@@ -1274,8 +1274,8 @@ AutoLFMMinimapBtn:SetHeight(25)  -- Taille du bouton
 AutoLFMMinimapBtn:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -5, -5)  -- Positionner le bouton
 
 -- Définir l'icône
-AutoLFMMinimapBtn:SetNormalTexture("Interface\\Icons\\INV_Misc_Eye_01")
-AutoLFMMinimapBtn:GetNormalTexture():SetTexCoord(0.10, 0.80, 0.10, 0.80)  -- Ajuster le cadrage pour rendre l'icône plus centrée et ronde
+AutoLFMMinimapBtn:SetNormalTexture("Interface\\Icons\\spell_arcane_teleportsilvermoon")
+AutoLFMMinimapBtn:GetNormalTexture():SetTexCoord(0.0, 1.0, 0.0, 1.0)  -- Ajuster le cadrage pour rendre l'icône plus centrée et ronde
 
 -- Créer une bordure ronde
 local border = AutoLFMMinimapBtn:CreateTexture(nil, "BACKGROUND")
