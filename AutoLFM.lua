@@ -1,3 +1,7 @@
+
+
+
+
 -- Variables
 local selectedDungeons = {}
 local selectedRaids = {}
@@ -6,39 +10,40 @@ local selectedChannels = {}
 local combinedMessage = ""
 
 local donjons = {
-    { nom = "Ragefire Chasm", abrev = "RFC", size = 5 },
-    { nom = "Wailing Caverns", abrev = "WC", size = 5 },
-    { nom = "Deadmines", abrev = "DM", size = 5 },
-    { nom = "Shadowfang Keep", abrev = "SFK", size = 5 },
-    { nom = "Blackfathom Deeps", abrev = "BFD", size = 5 },
-    { nom = "The Stockade", abrev = "Stockade", size = 5 },  
-    { nom = "Gnomeregan", abrev = "Gnomeregan", size = 5 },  
-    { nom = "Razorfen Kraul", abrev = "RFK", size = 5 },
-    { nom = "Scarlet Monastery Graveyard", abrev = "SM Grav", size = 5 },
-    { nom = "Scarlet Monastery Library", abrev = "SM Lib", size = 5 },
-    { nom = "Scarlet Monastery Armory", abrev = "SM Armo", size = 5 },
-    { nom = "Scarlet Monastery Cathedral", abrev = "SM Cath", size = 5 },
-    { nom = "Razorfen Downs", abrev = "RFD", size = 5 },
-    { nom = "Uldaman", abrev = "Ulda", size = 5 },
-    { nom = "Gilneas City", abrev = "Gilneas", size = 5 },
-    { nom = "Maraudon", abrev = "Maraudon", size = 5 },  
-    { nom = "Zul'Farrak", abrev = "ZF", size = 5 },
-    { nom = "The Sunken Temple", abrev = "ST", size = 5 },
-    { nom = "Halteforge Quarry", abrev = "HQ", size = 5 },
-    { nom = "Blackrock Depths", abrev = "BRD", size = 5 },
-    { nom = "Dire Maul East", abrev = "DM E", size = 5 },
-    { nom = "Dire Maul West", abrev = "DM W", size = 5 },
-    { nom = "Dire Maul North", abrev = "DM N", size = 5 },
-    { nom = "Scholomance 5", abrev = "Scholo 5", size = 5 },
-    { nom = "Scholomance 10", abrev = "Scholo 10", size = 10 },
-    { nom = "Stratholme UD 5", abrev = "Strat UD 5", size = 5 },
-    { nom = "Stratholme UD 10", abrev = "Strat UD 10", size = 10 },
-    { nom = "Stratholme Live 5", abrev = "Strat Live 5", size = 5 },
-    { nom = "Stratholme Live 10", abrev = "Strat Live 10", size = 10  },
-    { nom = "Lower Blackrock Spire", abrev = "LBRS", size = 5 },
-    { nom = "Upper Blackrock Spire", abrev = "UBRS", size = 10  },
-    { nom = "Caverns of Time. Black Morass", abrev = "BT", size = 5 },
-    { nom = "Stormwind Vault", abrev = "SWV", size = 5 },
+    { nom = "Ragefire Chasm", abrev = "RFC", size = 5, lvl = "13-18", lvl_min = 13, lvl_max = 18 },
+    { nom = "Wailing Caverns", abrev = "WC", size = 5, lvl = "17-24", lvl_min = 17, lvl_max = 24 },
+    { nom = "Deadmines", abrev = "DM", size = 5, lvl = "17-24", lvl_min = 17, lvl_max = 24 },
+    { nom = "Shadowfang Keep", abrev = "SFK", size = 5, lvl = "22-30", lvl_min = 22, lvl_max = 30 },
+    { nom = "Blackfathom Deeps", abrev = "BFD", size = 5, lvl = "23-32", lvl_min = 23, lvl_max = 32 },
+    { nom = "The Stockade", abrev = "Stockade", size = 5, lvl = "22-30", lvl_min = 22, lvl_max = 30 },
+    { nom = "Gnomeregan", abrev = "Gnomeregan", size = 5, lvl = "29-38", lvl_min = 29, lvl_max = 38 },
+    { nom = "Razorfen Kraul", abrev = "RFK", size = 5, lvl = "29-38", lvl_min = 29, lvl_max = 38 },
+    { nom = "The Crescent Grove", abrev = "Crescent", size = 5, lvl = "32-38", lvl_min = 32, lvl_max = 38 },
+    { nom = "Scarlet Monastery Graveyard", abrev = "SM Grav", size = 5, lvl = "27-36", lvl_min = 27, lvl_max = 36 },
+    { nom = "Scarlet Monastery Library", abrev = "SM Lib", size = 5, lvl = "28-39", lvl_min = 28, lvl_max = 39 },
+    { nom = "Scarlet Monastery Armory", abrev = "SM Armo", size = 5, lvl = "23-41", lvl_min = 23, lvl_max = 41 },
+    { nom = "Scarlet Monastery Cathedral", abrev = "SM Cath", size = 5, lvl = "35-45", lvl_min = 35, lvl_max = 45 },
+    { nom = "Razorfen Downs", abrev = "RFD", size = 5, lvl = "38-46", lvl_min = 38, lvl_max = 46 },
+    { nom = "Uldaman", abrev = "Ulda", size = 5, lvl = "40-51", lvl_min = 40, lvl_max = 51 },
+    { nom = "Gilneas City", abrev = "Gilneas", size = 5, lvl = "42-50", lvl_min = 42, lvl_max = 50 },
+    { nom = "Maraudon", abrev = "Maraudon", size = 5, lvl = "45-55", lvl_min = 45, lvl_max = 55 },
+    { nom = "Zul'Farrak", abrev = "ZF", size = 5, lvl = "44-54", lvl_min = 44, lvl_max = 54 },
+    { nom = "The Sunken Temple", abrev = "ST", size = 5, lvl = "50-60", lvl_min = 50, lvl_max = 60 },
+    { nom = "Halteforge Quarry", abrev = "HQ", size = 5, lvl = "50-60", lvl_min = 50, lvl_max = 60 },
+    { nom = "Blackrock Depths", abrev = "BRD", size = 5, lvl = "52-60", lvl_min = 52, lvl_max = 60 },
+    { nom = "Dire Maul East", abrev = "DM E", size = 5, lvl = "55-60", lvl_min = 55, lvl_max = 60 },
+    { nom = "Dire Maul West", abrev = "DM W", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
+    { nom = "Dire Maul North", abrev = "DM N", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
+    { nom = "Scholomance 5", abrev = "Scholo 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Scholomance 10", abrev = "Scholo 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Stratholme UD 5", abrev = "Strat UD 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Stratholme UD 10", abrev = "Strat UD 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Stratholme Live 5", abrev = "Strat Live 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Stratholme Live 10", abrev = "Strat Live 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Lower Blackrock Spire", abrev = "LBRS", size = 5, lvl = "55-60", lvl_min = 55, lvl_max = 60 },
+    { nom = "Upper Blackrock Spire", abrev = "UBRS", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Caverns of Time. Black Morass", abrev = "BT", size = 5, lvl = "60", lvl_min = 60, lvl_max = 60 },
+    { nom = "Stormwind Vault", abrev = "SWV", size = 5, lvl = "60", lvl_min = 60, lvl_max = 60 }
 }
 
 
@@ -64,6 +69,18 @@ local allRoles = {
 -- Initialiser les tables si elles ne le sont pas déjà
 donjonCheckButtons = donjonCheckButtons or {}
 raidCheckButtons = raidCheckButtons or {}
+
+-- Initialisation des variables
+local donjonCount = 0
+local maxDonjons = 100
+
+-- Nombre maximum de donjons à afficher
+for _, donjon in pairs(donjons) do
+    if donjonCount >= maxDonjons then
+        break
+    end
+    donjonCount = donjonCount + 1
+end
 
 
 --------------------------- Fonction Divers ---------------------------
@@ -247,7 +264,7 @@ end)
 
 -- Créer cadre djframe
 local djframe = CreateFrame("Frame", nil, AutoLFM)
-djframe:SetWidth(240)
+djframe:SetWidth(265)
 djframe:SetHeight(380)
 djframe:SetPoint("TOPLEFT", AutoLFM, "TOPLEFT", 10, -10)
 djframe:SetBackdrop({
@@ -258,9 +275,16 @@ djframe:Hide()
 
 local djScrollFrame = CreateFrame("ScrollFrame", "AutoLFM_ScrollFrame_Dungeons", djframe, "UIPanelScrollFrameTemplate")
 djScrollFrame:SetPoint("TOPLEFT", djframe, "TOPLEFT", 10, -40)
-djScrollFrame:SetWidth(240)
+djScrollFrame:SetWidth(265)
 djScrollFrame:SetHeight(330)
 djScrollFrame:Hide()
+
+-- Créer le contenu du ScrollFrame pour les donjons
+local contentFrame = CreateFrame("Frame", nil, djScrollFrame)
+contentFrame:SetWidth(250)
+contentFrame:SetHeight(donjonCount * 30)  -- Hauteur dynamique basée sur le nombre de donjons
+djScrollFrame:SetScrollChild(contentFrame)
+contentFrame:Show()
 
 
 -- Créer cadre raidFrame
@@ -276,7 +300,7 @@ raidFrame:Hide()
 
 local raidScrollFrame = CreateFrame("ScrollFrame", "AutoLFM_ScrollFrame_Raids", raidFrame, "UIPanelScrollFrameTemplate")
 raidScrollFrame:SetPoint("TOPLEFT", raidFrame, "TOPLEFT", 10, -40)
-raidScrollFrame:SetWidth(240)
+raidScrollFrame:SetWidth(265)
 raidScrollFrame:SetHeight(330)
 raidScrollFrame:Hide()
 
@@ -332,7 +356,7 @@ msgFrame:SetBackdropColor(1, 1, 1, 0.3)
 msgFrame:SetBackdropBorderColor(1, 1, 1, 1) 
 
 -- Positionner le nouveau cadre juste en dessous de roleframe
-msgFrame:SetWidth(roleframe:GetWidth()) 
+msgFrame:SetWidth(roleframe:GetWidth() - 10) 
 msgFrame:SetHeight(roleframe:GetHeight())
 msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -10)
 
@@ -376,10 +400,62 @@ slider:SetMinMaxValues(30, 120)
 slider:SetValue(70)
 slider:SetValueStep(10)
 
+-- Fonction pour gérer l'événement PLAYER_ENTERING_WORLD
+local function OnPlayerEnteringWorld(self, event)
+    -- Effectuer l'initialisation nécessaire après la connexion et le chargement du joueur
+    -- "Auto" en vert (0, 1, 0)
+-- Segments de texte avec leurs couleurs RGB
+local seg1 = "|cff00FF00Auto "  -- "Auto" en vert (0.0, 1.0, 0.0)
+local seg2 = "|cff00FFFFL"      -- "L" en rouge (1.0, 0.0, 0.0)
+local seg3 = "|cffffffffF"     -- "F" en vert (0.0, 1.0, 0.0)
+local seg4 = "|cffff0000M "     -- "M" en rouge (1.0, 0.0, 0.0)
+local seg5 = "|cff00FF00properly load "  -- "properly load" en blanc (1.0, 1.0, 1.0)
+local seg6 = "|cff00FFFF/lfm help "  -- "/lfm" en rouge (1.0, 0.0, 0.0)
+local seg7 = "|cff00FF00for more information"  -- "help for more information" en blanc (1.0, 1.0, 1.0)
+
+-- Concaténation des segments et envoi du message complet
+DEFAULT_CHAT_FRAME:AddMessage(seg1 .. seg2 .. seg3 .. seg4 .. seg5 .. seg6 .. seg7)
+
+
+
+    -- Afficher les donjons
+    DisplayDungeonsByColor()
+
+    -- Masquer le cadre de chargement une fois les donjons colorés
+    if dungeonsColored then
+        loadingFrame:Hide()  -- Masquer le cadre de chargement une fois les donjons colorés
+    end
+
+    -- Désenregistrer cet événement une fois qu'il est traité
+    this:UnregisterEvent("PLAYER_ENTERING_WORLD")
+end
+
+-- Enregistrer l'événement PLAYER_ENTERING_WORLD
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
+eventFrame:SetScript("OnEvent", OnPlayerEnteringWorld)
+
+-- Créer un cadre de chargement personnalisé
+local loadingFrame = CreateFrame("Frame", nil, UIParent)
+loadingFrame:SetWidth(200)  -- Largeur du cadre
+loadingFrame:SetHeight(100)  -- Hauteur du cadre
+loadingFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)  -- Positionner au centre de l'écran
+
+-- Ajouter un texte de chargement
+local loadingText = loadingFrame:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+loadingText:SetPoint("CENTER", loadingFrame, "CENTER", 0, 0)  -- Placer le texte au centre du cadre
+loadingText:SetText("Chargement des donjons...")
+
+-- Afficher le cadre immédiatement
+loadingFrame:Show()
+
+-- Variable pour suivre si les donjons sont colorés
+local dungeonsColored = false
 
 --------------------------- Init ---------------------------
 
 AutoLFM:RegisterEvent("PARTY_MEMBERS_CHANGED")
+
 
 djframe:Show()
 djScrollFrame:Show()
@@ -467,7 +543,6 @@ local function updateMsgFrameCombined()
             end
         end
     else
-
         -- Sinon, utiliser les donjons
         for _, donjonAbrev in pairs(selectedDungeons) do
             -- Rechercher le donjon correspondant dans la table 'donjons'
@@ -494,7 +569,7 @@ local function updateMsgFrameCombined()
                         table.insert(selectedContent, donjonMessage)
                     else
                         -- Si 'donjon.size' est nil ou 'totalPlayersInGroup' est nil, afficher un message d'erreur
-                        DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid dungeon size or number of players for " .. donjon.abrev " " .. donjon.size)
+                        DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid dungeon size or number of players for " .. donjon.abrev .. " " .. donjon.size)
                     end
                     break  -- Stopper la recherche dès qu'on a trouvé le bon donjon
                 end
@@ -523,13 +598,11 @@ local function updateMsgFrameCombined()
     -- Combiner le message final
     combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " "
 
+    -- Ajuster le texte du message
     msgText:SetText(combinedMessage)
 
     -- Vérifier si combinedMessage est non vide
     if combinedMessage and combinedMessage ~= "" then
-        -- Ajuster le texte du message
-        msgText:SetText(combinedMessage)
-
         -- Gérer le retour à la ligne si le texte dépasse la largeur du cadre
         local frameWidth = msgText:GetWidth()  -- Largeur du cadre où le texte est affiché
         local textWidth = msgText:GetStringWidth()  -- Largeur du texte
@@ -539,32 +612,29 @@ local function updateMsgFrameCombined()
             local wrappedText = ""
             local words = {strsplit(" ", combinedMessage)}  -- Séparer les mots
 
-            -- Vérifier si 'words' est valide avant de procéder
-            if words then
-                local line = ""
-                
-                for _, word in ipairs(words) do
-                    -- Si ajouter ce mot dépasse la largeur du cadre
-                    if (strlen(line) + strlen(word) + 1) > frameWidth then
-                        wrappedText = wrappedText .. line .. "\n"  -- Ajouter un retour à la ligne
-                        line = word  -- Commencer une nouvelle ligne avec ce mot
+            local line = ""
+
+            for _, word in ipairs(words) do
+                -- Si ajouter ce mot dépasse la largeur du cadre
+                if (strlen(line) + strlen(word) + 1) > frameWidth then
+                    wrappedText = wrappedText .. line .. "\n"  -- Ajouter un retour à la ligne
+                    line = word  -- Commencer une nouvelle ligne avec ce mot
+                else
+                    if line == "" then
+                        line = word
                     else
-                        if line == "" then
-                            line = word
-                        else
-                            line = line .. " " .. word  -- Ajouter un espace entre les mots
-                        end
+                        line = line .. " " .. word  -- Ajouter un espace entre les mots
                     end
                 end
-                -- Ajouter la dernière ligne
-                wrappedText = wrappedText .. line
-
-                -- Afficher le texte enveloppé
-                msgText:SetText(wrappedText)
-            else
-                -- Si 'words' est nil, afficher le texte tel quel
-                msgText:SetText(combinedMessage)
             end
+            -- Ajouter la dernière ligne
+            wrappedText = wrappedText .. line
+
+            -- Afficher le texte enveloppé
+            msgText:SetText(wrappedText)
+        else
+            -- Si le texte ne dépasse pas la largeur du cadre, afficher normalement
+            msgText:SetText(combinedMessage)
         end
     else
         msgText:SetText("")
@@ -589,90 +659,120 @@ end
 
 --------------------------- Donjon Fonction ---------------------------
 
-local donjonCount = 0
-local maxDonjons = 100
 
--- Nombre maximum de donjons à afficher
-for _, donjon in pairs(donjons) do
-    donjonCount = donjonCount + 1
-    if donjonCount >= maxDonjons then
-        break
-    end
-end
 
--- Créer une bordure autour du ScrollFrame des donjons
-local djBorderFrame = CreateFrame("Frame", "AutoLFM_BorderFrame_Dungeons", djScrollFrame)
-djBorderFrame:SetPoint("TOPLEFT", djScrollFrame, "TOPLEFT", -5, 5)
-djBorderFrame:SetPoint("BOTTOMRIGHT", djScrollFrame, "BOTTOMRIGHT", 5, -5)
-djBorderFrame:SetBackdrop({
-    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-    edgeSize = 16,
-    insets = { left = 4, right = 4, top = 4, bottom = 4 }
-})
-djBorderFrame:SetBackdropBorderColor(0, 0, 0, 1)
-
--- Créer le contenu du ScrollFrame pour les donjons
-local contentFrame = CreateFrame("Frame", nil, djScrollFrame)
-contentFrame:SetWidth(200)
-contentFrame:SetHeight(donjonCount * 30)
-djScrollFrame:SetScrollChild(contentFrame)
-
-local donjonCheckButtons = {}
 -- Fonction pour vérifier si un élément est présent dans la table
 local function tableContains(table, element)
-    for _, value in pairs(table) do
-        if value == element then
-            return true
-        end
-    end
-    return false
+    return table[element] ~= nil  -- Vérification optimisée
 end
 
--- Créer les cases à cocher pour chaque donjon
-for index, donjon in pairs(donjons) do
-    -- Créer la case à cocher
-    local checkbox = CreateFrame("CheckButton", "DonjonCheckbox" .. index, contentFrame, "UICheckButtonTemplate")
-    checkbox:SetWidth(20)
-    checkbox:SetHeight(20)
-    checkbox:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -(30 * (index - 1)))
+-- Fonction pour afficher les donjons par code couleur avec le niveau du donjon
+function DisplayDungeonsByColor()
+    -- Effacer les précédents donjons affichés
+    for _, child in ipairs({contentFrame:GetChildren()}) do
+        child:Hide()
+    end
 
-    -- Créer le label à côté de la case à cocher
-    local label = checkbox:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    label:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
+    local playerLevel = UnitLevel("player")  -- Récupère le niveau du joueur
+    local yOffset = 0  -- Position verticale pour les donjons
 
-    -- Afficher le nom du donjon (pas l'abréviation)
-    label:SetText(donjon.nom)
+    -- Créer une table de priorités pour organiser les donjons selon leur couleur
+    local sortedDungeons = {}
 
-    -- Capturer l'abréviation du donjon localement dans la closure de la case à cocher
-    local donjonAbrev = donjon.abrev 
+    -- Ajouter une priorité pour chaque donjon
+    for _, donjon in pairs(donjons) do
+        if donjonCount >= maxDonjons then
+            break
+        end
+        donjonCount = donjonCount + 1
 
-    -- Ajouter la case à cocher dans la table donjonCheckButtons
-    donjonCheckButtons[donjonAbrev] = checkbox 
-
-    -- Ajouter la gestion de la sélection des donjons
-    checkbox:SetScript("OnClick", function()
-        -- Ici on utilise la valeur de donjonAbrev déjà capturée dans la closure
-        -- Si la case est cochée, ajouter l'abréviation à la liste
-        if checkbox:GetChecked() then
-            if not tableContains(selectedDungeons, donjonAbrev) then
-                table.insert(selectedDungeons, donjonAbrev)
-            end
+        local priority
+        -- Attribuer une priorité en fonction de la couleur et du niveau du joueur
+        if playerLevel > donjon.lvl_max then
+            priority = 4  -- Gris : trop fort par rapport au niveau maximal du donjon
+        elseif playerLevel >= donjon.lvl_max - 2 then
+            priority = 1  -- Vert : légèrement en dessous du niveau maximal du donjon
+        elseif playerLevel >= donjon.lvl_min and playerLevel <= donjon.lvl_max then
+            priority = 2  -- Orange : dans la plage de niveaux du donjon
         else
-            -- Si la case est décochée, retirer l'abréviation du donjon de la liste
-            for i, value in pairs(selectedDungeons) do
-                if value == donjonAbrev then
-                    table.remove(selectedDungeons, i)
-                    break
-                end
-            end
+            priority = 3  -- Rouge : trop faible par rapport au niveau maximal du donjon
         end
 
-        -- Lorsque des donjons sont sélectionnés, effacer les raids sélectionnés
-        clearSelectedRaids()
+        -- Ajouter le donjon à la table en associant la priorité
+        table.insert(sortedDungeons, {donjon = donjon, priority = priority})
+    end
 
-        -- Mettre à jour l'affichage après chaque changement
-        updateMsgFrameCombined()
+    -- Trier les donjons par priorité
+    table.sort(sortedDungeons, function(a, b)
+        return a.priority < b.priority  -- Trier par priorité (1: Vert, 2: Blanc, 3: Rouge, 4: Gris)
     end)
+
+    -- Afficher les donjons dans l'ordre trié
+    for _, entry in ipairs(sortedDungeons) do
+        local donjon = entry.donjon
+        local priority = entry.priority
+
+        -- Créer la case à cocher à gauche du label
+        local checkbox = CreateFrame("CheckButton", "DonjonCheckbox" .. donjon.abrev, contentFrame, "UICheckButtonTemplate")
+        checkbox:SetWidth(20)
+        checkbox:SetHeight(20)
+        checkbox:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)  -- Positionner la case à cocher à gauche
+
+        local donjonAbrev = donjon.abrev
+        donjonCheckButtons[donjonAbrev] = checkbox
+
+        -- Créer un label pour afficher le niveau du donjon à droite de la case à cocher
+        local levelLabel = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        levelLabel:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
+        levelLabel:SetText(donjon.lvl_min .. "-" .. donjon.lvl_max)
+
+        -- Créer un label pour chaque donjon à droite du niveau du donjon
+        local label = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        label:SetPoint("LEFT", levelLabel, "RIGHT", 10, 0)
+    
+        -- Attribuer la couleur en fonction de la priorité
+        if priority == 4 then
+            label:SetTextColor(0.5, 0.5, 0.5)
+        elseif priority == 3 then
+            label:SetTextColor(1, 0, 0)
+        elseif priority == 2 then
+            label:SetTextColor(1, 0.647, 0)
+        else
+            label:SetTextColor(0, 1, 0)
+        end
+
+        label:SetText(donjon.nom)
+
+        -- Ajouter la gestion de la sélection des donjons
+        checkbox:SetScript("OnClick", function()
+            local isChecked = checkbox:GetChecked()
+            if checkbox:GetChecked() then
+                if not tableContains(selectedDungeons, donjonAbrev) then
+                    table.insert(selectedDungeons, donjonAbrev)
+                    clearSelectedRaids()
+                end
+            else
+                -- Si la case est décochée, retirer l'abréviation du donjon de la liste
+                for i, value in pairs(selectedDungeons) do
+                    if value == donjonAbrev then
+                        table.remove(selectedDungeons, i)
+                        break
+                    end
+                end
+            end
+            updateMsgFrameCombined()  -- Mettre à jour l'affichage sans rappeler DisplayDungeonsByColor
+        end)
+
+        dungeonsColored = true
+
+        -- Vérifier si les donjons sont colorés, et masquer le cadre
+        if dungeonsColored then
+            loadingFrame:Hide()  -- Masquer le cadre de chargement
+        end
+            -- Lorsque des raids sont sélectionnés, effacer les donjons sélectionnés
+            
+        yOffset = yOffset + 30
+    end
 end
 
 -- Fonction utilitaire pour vérifier si une table contient un élément
@@ -694,6 +794,27 @@ function clearSelectedRaids()
     selectedRaids = {}
 end
 
+-- Créer un événement Frame pour écouter les événements du jeu
+local eventFrame = CreateFrame("Frame")
+
+-- Enregistrer l'événement pour le joueur se connectant
+eventFrame:RegisterEvent("PLAYER_LOGIN")
+eventFrame:SetScript("OnEvent", function(self, event, ...)
+    if event == "PLAYER_LOGIN" then
+        OnPlayerLogin()
+    end
+end)
+
+-- Afficher les donjons au lancement
+-- Fonction pour gérer l'événement de fin de connexion
+local function OnPlayerLogin()
+    -- Réinitialiser et afficher les donjons
+    DisplayDungeonsByColor()
+    AutoLFM:Hide()
+    AutoLFM:Show()
+end
+
+
 --------------------------- Raids Fonctions ---------------------------
 
 
@@ -708,16 +829,6 @@ for _, raid in pairs(raids) do
     end
 end
 
--- Créer une bordure autour du ScrollFrame des raids
-local raidBorderFrame = CreateFrame("Frame", "AutoLFM_BorderFrame_Raids", raidScrollFrame)
-raidBorderFrame:SetPoint("TOPLEFT", raidScrollFrame, "TOPLEFT", -5, 5)
-raidBorderFrame:SetPoint("BOTTOMRIGHT", raidScrollFrame, "BOTTOMRIGHT", 5, -5)
-raidBorderFrame:SetBackdrop({
-    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-    edgeSize = 16,
-    insets = { left = 4, right = 4, top = 4, bottom = 4 }
-})
-raidBorderFrame:SetBackdropBorderColor(0, 0, 0, 1)
 
 -- Créer le contenu du ScrollFrame pour les raids
 local raidContentFrame = CreateFrame("Frame", nil, raidScrollFrame)
@@ -1086,6 +1197,7 @@ AutoLFM:SetScript("OnEvent", function(self, event, ...)
 end)
 
 
+
 --------------------- Commandes Slash pour l'addon ---------------------
 
 
@@ -1267,147 +1379,147 @@ title:SetScript("OnHide", StopMovingOnHide)
 
 --------------------------- Slash de Control Pour Dev ---------------------------
 
--- -- Créer la commande Slash pour afficher les rôles sélectionnés
+-- Créer la commande Slash pour afficher les rôles sélectionnés
 
--- local function ShowSelectedRoles()
---     if getTableSize(selectedRoles) == 0 then
---         print("Aucun rôle sélectionné.")
---     else
---         -- Concaténer les rôles sélectionnés en une chaîne séparée par des virgules
---         local rolesText = ""
---         for i, role in ipairs(selectedRoles) do
---             rolesText = rolesText .. role
---             if i < getTableSize(selectedRoles) then
---                 rolesText = rolesText .. ", "
---             end
---         end
---         print("Rôles sélectionnés : " .. rolesText)
---     end
--- end
+local function ShowSelectedRoles()
+    if getTableSize(selectedRoles) == 0 then
+        print("Aucun rôle sélectionné.")
+    else
+        -- Concaténer les rôles sélectionnés en une chaîne séparée par des virgules
+        local rolesText = ""
+        for i, role in ipairs(selectedRoles) do
+            rolesText = rolesText .. role
+            if i < getTableSize(selectedRoles) then
+                rolesText = rolesText .. ", "
+            end
+        end
+        print("Rôles sélectionnés : " .. rolesText)
+    end
+end
 
--- SLASH_ShowRoles1 = "/roles"
--- SlashCmdList["ShowRoles"] = ShowSelectedRoles
-
-
--- -- Slash Command pour afficher les rôles sélectionnés
--- SLASH_SHOWROLES1 = "/roles"  -- Nom de la commande Slash
--- SlashCmdList["SHOWROLES"] = function()
---     local rolesText = "Rôles sélectionnés : "
-
---     -- Compter le nombre total de rôles dans allRoles
---     local totalRoles = countTableEntries(allRoles)
-
---     -- Vérifier combien de rôles sont sélectionnés
---     local selectedCount = countSelectedRoles(selectedRoles)
-
---     if selectedCount == totalRoles then
---         -- Si tous les rôles sont sélectionnés
---         rolesText = rolesText .. "All"
---     elseif isTableEmpty(selectedRoles) then
---         -- Si aucun rôle n'est sélectionné
---         rolesText = rolesText .. "Aucun rôle sélectionné."
---     else
---         -- Afficher les rôles sélectionnés
---         for role, _ in pairs(selectedRoles) do
---             rolesText = rolesText .. role .. " "
---         end
---     end
-
---     -- Afficher le message dans la fenêtre de chat
---     DEFAULT_CHAT_FRAME:AddMessage(rolesText)
--- end
+SLASH_ShowRoles1 = "/roles"
+SlashCmdList["ShowRoles"] = ShowSelectedRoles
 
 
--- -- Slash Command pour afficher les donjons sélectionnés
--- SLASH_GETDUNGEONS1 = "/dgs"  -- Enregistrer la commande /dgs
+-- Slash Command pour afficher les rôles sélectionnés
+SLASH_SHOWROLES1 = "/roles"  -- Nom de la commande Slash
+SlashCmdList["SHOWROLES"] = function()
+    local rolesText = "Rôles sélectionnés : "
 
--- SlashCmdList["GETDUNGEONS"] = function()
---     -- Appeler la fonction pour récupérer les donjons sélectionnés avec leurs abréviations
---     local selected = GetSelectedDungeons()
+    -- Compter le nombre total de rôles dans allRoles
+    local totalRoles = countTableEntries(allRoles)
 
---     local selectedCount = 0
---     for _, _ in pairs(selected) do
---         selectedCount = selectedCount + 1  -- Compter manuellement les raids sélectionnés
---     end
+    -- Vérifier combien de rôles sont sélectionnés
+    local selectedCount = countSelectedRoles(selectedRoles)
 
---     -- Vérifier si des donjons ont été sélectionnés
---     if selectedCount == 0 then
---         -- Message si aucun donjon n'est sélectionné
---         DEFAULT_CHAT_FRAME:AddMessage("Aucun donjon sélectionné.", 1.0, 0.0, 0.0)  -- Rouge
---     else
---         -- Affichage des donjons sélectionnés
---         DEFAULT_CHAT_FRAME:AddMessage("Donjons sélectionnés :", 0.0, 1.0, 0.0)  -- Vert
+    if selectedCount == totalRoles then
+        -- Si tous les rôles sont sélectionnés
+        rolesText = rolesText .. "All"
+    elseif isTableEmpty(selectedRoles) then
+        -- Si aucun rôle n'est sélectionné
+        rolesText = rolesText .. "Aucun rôle sélectionné."
+    else
+        -- Afficher les rôles sélectionnés
+        for role, _ in pairs(selectedRoles) do
+            rolesText = rolesText .. role .. " "
+        end
+    end
 
---         -- Afficher chaque donjon sélectionné (abréviation)
---         for _, donjon in ipairs(selected) do
---             -- Affichage avec un tiret et une couleur personnalisée (ici un bleu clair)
---             DEFAULT_CHAT_FRAME:AddMessage("- " .. donjon, 0.0, 0.6, 1.0)  -- Bleu clair (RGB: 0, 0.6, 1)
---         end
---     end
--- end
+    -- Afficher le message dans la fenêtre de chat
+    DEFAULT_CHAT_FRAME:AddMessage(rolesText)
+end
 
 
--- -- Slash Command pour afficher les raids sélectionnés
--- SLASH_GETRAIDS1 = "/raids"  -- Enregistrer la commande /raids
+-- Slash Command pour afficher les donjons sélectionnés
+SLASH_GETDUNGEONS1 = "/dgs"  -- Enregistrer la commande /dgs
 
--- SlashCmdList["GETRAIDS"] = function()
---     -- Appeler la fonction pour récupérer les raids sélectionnés
---     local selected = GetSelectedRaids()
+SlashCmdList["GETDUNGEONS"] = function()
+    -- Appeler la fonction pour récupérer les donjons sélectionnés avec leurs abréviations
+    local selected = GetSelectedDungeons()
 
---     -- Vérifier si des raids ont été sélectionnés
---     local selectedCount = 0
---     for _, _ in pairs(selected) do
---         selectedCount = selectedCount + 1  -- Compter manuellement les raids sélectionnés
---     end
+    local selectedCount = 0
+    for _, _ in pairs(selected) do
+        selectedCount = selectedCount + 1  -- Compter manuellement les raids sélectionnés
+    end
 
---     -- Afficher les raids sélectionnés dans le chat
---     if selectedCount == 0 then
---         DEFAULT_CHAT_FRAME:AddMessage("Aucun raid sélectionné.", 1.0, 0.0, 0.0)  -- Message rouge si aucun raid n'est sélectionné
---     else
---         DEFAULT_CHAT_FRAME:AddMessage("Raids sélectionnés :", 0.0, 1.0, 0.0)  -- Message vert indiquant les raids sélectionnés
+    -- Vérifier si des donjons ont été sélectionnés
+    if selectedCount == 0 then
+        -- Message si aucun donjon n'est sélectionné
+        DEFAULT_CHAT_FRAME:AddMessage("Aucun donjon sélectionné.", 1.0, 0.0, 0.0)  -- Rouge
+    else
+        -- Affichage des donjons sélectionnés
+        DEFAULT_CHAT_FRAME:AddMessage("Donjons sélectionnés :", 0.0, 1.0, 0.0)  -- Vert
 
---         -- Pour chaque raid sélectionné, afficher avec un tiret et couleur
---         for _, raid in ipairs(selected) do
---             -- Affichage avec un tiret et une couleur personnalisée (ici un bleu clair)
---             DEFAULT_CHAT_FRAME:AddMessage("- " .. raid, 0.0, 0.6, 1.0)  -- Bleu clair (RGB: 0, 0.6, 1)
---         end
---     end
--- end
+        -- Afficher chaque donjon sélectionné (abréviation)
+        for _, donjon in ipairs(selected) do
+            -- Affichage avec un tiret et une couleur personnalisée (ici un bleu clair)
+            DEFAULT_CHAT_FRAME:AddMessage("- " .. donjon, 0.0, 0.6, 1.0)  -- Bleu clair (RGB: 0, 0.6, 1)
+        end
+    end
+end
 
--- -- Commande dev /inter pour afficher la valeur du slider
 
--- SLASH_INTER1 = "/inter"
--- SlashCmdList["INTER"] = function()
---     -- Afficher la valeur actuelle du slider dans le chat
---     print("La valeur actuelle du slider est : " .. sliderValue .. " second")
--- end
+-- Slash Command pour afficher les raids sélectionnés
+SLASH_GETRAIDS1 = "/raids"  -- Enregistrer la commande /raids
 
--- -- -- Enregistrer la commande Slash
--- SLASH_LFMMSG1 = "/lfmm"  -- Nom de la commande, par exemple "/lfmm"
--- -- Fonction qui sera appelée par la commande slash "/lfmm"
--- function showCombinedMessage(msg)
---     -- Générer le message combiné
---     GetCombinedMessage()
+SlashCmdList["GETRAIDS"] = function()
+    -- Appeler la fonction pour récupérer les raids sélectionnés
+    local selected = GetSelectedRaids()
 
---     -- Vérifier si le message est vide
---     if combinedMessage and combinedMessage ~= "" then
---         -- Afficher le message dans la fenêtre de chat
---         DEFAULT_CHAT_FRAME:AddMessage(combinedMessage)
---     else
---         -- Message d'erreur si le message est vide
---         print("Le message combiné est vide ou n'a pas été généré correctement.")
---     end
--- end
--- SlashCmdList["LFMMSG"] = showCombinedMessage
+    -- Vérifier si des raids ont été sélectionnés
+    local selectedCount = 0
+    for _, _ in pairs(selected) do
+        selectedCount = selectedCount + 1  -- Compter manuellement les raids sélectionnés
+    end
 
--- -- Commande slash pour afficher le message combiné
--- SLASH_GETCOMBINEDMESSAGE1 = "/msg"
--- function SlashCmdList.GETCOMBINEDMESSAGE(msg)
---     -- Appel à la fonction pour générer le message combiné
---     GetCombinedMessage()
+    -- Afficher les raids sélectionnés dans le chat
+    if selectedCount == 0 then
+        DEFAULT_CHAT_FRAME:AddMessage("Aucun raid sélectionné.", 1.0, 0.0, 0.0)  -- Message rouge si aucun raid n'est sélectionné
+    else
+        DEFAULT_CHAT_FRAME:AddMessage("Raids sélectionnés :", 0.0, 1.0, 0.0)  -- Message vert indiquant les raids sélectionnés
 
---     print("Combined Message: ", combinedMessage)
+        -- Pour chaque raid sélectionné, afficher avec un tiret et couleur
+        for _, raid in ipairs(selected) do
+            -- Affichage avec un tiret et une couleur personnalisée (ici un bleu clair)
+            DEFAULT_CHAT_FRAME:AddMessage("- " .. raid, 0.0, 0.6, 1.0)  -- Bleu clair (RGB: 0, 0.6, 1)
+        end
+    end
+end
 
---     -- Affichage du message dans le chat
---     DEFAULT_CHAT_FRAME:AddMessage(combinedMessage)
--- end
+-- Commande dev /inter pour afficher la valeur du slider
+
+SLASH_INTER1 = "/inter"
+SlashCmdList["INTER"] = function()
+    -- Afficher la valeur actuelle du slider dans le chat
+    print("La valeur actuelle du slider est : " .. sliderValue .. " second")
+end
+
+-- -- Enregistrer la commande Slash
+SLASH_LFMMSG1 = "/lfmm"  -- Nom de la commande, par exemple "/lfmm"
+-- Fonction qui sera appelée par la commande slash "/lfmm"
+function showCombinedMessage(msg)
+    -- Générer le message combiné
+    GetCombinedMessage()
+
+    -- Vérifier si le message est vide
+    if combinedMessage and combinedMessage ~= "" then
+        -- Afficher le message dans la fenêtre de chat
+        DEFAULT_CHAT_FRAME:AddMessage(combinedMessage)
+    else
+        -- Message d'erreur si le message est vide
+        print("Le message combiné est vide ou n'a pas été généré correctement.")
+    end
+end
+SlashCmdList["LFMMSG"] = showCombinedMessage
+
+-- Commande slash pour afficher le message combiné
+SLASH_GETCOMBINEDMESSAGE1 = "/msg"
+function SlashCmdList.GETCOMBINEDMESSAGE(msg)
+    -- Appel à la fonction pour générer le message combiné
+    GetCombinedMessage()
+
+    print("Combined Message: ", combinedMessage)
+
+    -- Affichage du message dans le chat
+    DEFAULT_CHAT_FRAME:AddMessage(combinedMessage)
+end
