@@ -322,11 +322,11 @@ roleframe:SetHeight(AutoLFM:GetHeight() * 0.2)
 roleframe:SetPoint("TOPRIGHT", AutoLFM, "TOPRIGHT", -50, -40)
 
 -- Réduction de la taille des icônes de 20 % au total
-local iconWidth = roleframe:GetWidth() / 3 * 0.6 
-local iconHeight = roleframe:GetHeight() * 0.6
+local iconWidth = roleframe:GetWidth() / 3 * 0.7 
+local iconHeight = roleframe:GetHeight() * 0.7
 
 -- Espacement entre les icônes (en pixels) : augmenter l'espacement à 20 pixels
-local iconSpacing = 20 
+local iconSpacing = 20
 
 -- Ajouter un texte au-dessus des icônes
 local selectRoleText = roleframe:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
@@ -337,11 +337,12 @@ selectRoleText:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
 
 -- Calculer la largeur totale nécessaire pour les icônes et l'espacement
 local totalIconsWidth = 3 * iconWidth + 2 * iconSpacing 
+
+-- Calculer l'offset X pour centrer les icônes (centrer par rapport au `roleframe`)
 local offsetX = (roleframe:GetWidth() - totalIconsWidth) / 2  
 
--- Calculer la hauteur totale nécessaire pour les icônes et l'espacement
-local totalIconsHeight = iconHeight
-local offsetY = (roleframe:GetHeight() - totalIconsHeight) / 2
+-- Positionner les icônes
+local offsetY = (roleframe:GetHeight() - iconHeight) / 2  -- Centrer verticalement
 
 
 -- Créer cadre msgFrame
@@ -353,16 +354,19 @@ msgFrame:SetBackdrop({
     insets = { left = 4, right = 4, top = 4, bottom = 4 },
 })
 msgFrame:SetBackdropColor(1, 1, 1, 0.3)
-msgFrame:SetBackdropBorderColor(1, 1, 1, 1) 
+msgFrame:SetBackdropBorderColor(1, 1, 1, 1)
 
--- Positionner le nouveau cadre juste en dessous de roleframe
-msgFrame:SetWidth(roleframe:GetWidth() - 10) 
-msgFrame:SetHeight(roleframe:GetHeight())
+-- Positionner le cadre msgFrame juste en dessous de roleframe
+msgFrame:SetWidth(roleframe:GetWidth()) 
+msgFrame:SetHeight(roleframe:GetHeight() + 30)
 msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -10)
 
--- Réduire la hauteur de msgFrame (par exemple, 50 pixels) et garder la largeur égale à sliderframe
-msgFrame:SetWidth(roleframe:GetWidth())
-msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -10) 
+-- Créer un FontString pour afficher le titre "Preview"
+local previewText = msgFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+previewText:SetText("Preview :")  -- Titre
+previewText:SetPoint("BOTTOM", msgFrame, "TOP", 0, -30)  -- Positionner juste au-dessus de msgFrame
+previewText:SetJustifyH("CENTER")
+previewText:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")  -- Taille et style du texte
 
 -- Créer un FontString dans msgFrame pour afficher le message
 local msgText = msgFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -370,7 +374,6 @@ msgText:SetPoint("CENTER", msgFrame, "CENTER")
 msgText:SetTextColor(1, 1, 1) 
 msgText:SetJustifyH("CENTER")
 msgText:SetJustifyV("CENTER")
-
 msgText:SetWidth(msgFrame:GetWidth())
 
 
@@ -388,8 +391,8 @@ sliderframe:SetBackdropBorderColor(1, 1, 1, 1)
 
 -- Positionner le nouveau cadre juste en dessous de roleframe
 sliderframe:SetWidth(roleframe:GetWidth()) 
-sliderframe:SetHeight(roleframe:GetHeight() + 90)
-sliderframe:SetPoint("TOPRIGHT", msgFrame, "BOTTOMRIGHT", 0, -10)
+sliderframe:SetHeight(roleframe:GetHeight() + 40)
+sliderframe:SetPoint("TOPRIGHT", msgFrame, "BOTTOMRIGHT", 0, -20)
 
 -- Créer la barre de glissement (Slider)
 local slider = CreateFrame("Slider", nil, sliderframe, "OptionsSliderTemplate")
@@ -600,6 +603,10 @@ local function updateMsgFrameCombined()
 
     -- Ajuster le texte du message
     msgText:SetText(combinedMessage)
+
+    -- Augmenter la taille du texte et le colorer en jaune clair
+    msgText:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")  -- Taille de la police augmentée et style "OUTLINE" pour plus de visibilité
+    msgText:SetTextColor(1, 1, 0)  -- Jaune clair (RGB: 1, 1, 0)
 
     -- Vérifier si combinedMessage est non vide
     if combinedMessage and combinedMessage ~= "" then
@@ -930,8 +937,8 @@ end)
 
 -- Créer l'icône Tank
 local tankIcon = CreateFrame("Button", nil, roleframe)
-tankIcon:SetWidth(iconWidth + 7)
-tankIcon:SetHeight(iconHeight + 7 )
+tankIcon:SetWidth(iconWidth)
+tankIcon:SetHeight(iconHeight)
 tankIcon:SetPoint("TOPLEFT", roleframe, "TOPLEFT", offsetX, -offsetY)
 
 tankIcon.texture = tankIcon:CreateTexture(nil, "BACKGROUND")
@@ -984,16 +991,15 @@ tankIcon:SetScript("OnClick", function()
     updateMsgFrameCombined()
 end)
 
-
 -- Créer l'icône DPS
 local dpsIcon = CreateFrame("Button", nil, roleframe)
-dpsIcon:SetWidth(iconWidth + 7 )  
-dpsIcon:SetHeight(iconHeight + 7 ) 
-dpsIcon:SetPoint("TOPLEFT", tankIcon, "TOPRIGHT", iconSpacing, 0) 
+dpsIcon:SetWidth(iconWidth)
+dpsIcon:SetHeight(iconHeight)
+dpsIcon:SetPoint("TOPLEFT", tankIcon, "TOPRIGHT", iconSpacing, 0)
 
 dpsIcon.texture = dpsIcon:CreateTexture(nil, "BACKGROUND")
 dpsIcon.texture:SetAllPoints(dpsIcon)
-dpsIcon.texture:SetTexture("Interface\\AddOns\\AutoLFM\\icon\\dps.png")  
+dpsIcon.texture:SetTexture("Interface\\AddOns\\AutoLFM\\icon\\dps.png")
 
 dpsIcon.selected = false
 dpsIcon:SetScript("OnClick", function()
@@ -1041,16 +1047,15 @@ dpsIcon:SetScript("OnClick", function()
     updateMsgFrameCombined()  
 end)
 
-
 -- Créer l'icône Heal
 local healIcon = CreateFrame("Button", nil, roleframe)
-healIcon:SetWidth(iconWidth + 7 )  
-healIcon:SetHeight(iconHeight + 7 )  
-healIcon:SetPoint("TOPLEFT", dpsIcon, "TOPRIGHT", iconSpacing, 0)  
+healIcon:SetWidth(iconWidth)
+healIcon:SetHeight(iconHeight)
+healIcon:SetPoint("TOPLEFT", dpsIcon, "TOPRIGHT", iconSpacing, 0)
 
 healIcon.texture = healIcon:CreateTexture(nil, "BACKGROUND")
 healIcon.texture:SetAllPoints(healIcon)
-healIcon.texture:SetTexture("Interface\\AddOns\\AutoLFM\\icon\\heal.png")  
+healIcon.texture:SetTexture("Interface\\AddOns\\AutoLFM\\icon\\heal.png")
 
 healIcon.selected = false
 healIcon:SetScript("OnClick", function()
@@ -1086,7 +1091,7 @@ healIcon:SetScript("OnClick", function()
         
         -- Appliquer un effet de glow (halo lumineux)
         healIcon:SetBackdrop({
-            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\glow-border.tga",  -- Texture personnalisée pour glow
+            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\glow-border.tga", 
             edgeSize = 32,
         })
         healIcon:SetBackdropBorderColor(0, 1, 0, 1)  -- Bordure néon verte pour l'effet lumineux
@@ -1095,7 +1100,7 @@ healIcon:SetScript("OnClick", function()
         -- Ajouter le rôle Heal à la table selectedRoles
         table.insert(selectedRoles, "Heal")
     end
-    updateMsgFrameCombined()  
+    updateMsgFrameCombined()
 end)
 
 
