@@ -7,5 +7,6 @@
 /lfm minimap hide  Hide minimap button.
 
 
-![Capture](https://github.com/user-attachments/assets/3731c77c-3dd2-4431-a406-3dec23a1043a)
+![image](https://github.com/user-attachments/assets/b354f849-ae01-49ae-9613-4832dd6d7e01)
+
 
