@@ -930,9 +930,9 @@ end)
 
 -- Créer l'icône Tank
 local tankIcon = CreateFrame("Button", nil, roleframe)
-tankIcon:SetWidth(iconWidth)
-tankIcon:SetHeight(iconHeight) 
-tankIcon:SetPoint("TOPLEFT", roleframe, "TOPLEFT", offsetX, -offsetY) 
+tankIcon:SetWidth(iconWidth + 7)
+tankIcon:SetHeight(iconHeight + 7 )
+tankIcon:SetPoint("TOPLEFT", roleframe, "TOPLEFT", offsetX, -offsetY)
 
 tankIcon.texture = tankIcon:CreateTexture(nil, "BACKGROUND")
 tankIcon.texture:SetAllPoints(tankIcon)
@@ -944,7 +944,13 @@ tankIcon:SetScript("OnClick", function()
     if tankIcon.selected then
         -- Désélectionner
         tankIcon.selected = false
-        tankIcon:SetBackdrop(nil)
+        tankIcon:SetBackdrop(nil)  -- Retirer les bordures
+        tankIcon.texture:SetAlpha(0.5)  -- Appliquer un effet de fade (transparence)
+        -- Ajouter une ombre pour la désélection
+        tankIcon:SetBackdrop({
+            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\shadow-border.tga",  -- Texture pour l'ombre
+            edgeSize = 16,
+        })
         -- Supprimer le rôle Tank de la table selectedRoles
         for i, role in ipairs(selectedRoles) do
             if role == "Tank" then
@@ -955,22 +961,34 @@ tankIcon:SetScript("OnClick", function()
     else
         -- Sélectionner
         tankIcon.selected = true
+        -- Appliquer une bordure plus lumineuse et épaisse
         tankIcon:SetBackdrop({
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
             edgeSize = 16,
             insets = { left = 4, right = 4, top = 4, bottom = 4 },
         })
-        tankIcon:SetBackdropBorderColor(1, 1, 0, 1) 
+        -- Bordure jaune plus lumineuse
+        tankIcon:SetBackdropBorderColor(1, 1, 0, 1)
+
+        -- Appliquer un effet de glow (halo lumineux)
+        tankIcon:SetBackdrop({
+            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\glow-border.tga",  -- Texture personnalisée pour glow
+            edgeSize = 32,
+        })
+        tankIcon:SetBackdropBorderColor(0, 1, 0, 1)  -- Bordure néon verte pour l'effet lumineux
+
+        tankIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle Tank à la table selectedRoles
         table.insert(selectedRoles, "Tank")
     end
     updateMsgFrameCombined()
 end)
 
+
 -- Créer l'icône DPS
 local dpsIcon = CreateFrame("Button", nil, roleframe)
-dpsIcon:SetWidth(iconWidth)  
-dpsIcon:SetHeight(iconHeight) 
+dpsIcon:SetWidth(iconWidth + 7 )  
+dpsIcon:SetHeight(iconHeight + 7 ) 
 dpsIcon:SetPoint("TOPLEFT", tankIcon, "TOPRIGHT", iconSpacing, 0) 
 
 dpsIcon.texture = dpsIcon:CreateTexture(nil, "BACKGROUND")
@@ -983,7 +1001,13 @@ dpsIcon:SetScript("OnClick", function()
     if dpsIcon.selected then
         -- Désélectionner
         dpsIcon.selected = false
-        dpsIcon:SetBackdrop(nil)
+        dpsIcon:SetBackdrop(nil)  -- Retirer les bordures
+        dpsIcon.texture:SetAlpha(0.5)  -- Appliquer un effet de fade (transparence)
+        -- Ajouter une ombre pour la désélection
+        dpsIcon:SetBackdrop({
+            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\shadow-border.tga",  -- Texture pour l'ombre
+            edgeSize = 16,
+        })
         -- Supprimer le rôle DPS de la table selectedRoles
         for i, role in ipairs(selectedRoles) do
             if role == "DPS" then
@@ -994,22 +1018,34 @@ dpsIcon:SetScript("OnClick", function()
     else
         -- Sélectionner
         dpsIcon.selected = true
+        -- Appliquer une bordure plus lumineuse et épaisse
         dpsIcon:SetBackdrop({
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
             edgeSize = 16,
             insets = { left = 4, right = 4, top = 4, bottom = 4 },
         })
+        -- Bordure jaune plus lumineuse
         dpsIcon:SetBackdropBorderColor(1, 1, 0, 1)
+        
+        -- Appliquer un effet de glow (halo lumineux)
+        dpsIcon:SetBackdrop({
+            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\glow-border.tga",  -- Texture personnalisée pour glow
+            edgeSize = 32,
+        })
+        dpsIcon:SetBackdropBorderColor(0, 1, 0, 1)  -- Bordure néon verte pour l'effet lumineux
+        
+        dpsIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle DPS à la table selectedRoles
         table.insert(selectedRoles, "DPS")
     end
     updateMsgFrameCombined()  
 end)
 
+
 -- Créer l'icône Heal
 local healIcon = CreateFrame("Button", nil, roleframe)
-healIcon:SetWidth(iconWidth)  
-healIcon:SetHeight(iconHeight)  
+healIcon:SetWidth(iconWidth + 7 )  
+healIcon:SetHeight(iconHeight + 7 )  
 healIcon:SetPoint("TOPLEFT", dpsIcon, "TOPRIGHT", iconSpacing, 0)  
 
 healIcon.texture = healIcon:CreateTexture(nil, "BACKGROUND")
@@ -1022,7 +1058,13 @@ healIcon:SetScript("OnClick", function()
     if healIcon.selected then
         -- Désélectionner
         healIcon.selected = false
-        healIcon:SetBackdrop(nil)
+        healIcon:SetBackdrop(nil)  -- Retirer les bordures
+        healIcon.texture:SetAlpha(0.5)  -- Appliquer un effet de fade (transparence)
+        -- Ajouter une ombre pour la désélection
+        healIcon:SetBackdrop({
+            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\shadow-border.tga",  -- Texture pour l'ombre
+            edgeSize = 16,
+        })
         -- Supprimer le rôle Heal de la table selectedRoles
         for i, role in ipairs(selectedRoles) do
             if role == "Heal" then
@@ -1033,17 +1075,35 @@ healIcon:SetScript("OnClick", function()
     else
         -- Sélectionner
         healIcon.selected = true
+        -- Appliquer une bordure plus lumineuse et épaisse
         healIcon:SetBackdrop({
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  
             edgeSize = 16,
             insets = { left = 4, right = 4, top = 4, bottom = 4 },
         })
+        -- Bordure jaune plus lumineuse
         healIcon:SetBackdropBorderColor(1, 1, 0, 1)  
+        
+        -- Appliquer un effet de glow (halo lumineux)
+        healIcon:SetBackdrop({
+            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\glow-border.tga",  -- Texture personnalisée pour glow
+            edgeSize = 32,
+        })
+        healIcon:SetBackdropBorderColor(0, 1, 0, 1)  -- Bordure néon verte pour l'effet lumineux
+        
+        healIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle Heal à la table selectedRoles
         table.insert(selectedRoles, "Heal")
     end
     updateMsgFrameCombined()  
 end)
+
+
+-- Appliquer un effet de fade (transparence) initialement lorsque non sélectionnée
+dpsIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour DPS
+healIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour Heal
+tankIcon.texture:SetAlpha(0.5)  -- Applique un fade initial lorsque non sélectionnée
+
 
 
 --------------------------- Slider Frame ---------------------------
