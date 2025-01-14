@@ -46,6 +46,10 @@ local donjons = {
     { nom = "Stormwind Vault", abrev = "SWV", size = 5, lvl = "60", lvl_min = 60, lvl_max = 60 }
 }
 
+-- Ajouter l'index à chaque donjon
+for index, donjon in ipairs(donjons) do
+    donjon.originalIndex = index
+end
 
 local raids = {
     { nom = "Zul'Gurub", abrev = "ZG", size = 20 },
@@ -682,6 +686,7 @@ function DisplayDungeonsByColor()
 
     local playerLevel = UnitLevel("player")  -- Récupère le niveau du joueur
     local yOffset = 0  -- Position verticale pour les donjons
+    local donjonCount = 0  -- Initialiser le compteur de donjons
 
     -- Créer une table de priorités pour organiser les donjons selon leur couleur
     local sortedDungeons = {}
@@ -694,24 +699,29 @@ function DisplayDungeonsByColor()
         donjonCount = donjonCount + 1
 
         local priority
-        -- Attribuer une priorité en fonction de la couleur et du niveau du joueur
-        if playerLevel > donjon.lvl_max then
-            priority = 4  -- Gris : trop fort par rapport au niveau maximal du donjon
-        elseif playerLevel >= donjon.lvl_max - 2 then
-            priority = 1  -- Vert : légèrement en dessous du niveau maximal du donjon
-        elseif playerLevel >= donjon.lvl_min and playerLevel <= donjon.lvl_max then
-            priority = 2  -- Orange : dans la plage de niveaux du donjon
+        local ratio = playerLevel / donjon.lvl_max  -- Calcul du ratio entre le niveau du joueur et le niveau max du donjon
+
+        if ratio > 1 then
+            priority = 5  -- Gris : trop fort (ratio supérieur à 1)
+        elseif ratio >= 0.95 then
+            priority = 1  -- Vert : légèrement en dessous du niveau max ou égal (ratio supérieur ou égal à 0.95)
+        elseif ratio >= 0.8 then
+            priority = 3  -- Orange : juste en dessous du niveau recommandé mais faisable (ratio entre 0.8 et 0.95)
         else
-            priority = 3  -- Rouge : trop faible par rapport au niveau maximal du donjon
+            priority = 4  -- Rouge : trop faible pour ce donjon (ratio inférieur à 0.8)
         end
 
-        -- Ajouter le donjon à la table en associant la priorité
-        table.insert(sortedDungeons, {donjon = donjon, priority = priority})
+        -- Ajouter le donjon à la table avec son index pour garder l'ordre d'origine
+        table.insert(sortedDungeons, {donjon = donjon, priority = priority, originalIndex = donjon.originalIndex})
     end
 
-    -- Trier les donjons par priorité
+    -- Tri par priorité (couleur)
     table.sort(sortedDungeons, function(a, b)
-        return a.priority < b.priority  -- Trier par priorité (1: Vert, 2: Blanc, 3: Rouge, 4: Gris)
+        if a.priority == b.priority then
+            return a.originalIndex < b.originalIndex  -- Si la priorité est identique, trier par ordre d'apparition
+        else
+            return a.priority < b.priority  -- Sinon, trier par priorité de couleur (vert, jaune, orange, gris, rouge)
+        end
     end)
 
     -- Afficher les donjons dans l'ordre trié
@@ -738,14 +748,16 @@ function DisplayDungeonsByColor()
         label:SetPoint("LEFT", levelLabel, "RIGHT", 10, 0)
     
         -- Attribuer la couleur en fonction de la priorité
-        if priority == 4 then
-            label:SetTextColor(0.5, 0.5, 0.5)
+        if priority == 5 then
+            label:SetTextColor(0.5, 0.5, 0.5)  -- Gris (trop élevé)
+        elseif priority == 4 then
+            label:SetTextColor(1, 0, 0)  -- Rouge (trop faible)
         elseif priority == 3 then
-            label:SetTextColor(1, 0, 0)
+            label:SetTextColor(1, 0.647, 0)  -- Orange (juste en dessous)
         elseif priority == 2 then
-            label:SetTextColor(1, 0.647, 0)
+            label:SetTextColor(1, 1, 0)  -- Jaune (proche du niveau recommandé)
         else
-            label:SetTextColor(0, 1, 0)
+            label:SetTextColor(0, 1, 0)  -- Vert (dans la plage ou légèrement en dessous)
         end
 
         label:SetText(donjon.nom)
@@ -776,7 +788,6 @@ function DisplayDungeonsByColor()
         if dungeonsColored then
             loadingFrame:Hide()  -- Masquer le cadre de chargement
         end
-            -- Lorsque des raids sont sélectionnés, effacer les donjons sélectionnés
             
         yOffset = yOffset + 30
     end
