@@ -680,6 +680,29 @@ end
 
 --------------------------- Donjon Fonction ---------------------------
 
+-- Fonction pour attribuer un ratio et une couleur en fonction du niveau du joueur
+function calculer_priorite(niveau_joueur, donjon)
+  local ratio = niveau_joueur / donjon.lvl_max  -- Ratio basé sur le niveau maximum du donjon
+  local priority
+
+  if ratio > 1 then
+      priority = 4  -- Gris : trop élevé
+  elseif ratio >= 0.85 then
+      priority = 1  -- Vert : adapté ou légèrement en dessous du niveau recommandé
+  else
+      priority = 3  -- Rouge : trop faible pour ce donjon
+  end
+
+  return priority
+end
+
+-- Tester pour chaque niveau de 1 à 60 et chaque donjon
+for niveau_joueur = 1, 60 do
+  for _, donjon in ipairs(donjons) do
+      local priority = calculer_priorite(niveau_joueur, donjon)
+      -- print("Joueur niveau " .. niveau_joueur .. " - Donjon: " .. donjon.nom .. " - Priorité: " .. priority)
+  end
+end
 
 
 -- Fonction pour vérifier si un élément est présent dans la table
@@ -689,133 +712,121 @@ end
 
 -- Fonction pour afficher les donjons par code couleur avec le niveau du donjon
 function DisplayDungeonsByColor()
-    -- Effacer les précédents donjons affichés
-    for _, child in ipairs({contentFrame:GetChildren()}) do
-        child:Hide()
-    end
+  -- Effacer les précédents donjons affichés
+  for _, child in ipairs({contentFrame:GetChildren()}) do
+      child:Hide()
+  end
 
-    local playerLevel = UnitLevel("player")  -- Récupère le niveau du joueur
-    local yOffset = 0  -- Position verticale pour les donjons
-    local donjonCount = 0  -- Initialiser le compteur de donjons
+  local playerLevel = UnitLevel("player")  -- Récupère le niveau du joueur
+  local yOffset = 0  -- Position verticale pour les donjons
+  local donjonCount = 0  -- Initialiser le compteur de donjons
 
-    -- Créer une table de priorités pour organiser les donjons selon leur couleur
-    local sortedDungeons = {}
+  -- Créer une table de priorités pour organiser les donjons selon leur couleur
+  local sortedDungeons = {}
 
-    -- Ajouter une priorité pour chaque donjon
-    for _, donjon in pairs(donjons) do
-        if donjonCount >= maxDonjons then
-            break
-        end
-        donjonCount = donjonCount + 1
+  -- Ajouter une priorité pour chaque donjon
+  for _, donjon in pairs(donjons) do
+      if donjonCount >= maxDonjons then
+          break
+      end
+      donjonCount = donjonCount + 1
 
-        local priority
-        local ratio = playerLevel / donjon.lvl_max  -- Calcul du ratio entre le niveau du joueur et le niveau max du donjon
+      -- Utiliser la fonction calculer_priorite pour obtenir la priorité du donjon
+      local priority = calculer_priorite(playerLevel, donjon)
 
-        if ratio > 1 then
-            priority = 5  -- Gris : trop fort (ratio supérieur à 1)
-        elseif ratio >= 0.95 then
-            priority = 1  -- Vert : légèrement en dessous du niveau max ou égal (ratio supérieur ou égal à 0.95)
-        elseif ratio >= 0.8 then
-            priority = 3  -- Orange : juste en dessous du niveau recommandé mais faisable (ratio entre 0.8 et 0.95)
-        else
-            priority = 4  -- Rouge : trop faible pour ce donjon (ratio inférieur à 0.8)
-        end
+      -- Ajouter le donjon à la table avec son index pour garder l'ordre d'origine
+      table.insert(sortedDungeons, {donjon = donjon, priority = priority, originalIndex = donjon.originalIndex})
+  end
 
-        -- Ajouter le donjon à la table avec son index pour garder l'ordre d'origine
-        table.insert(sortedDungeons, {donjon = donjon, priority = priority, originalIndex = donjon.originalIndex})
-    end
+  -- Tri par priorité (couleur)
+  table.sort(sortedDungeons, function(a, b)
+      if a.priority == b.priority then
+          return a.originalIndex < b.originalIndex  -- Si la priorité est identique, trier par ordre d'apparition
+      else
+          return a.priority < b.priority  -- Sinon, trier par priorité de couleur (vert, rouge, gris)
+      end
+  end)
 
-    -- Tri par priorité (couleur)
-    table.sort(sortedDungeons, function(a, b)
-        if a.priority == b.priority then
-            return a.originalIndex < b.originalIndex  -- Si la priorité est identique, trier par ordre d'apparition
-        else
-            return a.priority < b.priority  -- Sinon, trier par priorité de couleur (vert, jaune, orange, gris, rouge)
-        end
-    end)
+  -- Afficher les donjons dans l'ordre trié
+  for _, entry in ipairs(sortedDungeons) do
+      local donjon = entry.donjon
+      local priority = entry.priority
 
-    -- Afficher les donjons dans l'ordre trié
-    for _, entry in ipairs(sortedDungeons) do
-        local donjon = entry.donjon
-        local priority = entry.priority
+      -- Créer la case à cocher à gauche du label
+      local checkbox = CreateFrame("CheckButton", "DonjonCheckbox" .. donjon.abrev, contentFrame, "UICheckButtonTemplate")
+      checkbox:SetWidth(20)
+      checkbox:SetHeight(20)
+      checkbox:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)  -- Positionner la case à cocher à gauche
 
-        -- Créer la case à cocher à gauche du label
-        local checkbox = CreateFrame("CheckButton", "DonjonCheckbox" .. donjon.abrev, contentFrame, "UICheckButtonTemplate")
-        checkbox:SetWidth(20)
-        checkbox:SetHeight(20)
-        checkbox:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)  -- Positionner la case à cocher à gauche
+      local donjonAbrev = donjon.abrev
+      donjonCheckButtons[donjonAbrev] = checkbox
 
-        local donjonAbrev = donjon.abrev
-        donjonCheckButtons[donjonAbrev] = checkbox
+      -- Créer un label pour afficher le niveau du donjon à droite de la case à cocher
+      local levelLabel = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      levelLabel:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
+      levelLabel:SetText(donjon.lvl_min .. "-" .. donjon.lvl_max)
 
-        -- Créer un label pour afficher le niveau du donjon à droite de la case à cocher
-        local levelLabel = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        levelLabel:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
-        levelLabel:SetText(donjon.lvl_min .. "-" .. donjon.lvl_max)
+      -- Créer un label pour chaque donjon à droite du niveau du donjon
+      local label = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      label:SetPoint("LEFT", levelLabel, "RIGHT", 10, 0)
 
-        -- Créer un label pour chaque donjon à droite du niveau du donjon
-        local label = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        label:SetPoint("LEFT", levelLabel, "RIGHT", 10, 0)
+      -- Attribuer la couleur en fonction de la priorité calculée
+      if priority == 4 then
+        label:SetTextColor(0.5, 0.5, 0.5)  -- Gris (trop élevé)
+      elseif priority == 1 then
+        label:SetTextColor(0, 1, 0)  -- Vert (adapté ou légèrement en dessous)
+      else
+        label:SetTextColor(1, 0, 0)  -- Rouge (trop faible)
+      end
 
-        -- Attribuer la couleur en fonction de la priorité
-        if priority == 5 then
-            label:SetTextColor(0.5, 0.5, 0.5)  -- Gris (trop élevé)
-        elseif priority == 4 then
-            label:SetTextColor(1, 0, 0)  -- Rouge (trop faible)
-        elseif priority == 3 then
-            label:SetTextColor(1, 0.647, 0)  -- Orange (juste en dessous)
-        elseif priority == 2 then
-            label:SetTextColor(1, 1, 0)  -- Jaune (proche du niveau recommandé)
-        else
-            label:SetTextColor(0, 1, 0)  -- Vert (dans la plage ou légèrement en dessous)
-        end
+      label:SetText(donjon.nom)
 
-        label:SetText(donjon.nom)
+      -- Ajouter la gestion de la sélection des donjons
+      checkbox:SetScript("OnClick", function()
+          resetUserInputMessage()
+          clearSelectedRaids()
+          local isChecked = checkbox:GetChecked()
 
-        -- Ajouter la gestion de la sélection des donjons
-        checkbox:SetScript("OnClick", function()
-            resetUserInputMessage()
-            clearSelectedRaids()
-            local isChecked = checkbox:GetChecked()
+          if isChecked then
+              -- Vérifier si déjà 2 donjons sont sélectionnés
+              if table.getn(selectedDungeons) >= 4 then
+                  -- Retirer le premier élément sélectionné et décocher la case correspondante
+                  local firstDonjonAbrev = selectedDungeons[1]  -- Récupérer l'abréviation du premier donjon
+                  table.remove(selectedDungeons, 1)  -- Retirer le premier donjon
+                  -- Décocher la case du premier donjon retiré
+                  if donjonCheckButtons[firstDonjonAbrev] then
+                      donjonCheckButtons[firstDonjonAbrev]:SetChecked(false)
+                  end
+              end
+              -- Ajouter le nouveau donjon sélectionné à la liste
+              table.insert(selectedDungeons, donjonAbrev)
+          else
+              -- Si la case est décochée, retirer l'abréviation du donjon de la liste
+              for i, value in pairs(selectedDungeons) do
+                  if value == donjonAbrev then
+                      table.remove(selectedDungeons, i)
+                      -- Après avoir retiré l'élément de la liste, décocher la case
+                      checkbox:SetChecked(false)
+                      break
+                  end
+              end
+          end
 
-            if isChecked then
-                -- Vérifier si déjà 2 donjons sont sélectionnés
-                if table.getn(selectedDungeons) >= 4 then
-                    -- Retirer le premier élément sélectionné et décocher la case correspondante
-                    local firstDonjonAbrev = selectedDungeons[1]  -- Récupérer l'abréviation du premier donjon
-                    table.remove(selectedDungeons, 1)  -- Retirer le premier donjon
-                    -- Décocher la case du premier donjon retiré
-                    if donjonCheckButtons[firstDonjonAbrev] then
-                        donjonCheckButtons[firstDonjonAbrev]:SetChecked(false)
-                    end
-                end
-                -- Ajouter le nouveau donjon sélectionné à la liste
-                table.insert(selectedDungeons, donjonAbrev)
-            else
-                -- Si la case est décochée, retirer l'abréviation du donjon de la liste
-                for i, value in pairs(selectedDungeons) do
-                    if value == donjonAbrev then
-                        table.remove(selectedDungeons, i)
-                        -- Après avoir retiré l'élément de la liste, décocher la case
-                        checkbox:SetChecked(false)
-                        break
-                    end
-                end
-            end
+          updateMsgFrameCombined()  -- Mettre à jour l'affichage sans rappeler DisplayDungeonsByColor
+      end)
 
-            updateMsgFrameCombined()  -- Mettre à jour l'affichage sans rappeler DisplayDungeonsByColor
-        end)
+      dungeonsColored = true
 
-        dungeonsColored = true
+      -- Vérifier si les donjons sont colorés, et masquer le cadre
+      if dungeonsColored then
+          loadingFrame:Hide()  -- Masquer le cadre de chargement
+      end
 
-        -- Vérifier si les donjons sont colorés, et masquer le cadre
-        if dungeonsColored then
-            loadingFrame:Hide()  -- Masquer le cadre de chargement
-        end
-
-        yOffset = yOffset + 30
-    end
+      yOffset = yOffset + 30
+  end
 end
+
+
 
 
 
