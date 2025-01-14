@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version 1.1.6
+Message continue à être diffusé lorsque l'on ferme la fenêtre
+
 Version: 1.1.5
 Correctif mineur
 

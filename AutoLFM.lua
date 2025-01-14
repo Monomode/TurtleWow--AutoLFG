@@ -246,8 +246,8 @@ closeButton:SetBackdropBorderColor(0, 0, 0, 1)
 -- Ajouter un texte (un "X") à l'intérieur du bouton
 local closeIcon = closeButton:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 closeIcon:SetText("X")
-closeIcon:SetPoint("CENTER", closeButton, "CENTER", 0, 0) 
-closeIcon:SetTextColor(1, 1, 1) 
+closeIcon:SetPoint("CENTER", closeButton, "CENTER", 0, 0)
+closeIcon:SetTextColor(1, 1, 1)
 
 -- Ajouter un script pour masquer la frame quand le bouton est cliqué
 closeButton:SetScript("OnClick", function()
@@ -260,7 +260,7 @@ closeButton:SetScript("OnEnter", function(self)
 end)
 
 closeButton:SetScript("OnLeave", function(self)
-    this:SetBackdropBorderColor(0, 0, 0, 1) 
+    this:SetBackdropBorderColor(0, 0, 0, 1)
 end)
 
 
@@ -316,7 +316,7 @@ roleframe:SetBackdrop({
     bgFile = nil,
     -- edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  -- Bordure blanche dev position
     edgeSize = 16,
-    insets = { left = 4, right = 4, top = 4, bottom = 4 }, 
+    insets = { left = 4, right = 4, top = 4, bottom = 4 },
 })
 roleframe:SetBackdropColor(1, 1, 1, 0.3)
 roleframe:SetBackdropBorderColor(1, 1, 1, 1)
@@ -327,7 +327,7 @@ roleframe:SetHeight(AutoLFM:GetHeight() * 0.2)
 roleframe:SetPoint("TOPRIGHT", AutoLFM, "TOPRIGHT", -50, -40)
 
 -- Réduction de la taille des icônes de 20 % au total
-local iconWidth = roleframe:GetWidth() / 3 * 0.7 
+local iconWidth = roleframe:GetWidth() / 3 * 0.7
 local iconHeight = roleframe:GetHeight() * 0.7
 
 -- Espacement entre les icônes (en pixels) : augmenter l'espacement à 20 pixels
@@ -341,10 +341,10 @@ selectRoleText:SetJustifyH("CENTER")
 selectRoleText:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
 
 -- Calculer la largeur totale nécessaire pour les icônes et l'espacement
-local totalIconsWidth = 3 * iconWidth + 2 * iconSpacing 
+local totalIconsWidth = 3 * iconWidth + 2 * iconSpacing
 
 -- Calculer l'offset X pour centrer les icônes (centrer par rapport au `roleframe`)
-local offsetX = (roleframe:GetWidth() - totalIconsWidth) / 2  
+local offsetX = (roleframe:GetWidth() - totalIconsWidth) / 2
 
 -- Positionner les icônes
 local offsetY = (roleframe:GetHeight() - iconHeight) / 2  -- Centrer verticalement
@@ -362,7 +362,7 @@ msgFrame:SetBackdropColor(1, 1, 1, 0.3)
 msgFrame:SetBackdropBorderColor(1, 1, 1, 1)
 
 -- Positionner le cadre msgFrame juste en dessous de roleframe
-msgFrame:SetWidth(roleframe:GetWidth()) 
+msgFrame:SetWidth(roleframe:GetWidth())
 msgFrame:SetHeight(roleframe:GetHeight() + 20)
 msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -5)
 
@@ -370,7 +370,7 @@ msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -5)
 -- Créer un FontString dans msgFrame pour afficher le message
 local msgText = msgFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 msgText:SetPoint("CENTER", msgFrame, "CENTER")
-msgText:SetTextColor(1, 1, 1) 
+msgText:SetTextColor(1, 1, 1)
 msgText:SetJustifyH("CENTER")
 msgText:SetJustifyV("CENTER")
 msgText:SetWidth(msgFrame:GetWidth())
@@ -405,9 +405,9 @@ dashText:SetTextColor(1, 1, 1, 1)  -- Couleur blanche pour le tiret
 
 -- Optionnel : ajouter un fond à la zone de saisie pour la rendre plus visible
 editBox:SetBackdrop({
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", 
-    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
-    tile = true, tileSize = 16, edgeSize = 5, 
+    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+    tile = true, tileSize = 16, edgeSize = 5,
     insets = { left = 4, right = 4, top = 4, bottom = 4 }
 })
 editBox:SetBackdropColor(0, 0, 0, 0.7)  -- Fond légèrement transparent
@@ -422,11 +422,11 @@ sliderframe:SetBackdrop({
     edgeSize = 16,  -- Taille de la bordure
     insets = { left = 4, right = 4, top = 4, bottom = 4 },
 })
-sliderframe:SetBackdropColor(1, 1, 1, 0.3) 
+sliderframe:SetBackdropColor(1, 1, 1, 0.3)
 sliderframe:SetBackdropBorderColor(1, 1, 1, 1)
 
 -- Positionner le nouveau cadre juste en dessous de roleframe
-sliderframe:SetWidth(roleframe:GetWidth()) 
+sliderframe:SetWidth(roleframe:GetWidth())
 sliderframe:SetHeight(roleframe:GetHeight() + 50)
 sliderframe:SetPoint("TOPRIGHT", msgFrame, "BOTTOMRIGHT", 0, -40)
 
@@ -434,10 +434,12 @@ sliderframe:SetPoint("TOPRIGHT", msgFrame, "BOTTOMRIGHT", 0, -40)
 local slider = CreateFrame("Slider", nil, sliderframe, "OptionsSliderTemplate")
 slider:SetWidth(200)
 slider:SetHeight(20)
-slider:SetPoint("CENTER", sliderframe, "CENTER", 0, 0) 
-slider:SetMinMaxValues(30, 120)
+slider:SetPoint("CENTER", sliderframe, "CENTER", 0, 0)
+slider:SetMinMaxValues(40, 120)
 slider:SetValue(70)
 slider:SetValueStep(10)
+
+
 
 -- Fonction pour gérer l'événement PLAYER_ENTERING_WORLD
 local function OnPlayerEnteringWorld(self, event)
@@ -516,7 +518,7 @@ local function getTableSize(tbl)
 end
 
 local combinedMessage  = ""
-local userInputMessage = "" 
+local userInputMessage = ""
 
 
 -- Fonction pour compter les membres du groupe
@@ -532,13 +534,13 @@ end
 -- Fonction pour générer le message dynamique
 local function updateMsgFrameCombined()
     local totalPlayersInGroup = countGroupMembers()
-    local totalGroupSize = 0 
+    local totalGroupSize = 0
     local textWidth = msgText:GetStringWidth()  -- Largeur du texte
 
 
     -- Segment des rôles sélectionnés
     local selectedRoles = selectedRoles
-    local selectedCountRoles = 0 
+    local selectedCountRoles = 0
 
     -- Comptage des rôles sélectionnés
     for _, role in pairs(selectedRoles) do
@@ -548,7 +550,7 @@ local function updateMsgFrameCombined()
     -- Segment des rôles
     local rolesSegmentFix = "Need "
     local rolesSegment = ""
-    if selectedCountRoles == 3 then 
+    if selectedCountRoles == 3 then
         rolesSegment = "Need All"
     elseif selectedCountRoles > 0 then
         rolesSegment = rolesSegmentFix .. table.concat(selectedRoles, " & ")
@@ -561,18 +563,18 @@ local function updateMsgFrameCombined()
     -- Si un raid est sélectionné, utiliser les raids
     local selectedRaids = GetSelectedRaids()
     if table.getn(selectedRaids) > 0 then
-        
+
         for _, raidAbrev in pairs(selectedRaids) do
             -- Rechercher le raid correspondant dans la table 'raids'
             for _, raid in pairs(raids) do
                 if raid.abrev == raidAbrev then
                     -- Mettre à jour la taille du groupe en fonction du raid sélectionné
-                    totalGroupSize = raid.size 
+                    totalGroupSize = raid.size
 
                     -- Calcul du nombre de joueurs manquants pour chaque raid
                     local missingPlayers = totalGroupSize - totalPlayersInGroup
                     if missingPlayers < 0 then
-                        missingPlayers = 0 
+                        missingPlayers = 0
                         stopMessageBroadcast()
                     end
 
@@ -584,7 +586,7 @@ local function updateMsgFrameCombined()
 
                     -- Ajouter le message pour ce raid à la liste des contenus sélectionnés
                     table.insert(selectedContent, raidMessage)
-                    break 
+                    break
                 end
             end
         end
@@ -597,12 +599,12 @@ local function updateMsgFrameCombined()
                 if donjon.abrev == donjonAbrev then
                     -- Vérifier que 'donjon.size' n'est pas nil avant de l'utiliser
                     if donjon.size and totalPlayersInGroup then
-                        totalGroupSize = donjon.size 
+                        totalGroupSize = donjon.size
 
                         -- Calcul du nombre de joueurs manquants pour chaque donjon
                         local missingPlayers = totalGroupSize - totalPlayersInGroup
                         if missingPlayers < 0 then
-                            missingPlayers = 0  
+                            missingPlayers = 0
                             stopMessageBroadcast()
                         end
 
@@ -645,8 +647,8 @@ local function updateMsgFrameCombined()
     -- Combiner le message final
     combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " "
 
-    
-    if userInputMessage ~= "" then 
+
+    if userInputMessage ~= "" then
         combinedMessage = userInputMessage
         msgText:SetText(userInputMessage)
     else
@@ -754,7 +756,7 @@ function DisplayDungeonsByColor()
         -- Créer un label pour chaque donjon à droite du niveau du donjon
         local label = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         label:SetPoint("LEFT", levelLabel, "RIGHT", 10, 0)
-    
+
         -- Attribuer la couleur en fonction de la priorité
         if priority == 5 then
             label:SetTextColor(0.5, 0.5, 0.5)  -- Gris (trop élevé)
@@ -892,13 +894,13 @@ for index, raid in pairs(raids) do
     -- Créer le label pour chaque raid
     local label = checkbox:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     label:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
-    label:SetText(raid.nom) 
+    label:SetText(raid.nom)
 
     -- Capturer l'abréviation du raid localement
     local raidAbrev = raid.abrev
 
     -- Ajouter la case à cocher dans la table raidCheckButtons
-    raidCheckButtons[raidAbrev] = checkbox 
+    raidCheckButtons[raidAbrev] = checkbox
 
     -- Ajouter la gestion de la sélection des raids
     checkbox:SetScript("OnClick", function()
@@ -917,7 +919,7 @@ for index, raid in pairs(raids) do
             end
         else
             -- Si la case est décochée, retirer l'abréviation du raid de la liste
-            selectedRaids = {} 
+            selectedRaids = {}
         end
 
         -- Lorsque des raids sont sélectionnés, effacer les donjons sélectionnés
@@ -977,13 +979,13 @@ local function clearIconSelection(icon, roleName)
         icon.selected = false
         icon:SetBackdrop(nil)  -- Retirer les bordures
         icon.texture:SetAlpha(0.5)  -- Appliquer un effet de fade (transparence)
-        
+
         -- Retirer l'ombre
         icon:SetBackdrop({
             edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\shadow-border.tga",  -- Texture pour l'ombre
             edgeSize = 16,
         })
-        
+
         -- Supprimer le rôle de la table selectedRoles
         for i, role in ipairs(selectedRoles) do
             if role == roleName then
@@ -1093,20 +1095,20 @@ dpsIcon:SetScript("OnClick", function()
         })
         -- Bordure jaune plus lumineuse
         dpsIcon:SetBackdropBorderColor(1, 1, 0, 1)
-        
+
         -- Appliquer un effet de glow (halo lumineux)
         dpsIcon:SetBackdrop({
             edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\glow-border.tga",  -- Texture personnalisée pour glow
             edgeSize = 32,
         })
         dpsIcon:SetBackdropBorderColor(0, 1, 0, 1)  -- Bordure néon verte pour l'effet lumineux
-        
+
         dpsIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle DPS à la table selectedRoles
         table.insert(selectedRoles, "DPS")
         resetUserInputMessage()
     end
-    updateMsgFrameCombined()  
+    updateMsgFrameCombined()
 end)
 
 -- Créer l'icône Heal
@@ -1144,20 +1146,20 @@ healIcon:SetScript("OnClick", function()
         healIcon.selected = true
         -- Appliquer une bordure plus lumineuse et épaisse
         healIcon:SetBackdrop({
-            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
             edgeSize = 16,
             insets = { left = 4, right = 4, top = 4, bottom = 4 },
         })
         -- Bordure jaune plus lumineuse
-        healIcon:SetBackdropBorderColor(1, 1, 0, 1)  
-        
+        healIcon:SetBackdropBorderColor(1, 1, 0, 1)
+
         -- Appliquer un effet de glow (halo lumineux)
         healIcon:SetBackdrop({
-            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\glow-border.tga", 
+            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\glow-border.tga",
             edgeSize = 32,
         })
         healIcon:SetBackdropBorderColor(0, 1, 0, 1)  -- Bordure néon verte pour l'effet lumineux
-        
+
         healIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle Heal à la table selectedRoles
         table.insert(selectedRoles, "Heal")
@@ -1213,12 +1215,6 @@ local function clearSelections()
     updateMsgFrameCombined()
 end
 
--- -- Fonction pour réinitialiser la sélection des rôles et contenus
--- local function resetSelection()
---     clearSelectedDungeons()
---     clearSelectedRaids()
---     updateMsgFrameCombined()  -- Mettre à jour le message dynamique
--- end
 
 -- Fonction pour gérer le changement de texte
 editBox:SetScript("OnTextChanged", function(self)
@@ -1273,24 +1269,24 @@ local step = 10
 -- Fonction pour arrondir la valeur du slider à l'étape la plus proche
 local function SnapToStep(value)
     if value then
-        local roundedValue = math.floor(value / step + 0.5) * step 
+        local roundedValue = math.floor(value / step + 0.5) * step
         return roundedValue
     end
 end
 
 -- Variable pour stocker la valeur du slider
-local sliderValue = 70  
+local sliderValue = 70
 
 -- Créer une police pour afficher la valeur actuelle du slider (placer la valeur au-dessus du slider)
 local valueText = slider:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-valueText:SetPoint("BOTTOM", slider, "TOP", 0, 5) 
+valueText:SetPoint("BOTTOM", slider, "TOP", 0, 5)
 valueText:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
 
 
 -- Variables pour gérer l'intervalle et la diffusion du message
-local isBroadcasting = false 
-local broadcastStartTime = 0 
-
+local isBroadcasting = false
+local broadcastStartTime = 0
+local lastBroadcastTime = 0
 
 -- Fonction pour arrêter la diffusion du message
 local function stopMessageBroadcast()
@@ -1302,7 +1298,7 @@ local function startMessageBroadcast()
     -- Vérifier si combinedMessage est vide avant de démarrer la diffusion
     if combinedMessage == "" or combinedMessage == " " then
         print("The LFM message is empty. The broadcast cannot begin.")
-        return 
+        return
     end
 
     isBroadcasting = true
@@ -1312,6 +1308,49 @@ local function startMessageBroadcast()
     -- Diffuser immédiatement le message dès le démarrage
     sendMessageToChannels(combinedMessage)
 end
+
+-- Frame d'update pour gérer le délai entre chaque diffusion
+local broadcastFrame = CreateFrame("Frame")
+
+-- Fonction qui sera exécutée en continu pour gérer l'intervalle de diffusion
+-- Fonction qui sera exécutée en continu pour gérer l'intervalle de diffusion
+broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
+  if isBroadcasting then
+      -- Mettre à jour la valeur de l'intervalle du slider
+      local sliderValue = slider:GetValue()
+
+      -- Vérifier si le temps écoulé est supérieur ou égal à l'intervalle du slider
+      local timeElapsed = GetTime() - broadcastStartTime
+
+      -- Si le temps restant est inférieur à 3 secondes, afficher le décompte
+      if timeElapsed < sliderValue then
+          local remainingTime = sliderValue - timeElapsed
+
+          -- Afficher un message une seule fois pour chaque niveau du décompte (3, 2, 1)
+          if remainingTime == 10 and remainingTime  then
+              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion dans 10", 0, 1, 1)
+          elseif remainingTime == 5 and remainingTime  then
+              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion dans 5", 0, 1, 1)
+          elseif remainingTime == 3 and remainingTime  then
+              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion du Message", 0, 1, 1)
+          end
+      end
+
+      -- Une fois le temps écoulé, envoyer le message
+      if timeElapsed >= sliderValue then
+          -- Diffuser le message
+          if combinedMessage ~= "" then
+              sendMessageToChannels(combinedMessage)
+              print("The LFM message is empty.")
+          end
+
+          -- Réinitialiser le temps pour la prochaine diffusion
+          broadcastStartTime = GetTime()
+      end
+  end
+end)
+
+
 
 -- Créer un bouton Toggle en dessous de msgFrame, centré par rapport à AutoLFM
 local toggleButton = CreateFrame("Button", "ToggleButton", msgFrame, "UIPanelButtonTemplate")
@@ -1342,46 +1381,27 @@ toggleButton:SetScript("OnClick", function()
         toggleButton:SetText("Start")
         print("Broadcast stopped")
     else
-        startMessageBroadcast() 
+        startMessageBroadcast()
         toggleButton:SetText("Stop")
     end
 end)
 
 
--- Mettre à jour la valeur du slider à chaque déplacement en utilisant OnUpdate
+-- Mettre à jour la valeur du slider
 sliderframe:SetScript("OnUpdate", function(self, elapsed)
-    -- Récupérer la valeur actuelle du slider
-    local currentValue = slider:GetValue()
+  -- Récupérer la valeur actuelle du slider
+  local currentValue = slider:GetValue()
 
-    -- Arrondir la valeur à l'étape la plus proche
-    local snappedValue = SnapToStep(currentValue)
+  -- Arrondir la valeur à l'étape la plus proche
+  local snappedValue = SnapToStep(currentValue)
 
-    -- Appliquer la valeur arrondie au slider si nécessaire (au cas où la valeur serait flottante)
-    if currentValue ~= snappedValue then
-        slider:SetValue(snappedValue)
-    end
+  -- Appliquer la valeur arrondie au slider si nécessaire (au cas où la valeur serait flottante)
+  if currentValue ~= snappedValue then
+      slider:SetValue(snappedValue)
+  end
 
-    -- Mettre à jour dynamiquement le texte pour refléter la nouvelle valeur en temps réel
-    valueText:SetText("Dispense every " .. slider:GetValue() .. " seconds")
-
-    -- Mettre à jour la variable stockée
-    sliderValue = snappedValue
-
-    -- Si la diffusion est active, gérer le délai entre chaque diffusion du message
-    if isBroadcasting then
-        local timeElapsed = GetTime() - broadcastStartTime
-
-        -- Si le temps écoulé est supérieur ou égal à la valeur du slider, diffuser un message
-        if timeElapsed >= sliderValue then
-            -- Diffuser le message à l'intervalle spécifié
-            if combinedMessage ~= "" then
-                sendMessageToChannels(combinedMessage)
-            else
-                print("The LFM message is empty.")
-            end
-            broadcastStartTime = GetTime()
-        end
-    end
+  -- Mettre à jour dynamiquement le texte pour refléter la nouvelle valeur en temps réel
+  valueText:SetText("Dispense every " .. slider:GetValue() .. " seconds")
 end)
 
 
@@ -1515,14 +1535,14 @@ end)
 AutoLFMMinimapBtn:SetScript("OnClick", function()
     -- Vérifier si la touche Ctrl est enfoncée
     if IsControlKeyDown() then
-        return 
+        return
     end
 
     -- Si Ctrl n'est pas enfoncé, gérer l'ouverture/fermeture de l'interface
     if AutoLFM:IsShown() then
         AutoLFM:Hide()
     else
-        AutoLFM:Show() 
+        AutoLFM:Show()
     end
 end)
 
