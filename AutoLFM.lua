@@ -1,7 +1,3 @@
-
-
-
-
 -- Variables
 local selectedDungeons = {}
 local selectedRaids = {}
@@ -11,39 +7,44 @@ local combinedMessage = ""
 
 local donjons = {
     { nom = "Ragefire Chasm", abrev = "RFC", size = 5, lvl = "13-18", lvl_min = 13, lvl_max = 18 },
+    { nom = "The Deadmines", abrev = "DM", size = 5, lvl = "17-24", lvl_min = 17, lvl_max = 24 },
     { nom = "Wailing Caverns", abrev = "WC", size = 5, lvl = "17-24", lvl_min = 17, lvl_max = 24 },
-    { nom = "Deadmines", abrev = "DM", size = 5, lvl = "17-24", lvl_min = 17, lvl_max = 24 },
+    { nom = "The Stockade", abrev = "Stockade", size = 5, lvl = "22-30", lvl_min = 22, lvl_max = 30 },
     { nom = "Shadowfang Keep", abrev = "SFK", size = 5, lvl = "22-30", lvl_min = 22, lvl_max = 30 },
     { nom = "Blackfathom Deeps", abrev = "BFD", size = 5, lvl = "23-32", lvl_min = 23, lvl_max = 32 },
-    { nom = "The Stockade", abrev = "Stockade", size = 5, lvl = "22-30", lvl_min = 22, lvl_max = 30 },
+    { nom = "Scarlet Monastery Graveyard", abrev = "SM Grav", size = 5, lvl = "27-36", lvl_min = 27, lvl_max = 36 },
+    { nom = "Scarlet Monastery Library", abrev = "SM Lib", size = 5, lvl = "28-39", lvl_min = 28, lvl_max = 39 },
     { nom = "Gnomeregan", abrev = "Gnomeregan", size = 5, lvl = "29-38", lvl_min = 29, lvl_max = 38 },
     { nom = "Razorfen Kraul", abrev = "RFK", size = 5, lvl = "29-38", lvl_min = 29, lvl_max = 38 },
     { nom = "The Crescent Grove", abrev = "Crescent", size = 5, lvl = "32-38", lvl_min = 32, lvl_max = 38 },
-    { nom = "Scarlet Monastery Graveyard", abrev = "SM Grav", size = 5, lvl = "27-36", lvl_min = 27, lvl_max = 36 },
-    { nom = "Scarlet Monastery Library", abrev = "SM Lib", size = 5, lvl = "28-39", lvl_min = 28, lvl_max = 39 },
-    { nom = "Scarlet Monastery Armory", abrev = "SM Armo", size = 5, lvl = "23-41", lvl_min = 23, lvl_max = 41 },
+    { nom = "Scarlet Monastery Armory", abrev = "SM Armo", size = 5, lvl = "32-41", lvl_min = 32, lvl_max = 41 },
     { nom = "Scarlet Monastery Cathedral", abrev = "SM Cath", size = 5, lvl = "35-45", lvl_min = 35, lvl_max = 45 },
-    { nom = "Razorfen Downs", abrev = "RFD", size = 5, lvl = "38-46", lvl_min = 38, lvl_max = 46 },
+    { nom = "Razorfen Downs", abrev = "RFD", size = 5, lvl = "36-46", lvl_min = 36, lvl_max = 46 },
     { nom = "Uldaman", abrev = "Ulda", size = 5, lvl = "40-51", lvl_min = 40, lvl_max = 51 },
     { nom = "Gilneas City", abrev = "Gilneas", size = 5, lvl = "42-50", lvl_min = 42, lvl_max = 50 },
-    { nom = "Maraudon", abrev = "Maraudon", size = 5, lvl = "45-55", lvl_min = 45, lvl_max = 55 },
     { nom = "Zul'Farrak", abrev = "ZF", size = 5, lvl = "44-54", lvl_min = 44, lvl_max = 54 },
+    { nom = "Maraudon Purple", abrev = "Maraudon Purple", size = 5, lvl = "45-55", lvl_min = 45, lvl_max = 55 },
+    { nom = "Maraudon Orange", abrev = "Maraudon Orange", size = 5, lvl = "47-55", lvl_min = 47, lvl_max = 55 },
+    { nom = "Maraudon Princess", abrev = "Maraudon Princess", size = 5, lvl = "47-55", lvl_min = 47, lvl_max = 55 },
     { nom = "The Sunken Temple", abrev = "ST", size = 5, lvl = "50-60", lvl_min = 50, lvl_max = 60 },
     { nom = "Halteforge Quarry", abrev = "HQ", size = 5, lvl = "50-60", lvl_min = 50, lvl_max = 60 },
+    { nom = "Blackrock Depths Arena", abrev = "BRD Arena", size = 5, lvl = "52-60", lvl_min = 52, lvl_max = 60 },
     { nom = "Blackrock Depths", abrev = "BRD", size = 5, lvl = "52-60", lvl_min = 52, lvl_max = 60 },
-    { nom = "Dire Maul East", abrev = "DM E", size = 5, lvl = "55-60", lvl_min = 55, lvl_max = 60 },
+    { nom = "Blackrock Depths Emperor", abrev = "BRD Emperor", size = 5, lvl = "52-60", lvl_min = 54, lvl_max = 60 },
+    { nom = "Lower Blackrock Spire", abrev = "LBRS", size = 5, lvl = "55-60", lvl_min = 55, lvl_max = 60 },
+    { nom = "Dire Maul Tribute", abrev = "DM Tribute", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
     { nom = "Dire Maul West", abrev = "DM W", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
     { nom = "Dire Maul North", abrev = "DM N", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
     { nom = "Scholomance 5", abrev = "Scholo 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
     { nom = "Scholomance 10", abrev = "Scholo 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
-    { nom = "Stratholme UD 5", abrev = "Strat UD 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
-    { nom = "Stratholme UD 10", abrev = "Strat UD 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
     { nom = "Stratholme Live 5", abrev = "Strat Live 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
     { nom = "Stratholme Live 10", abrev = "Strat Live 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
-    { nom = "Lower Blackrock Spire", abrev = "LBRS", size = 5, lvl = "55-60", lvl_min = 55, lvl_max = 60 },
-    { nom = "Upper Blackrock Spire", abrev = "UBRS", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Karazhan Crypt", abrev = "Kara Crypt", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Stratholme UD 5", abrev = "Strat UD 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+    { nom = "Stratholme UD 10", abrev = "Strat UD 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
     { nom = "Caverns of Time. Black Morass", abrev = "BT", size = 5, lvl = "60", lvl_min = 60, lvl_max = 60 },
-    { nom = "Stormwind Vault", abrev = "SWV", size = 5, lvl = "60", lvl_min = 60, lvl_max = 60 }
+    { nom = "Stormwind Vault", abrev = "SWV", size = 5, lvl = "60", lvl_min = 60, lvl_max = 60 },
+    { nom = "Upper Blackrock Spire", abrev = "UBRS", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
 }
 
 -- Ajouter l'index à chaque donjon
@@ -362,15 +363,9 @@ msgFrame:SetBackdropBorderColor(1, 1, 1, 1)
 
 -- Positionner le cadre msgFrame juste en dessous de roleframe
 msgFrame:SetWidth(roleframe:GetWidth()) 
-msgFrame:SetHeight(roleframe:GetHeight() + 30)
-msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -10)
+msgFrame:SetHeight(roleframe:GetHeight() + 20)
+msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -5)
 
--- Créer un FontString pour afficher le titre "Preview"
-local previewText = msgFrame:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-previewText:SetText("Preview :")  -- Titre
-previewText:SetPoint("BOTTOM", msgFrame, "TOP", 0, -30)  -- Positionner juste au-dessus de msgFrame
-previewText:SetJustifyH("CENTER")
-previewText:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")  -- Taille et style du texte
 
 -- Créer un FontString dans msgFrame pour afficher le message
 local msgText = msgFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -380,6 +375,43 @@ msgText:SetJustifyH("CENTER")
 msgText:SetJustifyV("CENTER")
 msgText:SetWidth(msgFrame:GetWidth())
 
+
+-- Créer une zone de saisie de texte en bas de msgFrame
+local editBox = CreateFrame("EditBox", "MonAddonEditBox", msgFrame)
+editBox:SetPoint("BOTTOM", msgFrame, "BOTTOM", 0, -50)  -- Positionner en bas, avec un écart de 10 pixels du bas du cadre
+
+-- Définir les propriétés de la zone de texte sans spécifier la taille
+editBox:SetAutoFocus(false)  -- Empêcher le focus automatique
+editBox:SetFontObject(GameFontNormal)  -- Police de texte normale
+editBox:SetMaxLetters(100)  -- Limiter le nombre de caractères
+editBox:SetText("")  -- Texte initial (vide)
+
+-- Adapter la largeur de la zone de texte à la largeur de msgFrame moins une marge (pour éviter que le texte soit collé aux bords)
+editBox:SetWidth(msgFrame:GetWidth() - 40)  -- Largeur légèrement réduite par rapport à msgFrame
+
+-- Définir une hauteur fixe pour la zone de saisie (sans SetSize)
+editBox:SetHeight(22)  -- Hauteur fixe de la zone de saisie
+
+
+-- Créer un texte pour afficher un tiret centré au-dessus de la zone de saisie
+local dashText = msgFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+dashText:SetPoint("BOTTOM", editBox, "TOP", 0, 5)  -- Placer au-dessus de editBox avec un écart de 5 pixels
+dashText:SetText("Free seizure")  -- Le texte du tiret
+
+-- Personnaliser l'apparence du tiret (par exemple, couleur et taille de police)
+dashText:SetFontObject(GameFontNormal)  -- Utiliser la police de texte normale
+dashText:SetTextColor(1, 1, 1, 1)  -- Couleur blanche pour le tiret
+
+
+-- Optionnel : ajouter un fond à la zone de saisie pour la rendre plus visible
+editBox:SetBackdrop({
+    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background", 
+    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
+    tile = true, tileSize = 16, edgeSize = 5, 
+    insets = { left = 4, right = 4, top = 4, bottom = 4 }
+})
+editBox:SetBackdropColor(0, 0, 0, 0.7)  -- Fond légèrement transparent
+editBox:SetBackdropBorderColor(1, 1, 1, 1)  -- Bordure blanche
 
 
 -- Créer cadre sliderframe
@@ -395,8 +427,8 @@ sliderframe:SetBackdropBorderColor(1, 1, 1, 1)
 
 -- Positionner le nouveau cadre juste en dessous de roleframe
 sliderframe:SetWidth(roleframe:GetWidth()) 
-sliderframe:SetHeight(roleframe:GetHeight() + 40)
-sliderframe:SetPoint("TOPRIGHT", msgFrame, "BOTTOMRIGHT", 0, -20)
+sliderframe:SetHeight(roleframe:GetHeight() + 50)
+sliderframe:SetPoint("TOPRIGHT", msgFrame, "BOTTOMRIGHT", 0, -40)
 
 -- Créer la barre de glissement (Slider)
 local slider = CreateFrame("Slider", nil, sliderframe, "OptionsSliderTemplate")
@@ -466,7 +498,9 @@ AutoLFM:RegisterEvent("PARTY_MEMBERS_CHANGED")
 
 djframe:Show()
 djScrollFrame:Show()
-AutoLFM:Hide()
+AutoLFM:Show()
+
+
 
 
 --------------------------- Msg Dynamique ---------------------------
@@ -481,7 +515,9 @@ local function getTableSize(tbl)
     return size
 end
 
-combinedMessage  = ""
+local combinedMessage  = ""
+local userInputMessage = "" 
+
 
 -- Fonction pour compter les membres du groupe
 local function countGroupMembers()
@@ -497,6 +533,8 @@ end
 local function updateMsgFrameCombined()
     local totalPlayersInGroup = countGroupMembers()
     local totalGroupSize = 0 
+    local textWidth = msgText:GetStringWidth()  -- Largeur du texte
+
 
     -- Segment des rôles sélectionnés
     local selectedRoles = selectedRoles
@@ -523,6 +561,7 @@ local function updateMsgFrameCombined()
     -- Si un raid est sélectionné, utiliser les raids
     local selectedRaids = GetSelectedRaids()
     if table.getn(selectedRaids) > 0 then
+        
         for _, raidAbrev in pairs(selectedRaids) do
             -- Rechercher le raid correspondant dans la table 'raids'
             for _, raid in pairs(raids) do
@@ -550,6 +589,7 @@ local function updateMsgFrameCombined()
             end
         end
     else
+
         -- Sinon, utiliser les donjons
         for _, donjonAbrev in pairs(selectedDungeons) do
             -- Rechercher le donjon correspondant dans la table 'donjons'
@@ -576,7 +616,7 @@ local function updateMsgFrameCombined()
                         table.insert(selectedContent, donjonMessage)
                     else
                         -- Si 'donjon.size' est nil ou 'totalPlayersInGroup' est nil, afficher un message d'erreur
-                        DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid dungeon size or number of players for " .. donjon.abrev .. " " .. donjon.size)
+                        DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid dungeon size or number of players for " .. donjon.abrev " " .. donjon.size)
                     end
                     break  -- Stopper la recherche dès qu'on a trouvé le bon donjon
                 end
@@ -585,7 +625,7 @@ local function updateMsgFrameCombined()
     end
 
     -- Si aucun contenu n'est sélectionné, ne rien afficher
-    if table.getn(selectedContent) == 0 and selectedCountRoles == 0 then
+    if table.getn(selectedContent) == 0 and selectedCountRoles == 0 and userInputMessage == "" then
         combinedMessage = ""
         msgText:SetText("")
         return
@@ -605,53 +645,21 @@ local function updateMsgFrameCombined()
     -- Combiner le message final
     combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " "
 
-    -- Ajuster le texte du message
-    msgText:SetText(combinedMessage)
-
-    -- Augmenter la taille du texte et le colorer en jaune clair
-    msgText:SetFont("Fonts\\FRIZQT__.TTF", 13, "OUTLINE")  -- Taille de la police augmentée et style "OUTLINE" pour plus de visibilité
-    msgText:SetTextColor(1, 1, 0)  -- Jaune clair (RGB: 1, 1, 0)
-
-    -- Vérifier si combinedMessage est non vide
-    if combinedMessage and combinedMessage ~= "" then
-        -- Gérer le retour à la ligne si le texte dépasse la largeur du cadre
-        local frameWidth = msgText:GetWidth()  -- Largeur du cadre où le texte est affiché
-        local textWidth = msgText:GetStringWidth()  -- Largeur du texte
-
-        -- Si le texte dépasse la largeur du cadre, ajuster le retour à la ligne
-        if textWidth > frameWidth then
-            local wrappedText = ""
-            local words = {strsplit(" ", combinedMessage)}  -- Séparer les mots
-
-            local line = ""
-
-            for _, word in ipairs(words) do
-                -- Si ajouter ce mot dépasse la largeur du cadre
-                if (strlen(line) + strlen(word) + 1) > frameWidth then
-                    wrappedText = wrappedText .. line .. "\n"  -- Ajouter un retour à la ligne
-                    line = word  -- Commencer une nouvelle ligne avec ce mot
-                else
-                    if line == "" then
-                        line = word
-                    else
-                        line = line .. " " .. word  -- Ajouter un espace entre les mots
-                    end
-                end
-            end
-            -- Ajouter la dernière ligne
-            wrappedText = wrappedText .. line
-
-            -- Afficher le texte enveloppé
-            msgText:SetText(wrappedText)
-        else
-            -- Si le texte ne dépasse pas la largeur du cadre, afficher normalement
-            msgText:SetText(combinedMessage)
-        end
+    
+    if userInputMessage ~= "" then 
+        combinedMessage = userInputMessage
+        msgText:SetText(userInputMessage)
     else
-        msgText:SetText("")
+        msgText:SetText(combinedMessage)
     end
 end
 
+-- Fonction pour réinitialiser le message saisi
+local function resetUserInputMessage()
+    userInputMessage = ""  -- Réinitialiser le message saisi
+    editBox:SetText(userInputMessage)  -- Mettre à jour l'EditBox
+    updateMsgFrameCombined()
+end
 
 -- Fonction pour récupérer les donjons sélectionnés
 function GetSelectedDungeons()
@@ -764,21 +772,35 @@ function DisplayDungeonsByColor()
 
         -- Ajouter la gestion de la sélection des donjons
         checkbox:SetScript("OnClick", function()
+            resetUserInputMessage()
+            clearSelectedRaids()
             local isChecked = checkbox:GetChecked()
-            if checkbox:GetChecked() then
-                if not tableContains(selectedDungeons, donjonAbrev) then
-                    table.insert(selectedDungeons, donjonAbrev)
-                    clearSelectedRaids()
+
+            if isChecked then
+                -- Vérifier si déjà 2 donjons sont sélectionnés
+                if table.getn(selectedDungeons) >= 2 then
+                    -- Retirer le premier élément sélectionné et décocher la case correspondante
+                    local firstDonjonAbrev = selectedDungeons[1]  -- Récupérer l'abréviation du premier donjon
+                    table.remove(selectedDungeons, 1)  -- Retirer le premier donjon
+                    -- Décocher la case du premier donjon retiré
+                    if donjonCheckButtons[firstDonjonAbrev] then
+                        donjonCheckButtons[firstDonjonAbrev]:SetChecked(false)
+                    end
                 end
+                -- Ajouter le nouveau donjon sélectionné à la liste
+                table.insert(selectedDungeons, donjonAbrev)
             else
                 -- Si la case est décochée, retirer l'abréviation du donjon de la liste
                 for i, value in pairs(selectedDungeons) do
                     if value == donjonAbrev then
                         table.remove(selectedDungeons, i)
+                        -- Après avoir retiré l'élément de la liste, décocher la case
+                        checkbox:SetChecked(false)
                         break
                     end
                 end
             end
+
             updateMsgFrameCombined()  -- Mettre à jour l'affichage sans rappeler DisplayDungeonsByColor
         end)
 
@@ -788,10 +810,13 @@ function DisplayDungeonsByColor()
         if dungeonsColored then
             loadingFrame:Hide()  -- Masquer le cadre de chargement
         end
-            
+
         yOffset = yOffset + 30
     end
 end
+
+
+
 
 -- Fonction utilitaire pour vérifier si une table contient un élément
 function table.contains(table, element)
@@ -897,6 +922,7 @@ for index, raid in pairs(raids) do
 
         -- Lorsque des raids sont sélectionnés, effacer les donjons sélectionnés
         clearSelectedDungeons()
+        resetUserInputMessage()
 
         -- Mettre à jour l'affichage après chaque changement
         updateMsgFrameCombined()
@@ -944,6 +970,29 @@ end)
 
 
 --------------------------- Role Fonction ---------------------------
+
+-- Fonction pour réinitialiser l'état de sélection d'une icône (Tank, DPS, Heal)
+local function clearIconSelection(icon, roleName)
+    if icon.selected then
+        icon.selected = false
+        icon:SetBackdrop(nil)  -- Retirer les bordures
+        icon.texture:SetAlpha(0.5)  -- Appliquer un effet de fade (transparence)
+        
+        -- Retirer l'ombre
+        icon:SetBackdrop({
+            edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\shadow-border.tga",  -- Texture pour l'ombre
+            edgeSize = 16,
+        })
+        
+        -- Supprimer le rôle de la table selectedRoles
+        for i, role in ipairs(selectedRoles) do
+            if role == roleName then
+                table.remove(selectedRoles, i)
+                break
+            end
+        end
+    end
+end
 
 
 -- Créer l'icône Tank
@@ -998,6 +1047,7 @@ tankIcon:SetScript("OnClick", function()
         tankIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle Tank à la table selectedRoles
         table.insert(selectedRoles, "Tank")
+        resetUserInputMessage()
     end
     updateMsgFrameCombined()
 end)
@@ -1054,6 +1104,7 @@ dpsIcon:SetScript("OnClick", function()
         dpsIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle DPS à la table selectedRoles
         table.insert(selectedRoles, "DPS")
+        resetUserInputMessage()
     end
     updateMsgFrameCombined()  
 end)
@@ -1110,6 +1161,7 @@ healIcon:SetScript("OnClick", function()
         healIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle Heal à la table selectedRoles
         table.insert(selectedRoles, "Heal")
+        resetUserInputMessage()
     end
     updateMsgFrameCombined()
 end)
@@ -1120,6 +1172,80 @@ dpsIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour DPS
 healIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour Heal
 tankIcon.texture:SetAlpha(0.5)  -- Applique un fade initial lorsque non sélectionnée
 
+-- Fonction pour récupérer les rôles sélectionnés
+local function getSelectedRoles()
+    return selectedRoles
+end
+
+-- Fonction pour désélectionner tous les rôles et vider la table selectedRoles
+local function clearSelections()
+    -- Vider la table selectedRoles
+    selectedRoles = {}
+
+    -- Désélectionner l'icône Tank
+    tankIcon.selected = false
+    tankIcon:SetBackdrop(nil)  -- Retirer les bordures
+    tankIcon.texture:SetAlpha(0.5)  -- Appliquer un effet de fade (transparence)
+    tankIcon:SetBackdrop({
+        edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\shadow-border.tga",  -- Texture pour l'ombre
+        edgeSize = 16,
+    })
+
+    -- Désélectionner l'icône DPS
+    dpsIcon.selected = false
+    dpsIcon:SetBackdrop(nil)  -- Retirer les bordures
+    dpsIcon.texture:SetAlpha(0.5)  -- Appliquer un effet de fade (transparence)
+    dpsIcon:SetBackdrop({
+        edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\shadow-border.tga",  -- Texture pour l'ombre
+        edgeSize = 16,
+    })
+
+    -- Désélectionner l'icône Heal
+    healIcon.selected = false
+    healIcon:SetBackdrop(nil)  -- Retirer les bordures
+    healIcon.texture:SetAlpha(0.5)  -- Appliquer un effet de fade (transparence)
+    healIcon:SetBackdrop({
+        edgeFile = "Interface\\AddOns\\AutoLFM\\icon\\shadow-border.tga",  -- Texture pour l'ombre
+        edgeSize = 16,
+    })
+
+    -- Mettre à jour l'affichage après avoir désélectionné tous les rôles
+    updateMsgFrameCombined()
+end
+
+-- -- Fonction pour réinitialiser la sélection des rôles et contenus
+-- local function resetSelection()
+--     clearSelectedDungeons()
+--     clearSelectedRaids()
+--     updateMsgFrameCombined()  -- Mettre à jour le message dynamique
+-- end
+
+-- Fonction pour gérer le changement de texte
+editBox:SetScript("OnTextChanged", function(self)
+    -- print("Texte saisi : " .. this:GetText())  -- Afficher le texte dans la console
+    userInputMessage = this:GetText()
+        -- Vérifier si un message saisi existe
+    if userInputMessage ~= "" then
+        return updateMsgFrameCombined(userInputMessage)
+    end
+end)
+
+
+-- Fonction pour gérer l'appui sur "Entrée"
+editBox:SetScript("OnEnterPressed", function(self)
+    userInputMessage = this:GetText()
+    -- print("Entrée pressée, texte final : " .. this:GetText())  -- Afficher le texte final
+    this:ClearFocus()  -- Retirer le focus de la zone de texte
+    clearSelectedRaids()
+    selectedRaids = {}
+    clearSelectedDungeons()
+    selectedDungeons = {}
+    selectedRoles = {}
+    dpsIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour DPS
+    healIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour Heal
+    tankIcon.texture:SetAlpha(0.5)  -- Applique un fade initial lorsque non sélectionnée
+    updateMsgFrameCombined(userInputMessage)
+end)
 
 
 --------------------------- Slider Frame ---------------------------
