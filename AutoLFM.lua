@@ -498,7 +498,7 @@ AutoLFM:RegisterEvent("PARTY_MEMBERS_CHANGED")
 
 djframe:Show()
 djScrollFrame:Show()
-AutoLFM:Show()
+AutoLFM:Hide()
 
 
 
