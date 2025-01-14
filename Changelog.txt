@@ -1,5 +1,8 @@
 AddOn: AutoLFM
-Version: 1.14  
+Version: 1.1.5
+Correctif mineur
+
+Version: 1.1.4  
 Add Git
 
 Version: 1.1.3

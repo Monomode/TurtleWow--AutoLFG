@@ -498,7 +498,7 @@ AutoLFM:RegisterEvent("PARTY_MEMBERS_CHANGED")
 
 djframe:Show()
 djScrollFrame:Show()
-AutoLFM:Hide()
+
 
 
 
@@ -1725,3 +1725,6 @@ function SlashCmdList.GETCOMBINEDMESSAGE(msg)
     -- Affichage du message dans le chat
     DEFAULT_CHAT_FRAME:AddMessage(combinedMessage)
 end
+
+
+AutoLFM:Hide()
