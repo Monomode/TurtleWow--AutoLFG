@@ -778,7 +778,7 @@ function DisplayDungeonsByColor()
 
             if isChecked then
                 -- Vérifier si déjà 2 donjons sont sélectionnés
-                if table.getn(selectedDungeons) >= 2 then
+                if table.getn(selectedDungeons) >= 4 then
                     -- Retirer le premier élément sélectionné et décocher la case correspondante
                     local firstDonjonAbrev = selectedDungeons[1]  -- Récupérer l'abréviation du premier donjon
                     table.remove(selectedDungeons, 1)  -- Retirer le premier donjon
