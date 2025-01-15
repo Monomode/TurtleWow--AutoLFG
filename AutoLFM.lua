@@ -440,11 +440,9 @@ slider:SetValue(70)
 slider:SetValueStep(10)
 
 
-
 -- Fonction pour gérer l'événement PLAYER_ENTERING_WORLD
 local function OnPlayerEnteringWorld(self, event)
-    -- Effectuer l'initialisation nécessaire après la connexion et le chargement du joueur
-    -- "Auto" en vert (0, 1, 0)
+
 -- Segments de texte avec leurs couleurs RGB
 local seg1 = "|cff00FF00Auto "  -- "Auto" en vert (0.0, 1.0, 0.0)
 local seg2 = "|cff00FFFFL"      -- "L" en rouge (1.0, 0.0, 0.0)
@@ -456,9 +454,6 @@ local seg7 = "|cff00FF00for more information"  -- "help for more information" en
 
 -- Concaténation des segments et envoi du message complet
 DEFAULT_CHAT_FRAME:AddMessage(seg1 .. seg2 .. seg3 .. seg4 .. seg5 .. seg6 .. seg7)
-
-
-
     -- Afficher les donjons
     DisplayDungeonsByColor()
 
@@ -497,12 +492,8 @@ local dungeonsColored = false
 
 AutoLFM:RegisterEvent("PARTY_MEMBERS_CHANGED")
 
-
 djframe:Show()
 djScrollFrame:Show()
-
-
-
 
 
 --------------------------- Msg Dynamique ---------------------------
@@ -641,7 +632,7 @@ local function updateMsgFrameCombined()
     local mate = totalGroupSize - totalPlayersInGroup
 
     if mate == -totalPlayersInGroup then
-        mate = ""
+      mate = ""
     end
 
     -- Combiner le message final
@@ -680,7 +671,8 @@ end
 
 --------------------------- Donjon Fonction ---------------------------
 
--- Fonction pour attribuer un ratio et une couleur en fonction du niveau du joueur
+
+-- Fonction pour afficher les donjons par code couleur avec le niveau du donjon
 function calculer_priorite(niveau_joueur, donjon)
   local ratio = niveau_joueur / donjon.lvl_max  -- Ratio basé sur le niveau maximum du donjon
   local priority
@@ -703,7 +695,6 @@ for niveau_joueur = 1, 60 do
       -- print("Joueur niveau " .. niveau_joueur .. " - Donjon: " .. donjon.nom .. " - Priorité: " .. priority)
   end
 end
-
 
 -- Fonction pour vérifier si un élément est présent dans la table
 local function tableContains(table, element)
@@ -826,11 +817,6 @@ function DisplayDungeonsByColor()
   end
 end
 
-
-
-
-
-
 -- Fonction utilitaire pour vérifier si une table contient un élément
 function table.contains(table, element)
     for _, value in ipairs(table) do
@@ -862,7 +848,6 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
 end)
 
 -- Afficher les donjons au lancement
--- Fonction pour gérer l'événement de fin de connexion
 local function OnPlayerLogin()
     -- Réinitialiser et afficher les donjons
     DisplayDungeonsByColor()
@@ -884,7 +869,6 @@ for _, raid in pairs(raids) do
         break
     end
 end
-
 
 -- Créer le contenu du ScrollFrame pour les raids
 local raidContentFrame = CreateFrame("Frame", nil, raidScrollFrame)
@@ -984,6 +968,7 @@ end)
 
 --------------------------- Role Fonction ---------------------------
 
+
 -- Fonction pour réinitialiser l'état de sélection d'une icône (Tank, DPS, Heal)
 local function clearIconSelection(icon, roleName)
     if icon.selected then
@@ -1006,7 +991,6 @@ local function clearIconSelection(icon, roleName)
         end
     end
 end
-
 
 -- Créer l'icône Tank
 local tankIcon = CreateFrame("Button", nil, roleframe)
@@ -1179,7 +1163,6 @@ healIcon:SetScript("OnClick", function()
     updateMsgFrameCombined()
 end)
 
-
 -- Appliquer un effet de fade (transparence) initialement lorsque non sélectionnée
 dpsIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour DPS
 healIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour Heal
@@ -1226,7 +1209,6 @@ local function clearSelections()
     updateMsgFrameCombined()
 end
 
-
 -- Fonction pour gérer le changement de texte
 editBox:SetScript("OnTextChanged", function(self)
     -- print("Texte saisi : " .. this:GetText())  -- Afficher le texte dans la console
@@ -1236,7 +1218,6 @@ editBox:SetScript("OnTextChanged", function(self)
         return updateMsgFrameCombined(userInputMessage)
     end
 end)
-
 
 -- Fonction pour gérer l'appui sur "Entrée"
 editBox:SetScript("OnEnterPressed", function(self)
@@ -1270,6 +1251,7 @@ local function sendMessageToChannels(message)
         local channelId = GetChannelName(channel)
         if channelId and channelId > 0 then
             SendChatMessage(message, "CHANNEL", nil, channelId)
+            -- DEFAULT_CHAT_FRAME:AddMessage(message, 0, 1, 1) -- Test Message
         end
     end
 end
@@ -1323,8 +1305,6 @@ end
 -- Frame d'update pour gérer le délai entre chaque diffusion
 local broadcastFrame = CreateFrame("Frame")
 
--- Fonction qui sera exécutée en continu pour gérer l'intervalle de diffusion
--- Fonction qui sera exécutée en continu pour gérer l'intervalle de diffusion
 broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
   if isBroadcasting then
       -- Mettre à jour la valeur de l'intervalle du slider
@@ -1333,16 +1313,21 @@ broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
       -- Vérifier si le temps écoulé est supérieur ou égal à l'intervalle du slider
       local timeElapsed = GetTime() - broadcastStartTime
 
-      -- Si le temps restant est inférieur à 3 secondes, afficher le décompte
-      if timeElapsed < sliderValue then
-          local remainingTime = sliderValue - timeElapsed
+      -- Calculer la moitié de la valeur du slider
+      local halfSliderValue = sliderValue / 2
+      local oneSecondBefore = sliderValue
 
-          -- Afficher un message une seule fois pour chaque niveau du décompte (3, 2, 1)
-          if remainingTime == 10 and remainingTime  then
-              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion in 10", 0, 1, 1)
-          elseif remainingTime == 3 and remainingTime  then
-              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion of Message", 0, 1, 1)
-          end
+      -- Afficher un message une seule fois pour chaque niveau du décompte
+      if not broadcastedHalf and timeElapsed >= halfSliderValue and timeElapsed < halfSliderValue + 1 then
+          -- Message à la moitié du temps
+          DEFAULT_CHAT_FRAME:AddMessage("Rediffusion in " .. math.floor(halfSliderValue) .. " seconds", 0, 1, 1)
+          broadcastedHalf = true  -- Marquer comme diffusé une fois
+      end
+
+      if not broadcastedOneSecBefore and timeElapsed >= oneSecondBefore and timeElapsed < oneSecondBefore + 1 then
+          -- Message 1 seconde avant la diffusion
+          DEFAULT_CHAT_FRAME:AddMessage("Rediffusion of Message", 0, 1, 1)
+          broadcastedOneSecBefore = true  -- Marquer comme diffusé une fois
       end
 
       -- Une fois le temps écoulé, envoyer le message
@@ -1354,17 +1339,19 @@ broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
 
           -- Réinitialiser le temps pour la prochaine diffusion
           broadcastStartTime = GetTime()
+
+          -- Réinitialiser les drapeaux
+          broadcastedHalf = false
+          broadcastedOneSecBefore = false
       end
   end
 end)
-
 
 
 -- Créer un bouton Toggle en dessous de msgFrame, centré par rapport à AutoLFM
 local toggleButton = CreateFrame("Button", "ToggleButton", msgFrame, "UIPanelButtonTemplate")
 toggleButton:SetWidth(120)
 toggleButton:SetHeight(30)
-
 
 -- Positionner le bouton en bas centré, sous roleframe et msgFrame par rapport a autolfm
 toggleButton:SetPoint("CENTER", msgFrame, "CENTER", 0, -10)  -- Placer 10 pixels sous msgFrame
@@ -1394,7 +1381,6 @@ toggleButton:SetScript("OnClick", function()
     end
 end)
 
-
 -- Mettre à jour la valeur du slider
 sliderframe:SetScript("OnUpdate", function(self, elapsed)
   -- Récupérer la valeur actuelle du slider
@@ -1419,13 +1405,10 @@ end)
 AutoLFM:SetScript("OnEvent", function(self, event, ...)
     if "GROUP_ROSTER_UPDATE" then
         -- Si le groupe a changé, on arrête la diffusion du message
-        stopMessageBroadcast()
-        toggleButton:SetText("Start")
         countGroupMembers()
         updateMsgFrameCombined()
     end
 end)
-
 
 
 --------------------- Commandes Slash pour l'addon ---------------------
@@ -1607,10 +1590,11 @@ title:SetScript("OnMouseDown", StartMovingFrame)
 title:SetScript("OnMouseUp", StopMovingFrame)
 title:SetScript("OnHide", StopMovingOnHide)
 
+
 --------------------------- Slash de Control Pour Dev ---------------------------
 
--- Créer la commande Slash pour afficher les rôles sélectionnés
 
+-- Créer la commande Slash pour afficher les rôles sélectionnés
 local function ShowSelectedRoles()
     if getTableSize(selectedRoles) == 0 then
         print("Aucun rôle sélectionné.")
@@ -1629,7 +1613,6 @@ end
 
 SLASH_ShowRoles1 = "/roles"
 SlashCmdList["ShowRoles"] = ShowSelectedRoles
-
 
 -- Slash Command pour afficher les rôles sélectionnés
 SLASH_SHOWROLES1 = "/roles"  -- Nom de la commande Slash
@@ -1659,7 +1642,6 @@ SlashCmdList["SHOWROLES"] = function()
     DEFAULT_CHAT_FRAME:AddMessage(rolesText)
 end
 
-
 -- Slash Command pour afficher les donjons sélectionnés
 SLASH_GETDUNGEONS1 = "/dgs"  -- Enregistrer la commande /dgs
 
@@ -1687,7 +1669,6 @@ SlashCmdList["GETDUNGEONS"] = function()
         end
     end
 end
-
 
 -- Slash Command pour afficher les raids sélectionnés
 SLASH_GETRAIDS1 = "/raids"  -- Enregistrer la commande /raids
@@ -1755,4 +1736,4 @@ function SlashCmdList.GETCOMBINEDMESSAGE(msg)
 end
 
 
-AutoLFM:Hide()
+AutoLFM:Hide()  -- Cacher la fenêtre principale par défaut
