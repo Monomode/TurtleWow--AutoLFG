@@ -1,8 +1,11 @@
 AddOn: AutoLFM
-Version 1.1.7
+Version: 1.1.8
+Ajustement Fr to En
+
+Version: 1.1.7
 Ajustement du ratio pour les donjons
 
-Version 1.1.6
+Version: 1.1.6
 Message continue à être diffusé lorsque l'on ferme la fenêtre
 
 Version: 1.1.5

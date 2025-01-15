@@ -1339,11 +1339,9 @@ broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
 
           -- Afficher un message une seule fois pour chaque niveau du décompte (3, 2, 1)
           if remainingTime == 10 and remainingTime  then
-              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion dans 10", 0, 1, 1)
-          elseif remainingTime == 5 and remainingTime  then
-              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion dans 5", 0, 1, 1)
+              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion in 10", 0, 1, 1)
           elseif remainingTime == 3 and remainingTime  then
-              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion du Message", 0, 1, 1)
+              DEFAULT_CHAT_FRAME:AddMessage("Rediffusion of Message", 0, 1, 1)
           end
       end
 
@@ -1352,7 +1350,6 @@ broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
           -- Diffuser le message
           if combinedMessage ~= "" then
               sendMessageToChannels(combinedMessage)
-              print("The LFM message is empty.")
           end
 
           -- Réinitialiser le temps pour la prochaine diffusion
