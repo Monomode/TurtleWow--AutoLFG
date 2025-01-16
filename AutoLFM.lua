@@ -396,7 +396,7 @@ editBox:SetHeight(22)  -- Hauteur fixe de la zone de saisie
 -- Créer un texte pour afficher un tiret centré au-dessus de la zone de saisie
 local dashText = msgFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 dashText:SetPoint("BOTTOM", editBox, "TOP", 0, 5)  -- Placer au-dessus de editBox avec un écart de 5 pixels
-dashText:SetText("Free seizure")  -- Le texte du tiret
+dashText:SetText("Add details (optional)")  -- Le texte du tiret
 
 -- Personnaliser l'apparence du tiret (par exemple, couleur et taille de police)
 dashText:SetFontObject(GameFontNormal)  -- Utiliser la police de texte normale
@@ -620,7 +620,7 @@ local function updateMsgFrameCombined()
     -- Si aucun contenu n'est sélectionné, ne rien afficher
     if table.getn(selectedContent) == 0 and selectedCountRoles == 0 and userInputMessage == "" then
         combinedMessage = ""
-        msgText:SetText("")
+        msgText:SetText(combinedMessage)
         return
     end
 
@@ -635,16 +635,17 @@ local function updateMsgFrameCombined()
       mate = ""
     end
 
-    -- Combiner le message final
-    combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " "
-
-
     if userInputMessage ~= "" then
-        combinedMessage = userInputMessage
-        msgText:SetText(userInputMessage)
+      userInputMessage = userInputMessage
+      msgText:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
     else
-        msgText:SetText(combinedMessage)
+      userInputMessage = ""
+      msgText:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
     end
+
+    -- Combiner le message final
+    combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
+
 end
 
 -- Fonction pour réinitialiser le message saisi
@@ -774,7 +775,6 @@ function DisplayDungeonsByColor()
 
       -- Ajouter la gestion de la sélection des donjons
       checkbox:SetScript("OnClick", function()
-          resetUserInputMessage()
           clearSelectedRaids()
           local isChecked = checkbox:GetChecked()
 
@@ -919,7 +919,6 @@ for index, raid in pairs(raids) do
 
         -- Lorsque des raids sont sélectionnés, effacer les donjons sélectionnés
         clearSelectedDungeons()
-        resetUserInputMessage()
 
         -- Mettre à jour l'affichage après chaque changement
         updateMsgFrameCombined()
@@ -1044,7 +1043,6 @@ tankIcon:SetScript("OnClick", function()
         tankIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle Tank à la table selectedRoles
         table.insert(selectedRoles, "Tank")
-        resetUserInputMessage()
     end
     updateMsgFrameCombined()
 end)
@@ -1101,7 +1099,6 @@ dpsIcon:SetScript("OnClick", function()
         dpsIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle DPS à la table selectedRoles
         table.insert(selectedRoles, "DPS")
-        resetUserInputMessage()
     end
     updateMsgFrameCombined()
 end)
@@ -1158,7 +1155,6 @@ healIcon:SetScript("OnClick", function()
         healIcon.texture:SetAlpha(1)  -- Rendre l'icône entièrement opaque
         -- Ajouter le rôle Heal à la table selectedRoles
         table.insert(selectedRoles, "Heal")
-        resetUserInputMessage()
     end
     updateMsgFrameCombined()
 end)
@@ -1222,16 +1218,12 @@ end)
 -- Fonction pour gérer l'appui sur "Entrée"
 editBox:SetScript("OnEnterPressed", function(self)
     userInputMessage = this:GetText()
-    -- print("Entrée pressée, texte final : " .. this:GetText())  -- Afficher le texte final
     this:ClearFocus()  -- Retirer le focus de la zone de texte
-    clearSelectedRaids()
-    selectedRaids = {}
-    clearSelectedDungeons()
-    selectedDungeons = {}
-    selectedRoles = {}
-    dpsIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour DPS
-    healIcon.texture:SetAlpha(0.5)  -- Applique un fade initial pour Heal
-    tankIcon.texture:SetAlpha(0.5)  -- Applique un fade initial lorsque non sélectionnée
+    updateMsgFrameCombined(userInputMessage)
+end)
+
+editBox:SetScript("OnEscapePressed", function(self)
+    this:ClearFocus()  -- Retirer le focus de la zone de texte
     updateMsgFrameCombined(userInputMessage)
 end)
 

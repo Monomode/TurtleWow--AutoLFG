@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.2.1
+Suppression Free seizure pour Add Details
+
 Version: 1.2.0
 Ajustement Timer diffusion
 
