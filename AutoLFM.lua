@@ -744,22 +744,34 @@ function DisplayDungeonsByColor()
       local donjon = entry.donjon
       local priority = entry.priority
 
+      -- Créer une ligne cliquable qui englobe la case à cocher et les labels
+      local clickableFrame = CreateFrame("Button", "ClickableDonjonFrame" .. donjon.abrev, contentFrame)
+      clickableFrame:SetHeight(30)  -- Hauteur de la ligne
+      clickableFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)
+      clickableFrame:SetWidth(300)  -- Largeur de la ligne
+      clickableFrame:SetScript("OnClick", function()
+          -- Gestion de la sélection des donjons lorsqu'on clique sur la ligne
+          local checkbox = donjonCheckButtons[donjon.abrev]
+          checkbox:SetChecked(not checkbox:GetChecked())
+          checkbox:GetScript("OnClick")()  -- Appeler la fonction OnClick déjà définie
+      end)
+
       -- Créer la case à cocher à gauche du label
-      local checkbox = CreateFrame("CheckButton", "DonjonCheckbox" .. donjon.abrev, contentFrame, "UICheckButtonTemplate")
+      local checkbox = CreateFrame("CheckButton", "DonjonCheckbox" .. donjon.abrev, clickableFrame, "UICheckButtonTemplate")
       checkbox:SetWidth(20)
       checkbox:SetHeight(20)
-      checkbox:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)  -- Positionner la case à cocher à gauche
+      checkbox:SetPoint("LEFT", clickableFrame, "LEFT", 0, 0)  -- Positionner la case à cocher à gauche
 
       local donjonAbrev = donjon.abrev
       donjonCheckButtons[donjonAbrev] = checkbox
 
       -- Créer un label pour afficher le niveau du donjon à droite de la case à cocher
-      local levelLabel = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      local levelLabel = clickableFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
       levelLabel:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
       levelLabel:SetText(donjon.lvl_min .. "-" .. donjon.lvl_max)
 
       -- Créer un label pour chaque donjon à droite du niveau du donjon
-      local label = contentFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+      local label = clickableFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
       label:SetPoint("LEFT", levelLabel, "RIGHT", 10, 0)
 
       -- Attribuer la couleur en fonction de la priorité calculée
@@ -816,6 +828,7 @@ function DisplayDungeonsByColor()
       yOffset = yOffset + 30
   end
 end
+
 
 -- Fonction utilitaire pour vérifier si une table contient un élément
 function table.contains(table, element)
@@ -880,50 +893,64 @@ raidCheckButtons = {}
 
 -- Créer des cases à cocher pour chaque raid (similaire aux donjons)
 for index, raid in pairs(raids) do
-    -- Créer la case à cocher pour chaque raid
-    local checkbox = CreateFrame("CheckButton", "RaidCheckbox" .. index, raidContentFrame, "UICheckButtonTemplate")
-    checkbox:SetWidth(20)
-    checkbox:SetHeight(20)
-    checkbox:SetPoint("TOPLEFT", raidContentFrame, "TOPLEFT", 0, -(30 * (index - 1)))
+  -- Créer un cadre cliquable qui englobe la case à cocher et le label
+  local clickableFrame = CreateFrame("Button", "ClickableRaidFrame" .. index, raidContentFrame)
+  clickableFrame:SetHeight(30)  -- Hauteur de la ligne
+  clickableFrame:SetPoint("TOPLEFT", raidContentFrame, "TOPLEFT", 0, -(30 * (index - 1)))
+  clickableFrame:SetWidth(300)  -- Largeur de la ligne
 
-    -- Créer le label pour chaque raid
-    local label = checkbox:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    label:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
-    label:SetText(raid.nom)
+  -- Capturer l'abréviation du raid localement
+  local raidAbrev = raid.abrev
 
-    -- Capturer l'abréviation du raid localement
-    local raidAbrev = raid.abrev
+  -- Créer la case à cocher pour chaque raid
+  local checkbox = CreateFrame("CheckButton", "RaidCheckbox" .. index, clickableFrame, "UICheckButtonTemplate")
+  checkbox:SetWidth(20)
+  checkbox:SetHeight(20)
+  checkbox:SetPoint("LEFT", clickableFrame, "LEFT", 0, 0)  -- Positionner la case à cocher à gauche
 
-    -- Ajouter la case à cocher dans la table raidCheckButtons
-    raidCheckButtons[raidAbrev] = checkbox
+  -- Créer le label pour chaque raid
+  local label = clickableFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  label:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
+  label:SetText(raid.nom)
 
-    -- Ajouter la gestion de la sélection des raids
-    checkbox:SetScript("OnClick", function()
-        -- Si la case est cochée, désélectionner toutes les autres cases
-        if checkbox:GetChecked() then
-            -- Désélectionner toutes les autres cases à cocher de raid
-            for _, otherCheckbox in pairs(raidCheckButtons) do
-                if otherCheckbox ~= checkbox then
-                    otherCheckbox:SetChecked(false)
-                end
-            end
+  -- Ajouter la case à cocher dans la table raidCheckButtons
+  raidCheckButtons[raidAbrev] = checkbox
 
-            -- Ajouter l'abréviation du raid à la liste des raids sélectionnés
-            if not tableContains(selectedRaids, raidAbrev) then
-                selectedRaids = {raidAbrev}
-            end
-        else
-            -- Si la case est décochée, retirer l'abréviation du raid de la liste
-            selectedRaids = {}
-        end
+  -- Ajouter la gestion de la sélection des raids
+  checkbox:SetScript("OnClick", function()
+      -- Si la case est cochée, désélectionner toutes les autres cases
+      if checkbox:GetChecked() then
+          -- Désélectionner toutes les autres cases à cocher de raid
+          for _, otherCheckbox in pairs(raidCheckButtons) do
+              if otherCheckbox ~= checkbox then
+                  otherCheckbox:SetChecked(false)
+              end
+          end
 
-        -- Lorsque des raids sont sélectionnés, effacer les donjons sélectionnés
-        clearSelectedDungeons()
+          -- Ajouter l'abréviation du raid à la liste des raids sélectionnés
+          if not tableContains(selectedRaids, raidAbrev) then
+              selectedRaids = {raidAbrev}
+          end
+      else
+          -- Si la case est décochée, retirer l'abréviation du raid de la liste
+          selectedRaids = {}
+      end
 
-        -- Mettre à jour l'affichage après chaque changement
-        updateMsgFrameCombined()
-    end)
+      -- Lorsque des raids sont sélectionnés, effacer les donjons sélectionnés
+      clearSelectedDungeons()
+
+      -- Mettre à jour l'affichage après chaque changement
+      updateMsgFrameCombined()
+  end)
+
+  -- Ajouter la gestion du clic sur la ligne entière (le cadre cliquable)
+  clickableFrame:SetScript("OnClick", function()
+      -- Lorsque la ligne entière est cliquée, basculer la sélection de la case à cocher
+      checkbox:SetChecked(not checkbox:GetChecked())
+      checkbox:GetScript("OnClick")()  -- Appeler la fonction OnClick déjà définie
+  end)
 end
+
 
 -- Fonction pour effacer les donjons sélectionnés
 function clearSelectedDungeons()

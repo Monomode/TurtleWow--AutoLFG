@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.2.2
+Amélioration du systeme de selection
+
 Version: 1.2.1
 Suppression Free seizure pour Add Details
 
