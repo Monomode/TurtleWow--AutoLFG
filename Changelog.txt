@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.2.5
+Frame repositionnement
+
 Version: 1.2.4
 Ajustement couleurs Donjons
 

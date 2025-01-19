@@ -317,15 +317,15 @@ roleframe:SetBackdrop({
     bgFile = nil,
     -- edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  -- Bordure blanche dev position
     edgeSize = 16,
-    insets = { left = 4, right = 4, top = 4, bottom = 4 },
+    insets = { left = 4, right = 2, top = 4, bottom = 4 }, -- Marge de 4 pixels
 })
 roleframe:SetBackdropColor(1, 1, 1, 0.3)
 roleframe:SetBackdropBorderColor(1, 1, 1, 1)
 
 -- Positionner le roleframe
 roleframe:SetWidth(AutoLFM:GetWidth() * 0.4)
-roleframe:SetHeight(AutoLFM:GetHeight() * 0.2)
-roleframe:SetPoint("TOPRIGHT", AutoLFM, "TOPRIGHT", -50, -40)
+roleframe:SetHeight(AutoLFM:GetHeight() * 0.2) --
+roleframe:SetPoint("TOPRIGHT", AutoLFM, "TOPRIGHT", -30, -40)
 
 -- Réduction de la taille des icônes de 20 % au total
 local iconWidth = roleframe:GetWidth() / 3 * 0.7
@@ -354,10 +354,10 @@ local offsetY = (roleframe:GetHeight() - iconHeight) / 2  -- Centrer verticaleme
 -- Créer cadre msgFrame
 local msgFrame = CreateFrame("Frame", nil, AutoLFM)
 msgFrame:SetBackdrop({
-    bgFile = nil,
-    -- edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  -- Bordure blanche dev position
+    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  -- Bordure blanche dev position
     edgeSize = 16,  -- Taille de la bordure
-    insets = { left = 4, right = 4, top = 4, bottom = 4 },
+    insets = { left = 4, right = 2, top = 4, bottom = 4 },
 })
 msgFrame:SetBackdropColor(1, 1, 1, 0.3)
 msgFrame:SetBackdropBorderColor(1, 1, 1, 1)
@@ -411,8 +411,8 @@ editBox:SetBackdrop({
     tile = true, tileSize = 16, edgeSize = 5,
     insets = { left = 4, right = 4, top = 4, bottom = 4 }
 })
-editBox:SetBackdropColor(0, 0, 0, 0.7)  -- Fond légèrement transparent
-editBox:SetBackdropBorderColor(1, 1, 1, 1)  -- Bordure blanche
+editBox:SetBackdropColor(1, 1, 1, 0.8)  -- Fond légèrement transparent
+editBox:SetBackdropBorderColor(1, 1, 1, 1.2)  -- Bordure blanche
 
 
 -- Créer cadre sliderframe
@@ -421,7 +421,7 @@ sliderframe:SetBackdrop({
     bgFile = nil,
     -- edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  -- Bordure blanche dev position
     edgeSize = 16,  -- Taille de la bordure
-    insets = { left = 4, right = 4, top = 4, bottom = 4 },
+    insets = { left = 4, right = 2, top = 4, bottom = 4 },
 })
 sliderframe:SetBackdropColor(1, 1, 1, 0.3)
 sliderframe:SetBackdropBorderColor(1, 1, 1, 1)
@@ -437,7 +437,7 @@ slider:SetWidth(200)
 slider:SetHeight(20)
 slider:SetPoint("CENTER", sliderframe, "CENTER", 0, 0)
 slider:SetMinMaxValues(40, 120)
-slider:SetValue(70)
+slider:SetValue(80)
 slider:SetValueStep(10)
 
 
@@ -1298,7 +1298,7 @@ local function SnapToStep(value)
 end
 
 -- Variable pour stocker la valeur du slider
-local sliderValue = 70
+local sliderValue = 80
 
 -- Créer une police pour afficher la valeur actuelle du slider (placer la valeur au-dessus du slider)
 local valueText = slider:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
