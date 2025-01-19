@@ -191,12 +191,13 @@ title:SetBackdrop({
 title:SetBackdropBorderColor(0, 0, 0, 1)
 
 
+
 --------------------------- Titre segmenté LFM ---------------------------
 
 
 local titleSegments = {}
 local part1 = title:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-part1:SetText("|cffadd8e6L|r")
+part1:SetText("|cff0070DDL|r")
 part1:SetFont("Fonts\\SKURRI.TTF", 24, "OUTLINE")
 table.insert(titleSegments, part1)
 
@@ -208,7 +209,7 @@ part2:SetPoint("LEFT", part1, "RIGHT", 5, 0)
 table.insert(titleSegments, part2)
 
 local part3 = title:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-part3:SetText("|cffff7f7fM|r")
+part3:SetText("|cffff0000M|r")
 part3:SetFont("Fonts\\SKURRI.TTF", 24, "OUTLINE")
 part3:SetPoint("LEFT", part2, "RIGHT", 5, 0)
 table.insert(titleSegments, part3)
@@ -445,7 +446,7 @@ local function OnPlayerEnteringWorld(self, event)
 
 -- Segments de texte avec leurs couleurs RGB
 local seg1 = "|cff00FF00Auto "  -- "Auto" en vert (0.0, 1.0, 0.0)
-local seg2 = "|cff00FFFFL"      -- "L" en rouge (1.0, 0.0, 0.0)
+local seg2 = "|cff0070DDL"      -- "L" en Bleu (0.0, 0.0, 1.0)
 local seg3 = "|cffffffffF"     -- "F" en vert (0.0, 1.0, 0.0)
 local seg4 = "|cffff0000M "     -- "M" en rouge (1.0, 0.0, 0.0)
 local seg5 = "|cff00FF00properly load "  -- "properly load" en blanc (1.0, 1.0, 1.0)
