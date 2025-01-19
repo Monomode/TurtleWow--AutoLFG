@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.2.4
+Ajustement couleurs Donjons
+
 Version: 1.2.3
 Refonte Couleurs
 

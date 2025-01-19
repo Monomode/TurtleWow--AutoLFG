@@ -674,21 +674,28 @@ end
 --------------------------- Donjon Fonction ---------------------------
 
 
--- Fonction pour afficher les donjons par code couleur avec le niveau du donjon
 function calculer_priorite(niveau_joueur, donjon)
-  local ratio = niveau_joueur / donjon.lvl_max  -- Ratio basé sur le niveau maximum du donjon
+  local diff_min = niveau_joueur - donjon.lvl_min  -- Différence par rapport au niveau minimum du donjon
+  local diff_max = niveau_joueur - donjon.lvl_max  -- Différence par rapport au niveau maximum du donjon
+
   local priority
 
-  if ratio > 1 then
-      priority = 4  -- Gris : trop élevé
-  elseif ratio >= 0.85 then
-      priority = 1  -- Vert : adapté ou légèrement en dessous du niveau recommandé
+  if diff_min > 7 then
+      priority = 4  -- Gris : trop élevé, le joueur a plus de 7 niveaux au-dessus du donjon
+  elseif diff_min >= 3 then
+      priority = 1  -- Vert : adapté, joueur est à +2 niveaux du niveau minimum du donjon
+  elseif diff_min >= 1 then
+      priority = 2  -- Orange : légèrement en dessous, joueur à 1 niveau en dessous du niveau minimum
+  elseif diff_min < 0 and math.abs(diff_min) > 5 then
+      priority = 3  -- Rouge : trop faible, joueur a plus de 5 niveaux en dessous du donjon
   else
-      priority = 3  -- Rouge : trop faible pour ce donjon
+      priority = 3  -- Rouge : situation où le joueur est trop faible mais moins de 5 niveaux en dessous
   end
 
   return priority
 end
+
+
 
 -- Tester pour chaque niveau de 1 à 60 et chaque donjon
 for niveau_joueur = 1, 60 do
@@ -775,14 +782,17 @@ function DisplayDungeonsByColor()
       local label = clickableFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
       label:SetPoint("LEFT", levelLabel, "RIGHT", 10, 0)
 
-      -- Attribuer la couleur en fonction de la priorité calculée
-      if priority == 4 then
-        label:SetTextColor(0.5, 0.5, 0.5)  -- Gris (trop élevé)
-      elseif priority == 1 then
-        label:SetTextColor(0, 1, 0)  -- Vert (adapté ou légèrement en dessous)
-      else
-        label:SetTextColor(1, 0, 0)  -- Rouge (trop faible)
-      end
+    -- Attribuer la couleur en fonction de la priorité calculée
+    if priority == 4 then
+      label:SetTextColor(0.5, 0.5, 0.5)  -- Gris (trop élevé)
+    elseif priority == 1 then
+      label:SetTextColor(0, 1, 0)  -- Vert (adapté ou légèrement en dessous)
+    elseif priority == 2 then
+      label:SetTextColor(1, 0.5, 0)  -- Orange (légèrement en dessous)
+    else
+      label:SetTextColor(1, 0, 0)  -- Rouge (trop faible)
+    end
+
 
       label:SetText(donjon.nom)
 
