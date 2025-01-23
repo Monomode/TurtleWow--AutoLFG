@@ -507,12 +507,9 @@ local groupSize = 0
 -- Fonction pour compter les membres du groupe ou du raid
 local function countGroupMembers()
 
-  if GetNumPartyMembers() < 1 then
-    groupSize = GetNumPartyMembers() +1
-  elseif GetNumRaidMembers() > 1 then
-    groupSize = GetNumRaidMembers() or GetNumPartyMembers() +1
+  if GetNumPartyMembers() > 0 then
+    groupSize = (GetNumPartyMembers() +1) or (GetNumRaidMembers() +1) or 0
   end
-
   return groupSize
 end
 
@@ -877,6 +874,7 @@ function DisplayDungeonsByColor()
   end
 end
 
+DisplayDungeonsByColor()
 
 -- Fonction utilitaire pour vérifier si une table contient un élément
 function table.contains(table, element)
