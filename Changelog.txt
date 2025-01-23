@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.2.6
+Fix Group count
+
 Version: 1.2.5
 Frame repositionnement
 
@@ -32,7 +35,7 @@ Message continue à être diffusé lorsque l'on ferme la fenêtre
 Version: 1.1.5
 Correctif mineur
 
-Version: 1.1.4  
+Version: 1.1.4
 Add Git
 
 Version: 1.1.3

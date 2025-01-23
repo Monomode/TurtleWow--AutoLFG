@@ -491,37 +491,33 @@ local dungeonsColored = false
 
 --------------------------- Init ---------------------------
 
-AutoLFM:RegisterEvent("PARTY_MEMBERS_CHANGED")
+--------------------------- Event Fonction ---------------------------
 
-djframe:Show()
-djScrollFrame:Show()
+-- Fonction pour compter les membres du groupe
 
+local updatemenber = CreateFrame("Frame", "updatemenber", UIParent)
+updatemenber:RegisterEvent("PLAYER_ENTERING_WORLD")
+updatemenber:RegisterEvent("GROUP_ROSTER_UPDATE")
+updatemenber:RegisterEvent("GUILD_ROSTER_UPDATE")
+updatemenber:RegisterEvent("PLAYER_ROSTER_UPDATE")
+updatemenber:RegisterEvent("PARTY_MEMBERS_CHANGED")
+updatemenber:RegisterEvent("RAID_ROSTER_UPDATE")
 
---------------------------- Msg Dynamique ---------------------------
+local groupSize = 0
+-- Fonction pour compter les membres du groupe ou du raid
+local function countGroupMembers()
 
+  if GetNumPartyMembers() < 1 then
+    groupSize = GetNumPartyMembers() +1
+  elseif GetNumRaidMembers() > 1 then
+    groupSize = GetNumRaidMembers() or GetNumPartyMembers() +1
+  end
 
--- Fonction pour obtenir la taille d'une table
-local function getTableSize(tbl)
-    local size = 0
-    for _, _ in pairs(tbl) do
-        size = size + 1
-    end
-    return size
+  return groupSize
 end
 
 local combinedMessage  = ""
 local userInputMessage = ""
-
-
--- Fonction pour compter les membres du groupe
-local function countGroupMembers()
-    local groupSize
-
-    groupSize = GetNumPartyMembers() + 1
-
-    return groupSize
-end
-
 
 -- Fonction pour générer le message dynamique
 local function updateMsgFrameCombined()
@@ -647,6 +643,47 @@ local function updateMsgFrameCombined()
     -- Combiner le message final
     combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
 
+end
+
+
+updatemenber:SetScript("OnEvent", function(self, event, ...)
+    if "PLAYER_ENTERING_WORLD" then
+        countGroupMembers()
+        updateMsgFrameCombined()
+    elseif "GROUP_ROSTER_UPDATE" then
+        countGroupMembers()
+        updateMsgFrameCombined()
+    elseif "GUILD_ROSTER_UPDATE" then
+        countGroupMembers()
+        updateMsgFrameCombined()
+    elseif "PLAYER_ROSTER_UPDATE" then
+        countGroupMembers()
+        updateMsgFrameCombined()
+    elseif "PARTY_MEMBERS_CHANGED" then
+        countGroupMembers()
+        updateMsgFrameCombined()
+    elseif "RAID_ROSTER_UPDATE" then
+        countGroupMembers()
+        updateMsgFrameCombined()
+    end
+end)
+
+
+updatemenber:Show()
+djframe:Show()
+djScrollFrame:Show()
+
+
+--------------------------- Msg Dynamique ---------------------------
+
+
+-- Fonction pour obtenir la taille d'une table
+local function getTableSize(tbl)
+    local size = 0
+    for _, _ in pairs(tbl) do
+        size = size + 1
+    end
+    return size
 end
 
 -- Fonction pour réinitialiser le message saisi
@@ -1429,16 +1466,19 @@ sliderframe:SetScript("OnUpdate", function(self, elapsed)
 end)
 
 
---------------------------- Event Fonction ---------------------------
 
 
-AutoLFM:SetScript("OnEvent", function(self, event, ...)
-    if "GROUP_ROSTER_UPDATE" then
-        -- Si le groupe a changé, on arrête la diffusion du message
-        countGroupMembers()
-        updateMsgFrameCombined()
-    end
-end)
+-- AutoLFM:SetScript("OnEvent", function(self, event, ...)
+--     if "GROUP_ROSTER_UPDATE" then
+--         -- Si le groupe a changé, on arrête la diffusion du message
+--         countGroupMembers()
+--         updateMsgFrameCombined()
+--     elseif "PLAYER_GROUP_CHANGED" then
+--         -- Si le joueur a changé de groupe, on arrête la diffusion du message
+--         countGroupMembers()
+--         updateMsgFrameCombined()
+--     end
+-- end)
 
 
 --------------------- Commandes Slash pour l'addon ---------------------
