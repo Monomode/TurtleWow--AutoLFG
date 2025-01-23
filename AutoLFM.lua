@@ -491,30 +491,37 @@ local dungeonsColored = false
 
 --------------------------- Init ---------------------------
 
---------------------------- Event Fonction ---------------------------
+AutoLFM:RegisterEvent("PARTY_MEMBERS_CHANGED")
 
--- Fonction pour compter les membres du groupe
+djframe:Show()
+djScrollFrame:Show()
 
-local updatemenber = CreateFrame("Frame", "updatemenber", UIParent)
-updatemenber:RegisterEvent("PLAYER_ENTERING_WORLD")
-updatemenber:RegisterEvent("GROUP_ROSTER_UPDATE")
-updatemenber:RegisterEvent("GUILD_ROSTER_UPDATE")
-updatemenber:RegisterEvent("PLAYER_ROSTER_UPDATE")
-updatemenber:RegisterEvent("PARTY_MEMBERS_CHANGED")
-updatemenber:RegisterEvent("RAID_ROSTER_UPDATE")
 
-local groupSize = 0
--- Fonction pour compter les membres du groupe ou du raid
-local function countGroupMembers()
+--------------------------- Msg Dynamique ---------------------------
 
-  if GetNumPartyMembers() > 0 then
-    groupSize = (GetNumPartyMembers() +1) or (GetNumRaidMembers() +1) or 0
-  end
-  return groupSize
+
+-- Fonction pour obtenir la taille d'une table
+local function getTableSize(tbl)
+    local size = 0
+    for _, _ in pairs(tbl) do
+        size = size + 1
+    end
+    return size
 end
 
 local combinedMessage  = ""
 local userInputMessage = ""
+
+
+-- Fonction pour compter les membres du groupe
+local function countGroupMembers()
+    local groupSize
+
+    groupSize = GetNumPartyMembers() + 1
+
+    return groupSize
+end
+
 
 -- Fonction pour générer le message dynamique
 local function updateMsgFrameCombined()
@@ -640,47 +647,6 @@ local function updateMsgFrameCombined()
     -- Combiner le message final
     combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
 
-end
-
-
-updatemenber:SetScript("OnEvent", function(self, event, ...)
-    if "PLAYER_ENTERING_WORLD" then
-        countGroupMembers()
-        updateMsgFrameCombined()
-    elseif "GROUP_ROSTER_UPDATE" then
-        countGroupMembers()
-        updateMsgFrameCombined()
-    elseif "GUILD_ROSTER_UPDATE" then
-        countGroupMembers()
-        updateMsgFrameCombined()
-    elseif "PLAYER_ROSTER_UPDATE" then
-        countGroupMembers()
-        updateMsgFrameCombined()
-    elseif "PARTY_MEMBERS_CHANGED" then
-        countGroupMembers()
-        updateMsgFrameCombined()
-    elseif "RAID_ROSTER_UPDATE" then
-        countGroupMembers()
-        updateMsgFrameCombined()
-    end
-end)
-
-
-updatemenber:Show()
-djframe:Show()
-djScrollFrame:Show()
-
-
---------------------------- Msg Dynamique ---------------------------
-
-
--- Fonction pour obtenir la taille d'une table
-local function getTableSize(tbl)
-    local size = 0
-    for _, _ in pairs(tbl) do
-        size = size + 1
-    end
-    return size
 end
 
 -- Fonction pour réinitialiser le message saisi
@@ -874,7 +840,6 @@ function DisplayDungeonsByColor()
   end
 end
 
-DisplayDungeonsByColor()
 
 -- Fonction utilitaire pour vérifier si une table contient un élément
 function table.contains(table, element)
@@ -1464,19 +1429,16 @@ sliderframe:SetScript("OnUpdate", function(self, elapsed)
 end)
 
 
+--------------------------- Event Fonction ---------------------------
 
 
--- AutoLFM:SetScript("OnEvent", function(self, event, ...)
---     if "GROUP_ROSTER_UPDATE" then
---         -- Si le groupe a changé, on arrête la diffusion du message
---         countGroupMembers()
---         updateMsgFrameCombined()
---     elseif "PLAYER_GROUP_CHANGED" then
---         -- Si le joueur a changé de groupe, on arrête la diffusion du message
---         countGroupMembers()
---         updateMsgFrameCombined()
---     end
--- end)
+AutoLFM:SetScript("OnEvent", function(self, event, ...)
+    if "GROUP_ROSTER_UPDATE" then
+        -- Si le groupe a changé, on arrête la diffusion du message
+        countGroupMembers()
+        updateMsgFrameCombined()
+    end
+end)
 
 
 --------------------- Commandes Slash pour l'addon ---------------------
@@ -1662,146 +1624,146 @@ title:SetScript("OnHide", StopMovingOnHide)
 --------------------------- Slash de Control Pour Dev ---------------------------
 
 
--- Créer la commande Slash pour afficher les rôles sélectionnés
-local function ShowSelectedRoles()
-    if getTableSize(selectedRoles) == 0 then
-        print("Aucun rôle sélectionné.")
-    else
-        -- Concaténer les rôles sélectionnés en une chaîne séparée par des virgules
-        local rolesText = ""
-        for i, role in ipairs(selectedRoles) do
-            rolesText = rolesText .. role
-            if i < getTableSize(selectedRoles) then
-                rolesText = rolesText .. ", "
-            end
-        end
-        print("Rôles sélectionnés : " .. rolesText)
-    end
-end
+-- -- Créer la commande Slash pour afficher les rôles sélectionnés
+-- local function ShowSelectedRoles()
+--     if getTableSize(selectedRoles) == 0 then
+--         print("Aucun rôle sélectionné.")
+--     else
+--         -- Concaténer les rôles sélectionnés en une chaîne séparée par des virgules
+--         local rolesText = ""
+--         for i, role in ipairs(selectedRoles) do
+--             rolesText = rolesText .. role
+--             if i < getTableSize(selectedRoles) then
+--                 rolesText = rolesText .. ", "
+--             end
+--         end
+--         print("Rôles sélectionnés : " .. rolesText)
+--     end
+-- end
 
-SLASH_ShowRoles1 = "/roles"
-SlashCmdList["ShowRoles"] = ShowSelectedRoles
+-- SLASH_ShowRoles1 = "/roles"
+-- SlashCmdList["ShowRoles"] = ShowSelectedRoles
 
--- Slash Command pour afficher les rôles sélectionnés
-SLASH_SHOWROLES1 = "/roles"  -- Nom de la commande Slash
-SlashCmdList["SHOWROLES"] = function()
-    local rolesText = "Rôles sélectionnés : "
+-- -- Slash Command pour afficher les rôles sélectionnés
+-- SLASH_SHOWROLES1 = "/roles"  -- Nom de la commande Slash
+-- SlashCmdList["SHOWROLES"] = function()
+--     local rolesText = "Rôles sélectionnés : "
 
-    -- Compter le nombre total de rôles dans allRoles
-    local totalRoles = countTableEntries(allRoles)
+--     -- Compter le nombre total de rôles dans allRoles
+--     local totalRoles = countTableEntries(allRoles)
 
-    -- Vérifier combien de rôles sont sélectionnés
-    local selectedCount = countSelectedRoles(selectedRoles)
+--     -- Vérifier combien de rôles sont sélectionnés
+--     local selectedCount = countSelectedRoles(selectedRoles)
 
-    if selectedCount == totalRoles then
-        -- Si tous les rôles sont sélectionnés
-        rolesText = rolesText .. "All"
-    elseif isTableEmpty(selectedRoles) then
-        -- Si aucun rôle n'est sélectionné
-        rolesText = rolesText .. "Aucun rôle sélectionné."
-    else
-        -- Afficher les rôles sélectionnés
-        for role, _ in pairs(selectedRoles) do
-            rolesText = rolesText .. role .. " "
-        end
-    end
+--     if selectedCount == totalRoles then
+--         -- Si tous les rôles sont sélectionnés
+--         rolesText = rolesText .. "All"
+--     elseif isTableEmpty(selectedRoles) then
+--         -- Si aucun rôle n'est sélectionné
+--         rolesText = rolesText .. "Aucun rôle sélectionné."
+--     else
+--         -- Afficher les rôles sélectionnés
+--         for role, _ in pairs(selectedRoles) do
+--             rolesText = rolesText .. role .. " "
+--         end
+--     end
 
-    -- Afficher le message dans la fenêtre de chat
-    DEFAULT_CHAT_FRAME:AddMessage(rolesText)
-end
+--     -- Afficher le message dans la fenêtre de chat
+--     DEFAULT_CHAT_FRAME:AddMessage(rolesText)
+-- end
 
--- Slash Command pour afficher les donjons sélectionnés
-SLASH_GETDUNGEONS1 = "/dgs"  -- Enregistrer la commande /dgs
+-- -- Slash Command pour afficher les donjons sélectionnés
+-- SLASH_GETDUNGEONS1 = "/dgs"  -- Enregistrer la commande /dgs
 
-SlashCmdList["GETDUNGEONS"] = function()
-    -- Appeler la fonction pour récupérer les donjons sélectionnés avec leurs abréviations
-    local selected = GetSelectedDungeons()
+-- SlashCmdList["GETDUNGEONS"] = function()
+--     -- Appeler la fonction pour récupérer les donjons sélectionnés avec leurs abréviations
+--     local selected = GetSelectedDungeons()
 
-    local selectedCount = 0
-    for _, _ in pairs(selected) do
-        selectedCount = selectedCount + 1  -- Compter manuellement les raids sélectionnés
-    end
+--     local selectedCount = 0
+--     for _, _ in pairs(selected) do
+--         selectedCount = selectedCount + 1  -- Compter manuellement les raids sélectionnés
+--     end
 
-    -- Vérifier si des donjons ont été sélectionnés
-    if selectedCount == 0 then
-        -- Message si aucun donjon n'est sélectionné
-        DEFAULT_CHAT_FRAME:AddMessage("Aucun donjon sélectionné.", 1.0, 0.0, 0.0)  -- Rouge
-    else
-        -- Affichage des donjons sélectionnés
-        DEFAULT_CHAT_FRAME:AddMessage("Donjons sélectionnés :", 0.0, 1.0, 0.0)  -- Vert
+--     -- Vérifier si des donjons ont été sélectionnés
+--     if selectedCount == 0 then
+--         -- Message si aucun donjon n'est sélectionné
+--         DEFAULT_CHAT_FRAME:AddMessage("Aucun donjon sélectionné.", 1.0, 0.0, 0.0)  -- Rouge
+--     else
+--         -- Affichage des donjons sélectionnés
+--         DEFAULT_CHAT_FRAME:AddMessage("Donjons sélectionnés :", 0.0, 1.0, 0.0)  -- Vert
 
-        -- Afficher chaque donjon sélectionné (abréviation)
-        for _, donjon in ipairs(selected) do
-            -- Affichage avec un tiret et une couleur personnalisée (ici un bleu clair)
-            DEFAULT_CHAT_FRAME:AddMessage("- " .. donjon, 0.0, 0.6, 1.0)  -- Bleu clair (RGB: 0, 0.6, 1)
-        end
-    end
-end
+--         -- Afficher chaque donjon sélectionné (abréviation)
+--         for _, donjon in ipairs(selected) do
+--             -- Affichage avec un tiret et une couleur personnalisée (ici un bleu clair)
+--             DEFAULT_CHAT_FRAME:AddMessage("- " .. donjon, 0.0, 0.6, 1.0)  -- Bleu clair (RGB: 0, 0.6, 1)
+--         end
+--     end
+-- end
 
--- Slash Command pour afficher les raids sélectionnés
-SLASH_GETRAIDS1 = "/raids"  -- Enregistrer la commande /raids
+-- -- Slash Command pour afficher les raids sélectionnés
+-- SLASH_GETRAIDS1 = "/raids"  -- Enregistrer la commande /raids
 
-SlashCmdList["GETRAIDS"] = function()
-    -- Appeler la fonction pour récupérer les raids sélectionnés
-    local selected = GetSelectedRaids()
+-- SlashCmdList["GETRAIDS"] = function()
+--     -- Appeler la fonction pour récupérer les raids sélectionnés
+--     local selected = GetSelectedRaids()
 
-    -- Vérifier si des raids ont été sélectionnés
-    local selectedCount = 0
-    for _, _ in pairs(selected) do
-        selectedCount = selectedCount + 1  -- Compter manuellement les raids sélectionnés
-    end
+--     -- Vérifier si des raids ont été sélectionnés
+--     local selectedCount = 0
+--     for _, _ in pairs(selected) do
+--         selectedCount = selectedCount + 1  -- Compter manuellement les raids sélectionnés
+--     end
 
-    -- Afficher les raids sélectionnés dans le chat
-    if selectedCount == 0 then
-        DEFAULT_CHAT_FRAME:AddMessage("Aucun raid sélectionné.", 1.0, 0.0, 0.0)  -- Message rouge si aucun raid n'est sélectionné
-    else
-        DEFAULT_CHAT_FRAME:AddMessage("Raids sélectionnés :", 0.0, 1.0, 0.0)  -- Message vert indiquant les raids sélectionnés
+--     -- Afficher les raids sélectionnés dans le chat
+--     if selectedCount == 0 then
+--         DEFAULT_CHAT_FRAME:AddMessage("Aucun raid sélectionné.", 1.0, 0.0, 0.0)  -- Message rouge si aucun raid n'est sélectionné
+--     else
+--         DEFAULT_CHAT_FRAME:AddMessage("Raids sélectionnés :", 0.0, 1.0, 0.0)  -- Message vert indiquant les raids sélectionnés
 
-        -- Pour chaque raid sélectionné, afficher avec un tiret et couleur
-        for _, raid in ipairs(selected) do
-            -- Affichage avec un tiret et une couleur personnalisée (ici un bleu clair)
-            DEFAULT_CHAT_FRAME:AddMessage("- " .. raid, 0.0, 0.6, 1.0)  -- Bleu clair (RGB: 0, 0.6, 1)
-        end
-    end
-end
+--         -- Pour chaque raid sélectionné, afficher avec un tiret et couleur
+--         for _, raid in ipairs(selected) do
+--             -- Affichage avec un tiret et une couleur personnalisée (ici un bleu clair)
+--             DEFAULT_CHAT_FRAME:AddMessage("- " .. raid, 0.0, 0.6, 1.0)  -- Bleu clair (RGB: 0, 0.6, 1)
+--         end
+--     end
+-- end
 
--- Commande dev /inter pour afficher la valeur du slider
+-- -- Commande dev /inter pour afficher la valeur du slider
 
-SLASH_INTER1 = "/inter"
-SlashCmdList["INTER"] = function()
-    -- Afficher la valeur actuelle du slider dans le chat
-    print("La valeur actuelle du slider est : " .. sliderValue .. " second")
-end
+-- SLASH_INTER1 = "/inter"
+-- SlashCmdList["INTER"] = function()
+--     -- Afficher la valeur actuelle du slider dans le chat
+--     print("La valeur actuelle du slider est : " .. sliderValue .. " second")
+-- end
 
--- -- Enregistrer la commande Slash
-SLASH_LFMMSG1 = "/lfmm"  -- Nom de la commande, par exemple "/lfmm"
--- Fonction qui sera appelée par la commande slash "/lfmm"
-function showCombinedMessage(msg)
-    -- Générer le message combiné
-    GetCombinedMessage()
+-- -- -- Enregistrer la commande Slash
+-- SLASH_LFMMSG1 = "/lfmm"  -- Nom de la commande, par exemple "/lfmm"
+-- -- Fonction qui sera appelée par la commande slash "/lfmm"
+-- function showCombinedMessage(msg)
+--     -- Générer le message combiné
+--     GetCombinedMessage()
 
-    -- Vérifier si le message est vide
-    if combinedMessage and combinedMessage ~= "" then
-        -- Afficher le message dans la fenêtre de chat
-        DEFAULT_CHAT_FRAME:AddMessage(combinedMessage)
-    else
-        -- Message d'erreur si le message est vide
-        print("Le message combiné est vide ou n'a pas été généré correctement.")
-    end
-end
-SlashCmdList["LFMMSG"] = showCombinedMessage
+--     -- Vérifier si le message est vide
+--     if combinedMessage and combinedMessage ~= "" then
+--         -- Afficher le message dans la fenêtre de chat
+--         DEFAULT_CHAT_FRAME:AddMessage(combinedMessage)
+--     else
+--         -- Message d'erreur si le message est vide
+--         print("Le message combiné est vide ou n'a pas été généré correctement.")
+--     end
+-- end
+-- SlashCmdList["LFMMSG"] = showCombinedMessage
 
--- Commande slash pour afficher le message combiné
-SLASH_GETCOMBINEDMESSAGE1 = "/msg"
-function SlashCmdList.GETCOMBINEDMESSAGE(msg)
-    -- Appel à la fonction pour générer le message combiné
-    GetCombinedMessage()
+-- -- Commande slash pour afficher le message combiné
+-- SLASH_GETCOMBINEDMESSAGE1 = "/msg"
+-- function SlashCmdList.GETCOMBINEDMESSAGE(msg)
+--     -- Appel à la fonction pour générer le message combiné
+--     GetCombinedMessage()
 
-    print("Combined Message: ", combinedMessage)
+--     print("Combined Message: ", combinedMessage)
 
-    -- Affichage du message dans le chat
-    DEFAULT_CHAT_FRAME:AddMessage(combinedMessage)
-end
+--     -- Affichage du message dans le chat
+--     DEFAULT_CHAT_FRAME:AddMessage(combinedMessage)
+-- end
 
 
 AutoLFM:Hide()  -- Cacher la fenêtre principale par défaut

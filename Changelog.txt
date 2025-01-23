@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.2.8
+Retour version 1.2.5 Bug Raid Group Count
+
 Version: 1.2.7
 Fix Bug Count Group & Raid
 
