@@ -6,7 +6,7 @@
 
 ## Image
 
-![image](https://github.com/user-attachments/assets/901d931b-abee-45f6-bda9-201b184cd2ce)
+![alt text](image.png)
 
 ## Fonctionnalités
 

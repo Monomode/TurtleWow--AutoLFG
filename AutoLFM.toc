@@ -1,7 +1,7 @@
 ## Interface: 11200
 ## Title: |cffffffffAuto|r|cff0070DDL|rF|cffff0000M|r |cff00FF00- |r|cffadd8e6Gon|r|cffffffffdo|r|cffff7f7fLeon|r|cff00FF00 -|r
 ## Notes: Automated LFM Message
-## Version: 1.3.0
+## Version: 1.3.1
 ## Author: Gondoleon
 ## DefaultState: Enabled
 ## SavedVariables: AutoLFM_SavedVariables

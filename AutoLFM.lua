@@ -8,11 +8,10 @@
 --------------------------- Variables ---------------------------
 
 
-local userInputMessage = "" -- Variable to store user input message
 local selectedDungeons = {} -- Table to store selected dungeons
 local selectedRaids = {} -- Table to store selected raids
 local selectedRoles = {} -- Table to store selected roles
-local selectedChannels = {} -- Table to store selected channels
+local userInputMessage = "" -- Variable to store user input message
 local combinedMessage = "" -- String to store the combined message
 
 
@@ -95,7 +94,7 @@ local msglog = CreateFrame("Frame")
 msglog:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 local function OnPlayerEnteringWorld(self, event)
-  -- local seg1 = "|cffffffff ---- Refonte de l'addon ---- "
+--   local seg1 = "|cffffffff ---- Refonte de l'addon ---- "
   local seg2 = "|cffffffff <"
   local seg3 = "|cffffff00 Auto "
   local seg4 = "|cff0070DDL"
@@ -109,7 +108,7 @@ local function OnPlayerEnteringWorld(self, event)
 
 
   -- Combine the segments and display the message
-  -- DEFAULT_CHAT_FRAME:AddMessage(seg1)
+--   DEFAULT_CHAT_FRAME:AddMessage(seg1)
   DEFAULT_CHAT_FRAME:AddMessage(seg2 .. seg3 .. seg4 .. seg5 .. seg6 .. seg7 .. seg8 .. seg9)
   DEFAULT_CHAT_FRAME:AddMessage(seg10 .. seg11)
 
@@ -668,7 +667,6 @@ local function countGroupMembers()
   return groupSize
 end
 
-
 -- Fonction pour générer le message dynamique
 local function updateMsgFrameCombined()
   local totalPlayersInGroup = countGroupMembers()
@@ -790,6 +788,16 @@ editBox:SetScript("OnTextChanged", function(self)
       -- Vérifier si un message saisi existe
   if userInputMessage ~= "" then
       return updateMsgFrameCombined(userInputMessage)
+  end
+end)
+
+AutoLFM:RegisterEvent("PARTY_MEMBERS_CHANGED")
+
+AutoLFM:SetScript("OnEvent", function(self, event, ...)
+  if "GROUP_ROSTER_UPDATE" then
+      -- Si le groupe a changé, on arrête la diffusion du message
+      countGroupMembers()
+      updateMsgFrameCombined()
   end
 end)
 
@@ -1588,4 +1596,4 @@ SlashCmdList["LFM"] = function(msg)
     DEFAULT_CHAT_FRAME:AddMessage("|cffff0000 ! Usage !   |cff00FFFF/lfm help |cffFFFFFFto list all commands.")  -- Rouge
 end
 
-AutoLFM:Hide()
+AutoLFM:Show()
