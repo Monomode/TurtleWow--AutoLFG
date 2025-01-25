@@ -1596,4 +1596,4 @@ SlashCmdList["LFM"] = function(msg)
     DEFAULT_CHAT_FRAME:AddMessage("|cffff0000 ! Usage !   |cff00FFFF/lfm help |cffFFFFFFto list all commands.")  -- Rouge
 end
 
-AutoLFM:Show()
+AutoLFM:Hide()
