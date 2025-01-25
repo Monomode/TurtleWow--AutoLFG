@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.3.0
+Refonte Graphique & Factorisation
+
 Version: 1.2.9
 KC on 5
 
