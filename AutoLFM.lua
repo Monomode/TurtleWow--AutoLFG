@@ -762,7 +762,7 @@ local function updateMsgFrameCombined()
 
   local mate = totalGroupSize - totalPlayersInGroup
 
-  if mate == -totalGroupSize then
+  if mate == -totalPlayersInGroup then
     mate = ""
   end
 
@@ -775,9 +775,6 @@ local function updateMsgFrameCombined()
     msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
     msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
   end
-
-  -- Combiner le message final
-  combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
 end
 
 
