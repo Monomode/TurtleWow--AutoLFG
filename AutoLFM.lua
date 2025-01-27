@@ -136,8 +136,8 @@ local function sendMessageToChannels(message)
         -- Recherche l'ID du canal en utilisant "/join" pour s'assurer qu'il est ouvert
         local channelId = GetChannelName(channel)
         if channelId and channelId > 0 then
-            SendChatMessage(message, "CHANNEL", nil, channelId)
-            -- DEFAULT_CHAT_FRAME:AddMessage(message, 0, 1, 1) -- Test Message
+            -- SendChatMessage(message, "CHANNEL", nil, channelId)
+            DEFAULT_CHAT_FRAME:AddMessage(message, 0, 1, 1) -- Test Message
         end
     end
 end
@@ -1530,15 +1530,34 @@ end)
 --------------------------- Broadcast Fonction ---------------------------
 
 
--- Variables pour gérer l'intervalle et la diffusion du message
+--- Variables pour gérer l'intervalle et la diffusion du message
 local isBroadcasting = false
 local broadcastStartTime = 0
 local lastBroadcastTime = 0
+
+local iconUpdateFrame = CreateFrame("Frame")  -- Frame pour gérer l'update des icônes
+
+-- Fonction pour alterner les icônes
+local function toggleMinimapButtonIcon()
+    local randomChoice = math.random(1, 2)
+    if randomChoice == 1 then
+        AutoLFMMinimapBtn:SetNormalTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png")
+        AutoLFMMinimapBtn:SetPushedTexture("Interface\\AddOns\\AutoLFM\\icon\\fermer.png")
+    else
+        AutoLFMMinimapBtn:SetNormalTexture("Interface\\AddOns\\AutoLFM\\icon\\fermer.png")
+        AutoLFMMinimapBtn:SetPushedTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png")
+    end
+end
 
 -- Fonction pour arrêter la diffusion du message
 local function stopMessageBroadcast()
     isBroadcasting = false
     print("Broadcast stopped")
+    -- Réinitialiser l'icône du bouton lorsque la diffusion s'arrête
+    AutoLFMMinimapBtn:SetNormalTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png")
+    AutoLFMMinimapBtn:SetPushedTexture("Interface\\AddOns\\AutoLFM\\icon\\fermer.png")
+    -- Désactiver la mise à jour de l'icône
+    iconUpdateFrame:SetScript("OnUpdate", nil)
 end
 
 -- Fonction pour démarrer la diffusion du message
@@ -1555,6 +1574,20 @@ local function startMessageBroadcast()
 
     -- Diffuser immédiatement le message dès le démarrage
     sendMessageToChannels(combinedMessage)
+
+    -- Alterner les icônes toutes les 2 secondes pendant la diffusion
+    iconUpdateFrame:SetScript("OnUpdate", function(self, elapsed)
+        if isBroadcasting then
+            -- Alterner les icônes toutes les 2 secondes
+            if GetTime() - broadcastStartTime >= 0.3 then
+                toggleMinimapButtonIcon()
+                broadcastStartTime = GetTime()  -- Réinitialiser le temps à chaque changement
+            end
+        else
+            -- Si la diffusion est arrêtée, arrêter de changer l'icône
+            iconUpdateFrame:SetScript("OnUpdate", nil)
+        end
+    end)
 end
 
 -- Frame d'update pour gérer le délai entre chaque diffusion

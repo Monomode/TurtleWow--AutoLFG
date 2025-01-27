@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.3.4
+Fun animation on Broadcast true
+
 Version: 1.3.3
 Fiw mineur
 
