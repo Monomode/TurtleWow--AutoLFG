@@ -775,6 +775,7 @@ local function updateMsgFrameCombined()
     msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
     msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
   end
+  combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
 end
 
 
