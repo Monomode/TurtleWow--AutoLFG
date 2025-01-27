@@ -136,8 +136,8 @@ local function sendMessageToChannels(message)
         -- Recherche l'ID du canal en utilisant "/join" pour s'assurer qu'il est ouvert
         local channelId = GetChannelName(channel)
         if channelId and channelId > 0 then
-            -- SendChatMessage(message, "CHANNEL", nil, channelId)
-            DEFAULT_CHAT_FRAME:AddMessage(message, 0, 1, 1) -- Test Message
+            SendChatMessage(message, "CHANNEL", nil, channelId)
+            -- DEFAULT_CHAT_FRAME:AddMessage(message, 0, 1, 1) -- Test Message
         end
     end
 end
