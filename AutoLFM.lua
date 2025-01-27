@@ -1530,10 +1530,12 @@ end)
 --------------------------- Broadcast Fonction ---------------------------
 
 
---- Variables pour gérer l'intervalle et la diffusion du message
+-- Variables pour gérer l'intervalle et la diffusion du message
 local isBroadcasting = false
 local broadcastStartTime = 0
 local lastBroadcastTime = 0
+local broadcastedHalf = false
+local broadcastedOneSecBefore = false
 
 local iconUpdateFrame = CreateFrame("Frame")  -- Frame pour gérer l'update des icônes
 
@@ -1570,6 +1572,7 @@ local function startMessageBroadcast()
 
     isBroadcasting = true
     broadcastStartTime = GetTime()
+    lastBroadcastTime = broadcastStartTime
     print("Broadcast started.")
 
     -- Diffuser immédiatement le message dès le démarrage
@@ -1599,11 +1602,11 @@ broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
       local sliderValue = slider:GetValue()
 
       -- Vérifier si le temps écoulé est supérieur ou égal à l'intervalle du slider
-      local timeElapsed = GetTime() - broadcastStartTime
+      local timeElapsed = GetTime() - lastBroadcastTime
 
       -- Calculer la moitié de la valeur du slider
       local halfSliderValue = sliderValue / 2
-      local oneSecondBefore = sliderValue
+      local oneSecondBefore = sliderValue - 1
 
       -- Afficher un message une seule fois pour chaque niveau du décompte
       if not broadcastedHalf and timeElapsed >= halfSliderValue and timeElapsed < halfSliderValue + 1 then
@@ -1626,7 +1629,7 @@ broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
           end
 
           -- Réinitialiser le temps pour la prochaine diffusion
-          broadcastStartTime = GetTime()
+          lastBroadcastTime = GetTime()
 
           -- Réinitialiser les drapeaux
           broadcastedHalf = false
@@ -1634,6 +1637,7 @@ broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
       end
   end
 end)
+
 
 --------------------------- Toggle Bouton ---------------------------
 
