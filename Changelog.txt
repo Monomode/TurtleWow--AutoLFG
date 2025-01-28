@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.3.5
+Refacto and animation OnOver
+
 Version: 1.3.4
 Fun animation on Broadcast true
 
