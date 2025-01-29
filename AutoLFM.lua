@@ -331,9 +331,11 @@ end)
 
 
 -- Création du bouton de la mini-carte
-local AutoLFMMinimapBtn = CreateFrame("Button", "AutoLFMMinimapButton", Minimap)
+local AutoLFMMinimapBtn = CreateFrame("Button", "AutoLFMMinimapBtn", Minimap)
 AutoLFMMinimapBtn:SetFrameStrata("MEDIUM")  -- Ajuster la strate du cadre pour qu'il soit au-dessus de la mini-carte
 AutoLFMMinimapBtn:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")  -- Ajouter un effet de survol
+AutoLFMMinimapBtn:SetHeight(25)
+AutoLFMMinimapBtn:SetWidth(25)
 
 AutoLFMMinimapBtn:SetNormalTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png")  -- Icône de l'addon
 AutoLFMMinimapBtn:GetNormalTexture():SetTexCoord(0.0, 1.0, 0.0, 1.0)
@@ -504,6 +506,7 @@ contentFrame:Show()
 djframe:Show()
 djScrollFrame:Show()
 raidFrame:Hide()
+AutoLFMMinimapBtn:Show()
 
 
 ---------------------------------------------------------------------------------
@@ -1832,33 +1835,24 @@ SlashCmdList["LFM"] = function(msg)
 
     -- Commande pour afficher le bouton de la minimap
     if args[1] == "minimap" and args[2] == "show" then
-      -- Vérifier si le bouton de la minimap existe et s'il est caché
-      if AutoLFMMinimapButton then
-          -- Réinitialiser les configurations du bouton de la minimap (par exemple, réinitialiser la position)
-          AutoLFMMinimapBtn:SetWidth(25)  -- Taille du bouton
-          AutoLFMMinimapBtn:SetHeight(25)  -- Taille du bouton
-          AutoLFMMinimapBtn:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -5, -5)  -- Positionner le bouton
-
-          -- Afficher le bouton de la minimap
-          AutoLFMMinimapButton:Show()
-
-          DEFAULT_CHAT_FRAME:AddMessage("The minimap button has been redisplayed and reset.", 0.0, 1.0, 0.0)  -- Texte vert
-      else
+      if AutoLFMMinimapBtn:IsVisible() then
           DEFAULT_CHAT_FRAME:AddMessage("The minimap button is already visible.", 1.0, 0.0, 0.0)  -- Texte rouge
+      else
+          AutoLFMMinimapBtn:Show()
+          DEFAULT_CHAT_FRAME:AddMessage("The minimap button has been redisplayed.", 0.0, 1.0, 0.0)  -- Texte vert
       end
       return
     end
 
         -- Commande pour masquer le bouton de la minimap
     if args[1] == "minimap" and args[2] == "hide" then
-        -- Vérifier si le bouton de la minimap existe et est visible
-        if AutoLFMMinimapButton and AutoLFMMinimapButton:IsVisible() then
-            AutoLFMMinimapButton:Hide()  -- Masquer le bouton
-            DEFAULT_CHAT_FRAME:AddMessage("The minimap button has been hidden.", 0.0, 1.0, 0.0)  -- Texte vert
-        else
-            DEFAULT_CHAT_FRAME:AddMessage("The minimap button is already hidden.", 1.0, 0.0, 0.0)  -- Texte rouge
-        end
-        return
+      if AutoLFMMinimapBtn:IsVisible() then
+        AutoLFMMinimapBtn:Hide()  -- Masquer le bouton
+        DEFAULT_CHAT_FRAME:AddMessage("The minimap button has been hidden.", 0.0, 1.0, 0.0)  -- Texte vert
+      else
+        DEFAULT_CHAT_FRAME:AddMessage("The minimap button is already hidden.", 1.0, 0.0, 0.0)  -- Texte rouge
+      end
+      return
     end
 
     -- Si la commande est incorrecte
