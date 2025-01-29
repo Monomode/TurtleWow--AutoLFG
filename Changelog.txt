@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.3.6
+Add DM East
+
 Version: 1.3.5
 Refacto and animation OnOver
 
