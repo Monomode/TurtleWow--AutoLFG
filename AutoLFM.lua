@@ -332,18 +332,29 @@ end)
 
 -- Création du bouton de la mini-carte
 local AutoLFMMinimapBtn = CreateFrame("Button", "AutoLFMMinimapBtn", Minimap)
-AutoLFMMinimapBtn:SetFrameStrata("MEDIUM")  -- Ajuster la strate du cadre pour qu'il soit au-dessus de la mini-carte
-AutoLFMMinimapBtn:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")  -- Ajouter un effet de survol
-AutoLFMMinimapBtn:SetHeight(25)
-AutoLFMMinimapBtn:SetWidth(25)
-
-AutoLFMMinimapBtn:SetNormalTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png")  -- Icône de l'addon
-AutoLFMMinimapBtn:GetNormalTexture():SetTexCoord(0.0, 1.0, 0.0, 1.0)
-AutoLFMMinimapBtn:SetPushedTexture("Interface\\AddOns\\AutoLFM\\icon\\fermer.png")  -- Ajouter un effet de clic
+AutoLFMMinimapBtn:SetFrameStrata("LOW")  -- Ajuster la strate du cadre pour qu'il soit au-dessus de la mini-carte
+AutoLFMMinimapBtn:SetHeight(28)
+AutoLFMMinimapBtn:SetWidth(28)
 
 -- Positionner le bouton par rapport à la mini-carte
 AutoLFMMinimapBtn:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -10, -10)  -- Ajuste la position selon tes besoins
 
+-- Texture de bordure (au-dessus du bouton)
+local borderTexture = AutoLFMMinimapBtn:CreateTexture(nil, "BORDER")
+borderTexture:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+borderTexture:SetHeight(64)
+borderTexture:SetWidth(64)
+borderTexture:SetPoint("TOPLEFT", -5, 5)
+
+-- Icône de l'addon (en dessous de la bordure)
+AutoLFMMinimapBtn:SetNormalTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png")  -- Icône de l'addon
+AutoLFMMinimapBtn:GetNormalTexture():SetTexCoord(0.0, 1.0, 0.0, 1.0)
+
+-- Ajouter un effet de survol
+AutoLFMMinimapBtn:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+
+-- Ajouter un effet de clic
+AutoLFMMinimapBtn:SetPushedTexture("Interface\\AddOns\\AutoLFM\\icon\\fermer.png")  -- Ajouter un effet de clic
 
 -- Ajouter un effet lors du survol de la souris
 AutoLFMMinimapBtn:SetScript("OnEnter", function()

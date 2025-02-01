@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.3.8
+Border MinimapBtn
+
 Version: 1.3.7
 Fix MinimapBtn
 
