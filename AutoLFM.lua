@@ -1798,9 +1798,11 @@ toggleButton:SetScript("OnClick", function()
     if isBroadcasting then
       stopMessageBroadcast()
       toggleButton:SetText("Start")
+      PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")
     else
       startMessageBroadcast()
       toggleButton:SetText("Stop")
+      PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_RoleCheck.ogg")
     end
 end)
 
