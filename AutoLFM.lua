@@ -863,6 +863,7 @@ end
 editBox:SetScript("OnTextChanged", function(self)
   -- print("Texte saisi : " .. this:GetText())  -- Afficher le texte dans la console
   userInputMessage = this:GetText()
+  combinedMessage = userInputMessage
       -- Vérifier si un message saisi existe
   if userInputMessage ~= "" then
       return updateMsgFrameCombined(userInputMessage)
