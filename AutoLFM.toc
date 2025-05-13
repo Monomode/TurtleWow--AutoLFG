@@ -5,6 +5,8 @@
 ## Author: Gondoleon
 ## DefaultState: Enabled
 ## SavedVariables: AutoLFM_SavedVariables
+## GitHub: https://github.com/FSuhas/AutoLFM
+
 
 
 AutoLFM.lua

@@ -1,5 +1,7 @@
 # autoLFM - README
 
+https://github.com/FSuhas/AutoLFM
+
 ## Description
 
 **autoLFM** est un addon pour **World of Warcraft 1.12** conçu pour automatiser le processus de recherche de groupe (LFM). Il permet aux joueurs de créer automatiquement un message de recherche de groupe, ce qui simplifie l'interaction avec le système de LFG (Looking for Group). Cet addon permet d'économiser du temps et en optimisant les chances de trouver rapidement un groupe pour des donjons ou d'autres activités multijoueurs.

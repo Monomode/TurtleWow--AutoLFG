@@ -657,7 +657,6 @@ editBox:SetScript("OnEnterPressed", function(self)
     else
         userInputMessage = this:GetText()  -- Récupérer le message de l'utilisateur
     end
-    updateMsgFrameCombined()
 end)
 
 editBox:SetScript("OnEscapePressed", function(self)
@@ -669,7 +668,6 @@ editBox:SetScript("OnEscapePressed", function(self)
     else
         userInputMessage = this:GetText()  -- Récupérer le message de l'utilisateur
     end
-    updateMsgFrameCombined()
 end)
 
 -- Créer un texte pour afficher un tiret centré au-dessus de la zone de saisie
