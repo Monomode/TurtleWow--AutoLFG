@@ -649,25 +649,11 @@ editBox:SetHeight(30)  -- Hauteur fixe de la zone de saisie
 
 -- Fonction pour gérer l'appui sur "Entrée"
 editBox:SetScript("OnEnterPressed", function(self)
-    this:ClearFocus()  -- Retirer le focus de la zone de texte
-
-    -- Vérifier si le champ est vide et mettre à jour le message
-    if this:GetText() == "" then
-        userInputMessage = ""  -- Réinitialiser le message utilisateur si vide
-    else
-        userInputMessage = this:GetText()  -- Récupérer le message de l'utilisateur
-    end
+  this:ClearFocus()  -- Retirer le focus de la zone de texte
 end)
 
 editBox:SetScript("OnEscapePressed", function(self)
-    this:ClearFocus()  -- Retirer le focus de la zone de texte
-
-    -- Vérifier si le champ est vide et mettre à jour le message
-    if this:GetText() == "" then
-        userInputMessage = ""  -- Réinitialiser le message utilisateur si vide
-    else
-        userInputMessage = this:GetText()  -- Récupérer le message de l'utilisateur
-    end
+  this:ClearFocus()  -- Retirer le focus de la zone de texte
 end)
 
 -- Créer un texte pour afficher un tiret centré au-dessus de la zone de saisie
@@ -820,48 +806,40 @@ local function updateMsgFrameCombined()
   end
 
   -- Si aucun contenu n'est sélectionné, ne rien afficher
-    if table.getn(selectedContent) == 0 and selectedCountRoles == 0 and userInputMessage == "" then
-        combinedMessage = ""
-        msgTextDj:SetText(combinedMessage)
-        msgTextRaids:SetText(combinedMessage)
-        return
-    end
+  if table.getn(selectedContent) == 0 and selectedCountRoles == 0 and userInputMessage == "" then
+      combinedMessage = ""
+      msgTextDj:SetText(combinedMessage)
+      msgTextRaids:SetText(combinedMessage)
+      return
+  end
 
-    -- Créer un message combiné pour chaque donjon
-    local contentMessage = ""
-    if table.getn(selectedContent) > 0 then
-        contentMessage = table.concat(selectedContent, ", ")
-    end
+  -- Créer un message combiné pour chaque donjon
+  if table.getn(selectedContent) > 0 then
+      contentMessage = table.concat(selectedContent, ", ")
+  end
 
-    local mate = totalGroupSize - totalPlayersInGroup
+  local mate = totalGroupSize - totalPlayersInGroup
 
-    if mate == -totalPlayersInGroup then
-        mate = ""
-    end
+  if mate == -totalPlayersInGroup then
+    mate = ""
+  end
 
-    -- Gérer le message en fonction de la sélection
-    if table.getn(selectedContent) == 0 and selectedCountRoles == 0 then
-        -- Si aucun donjon ni rôle n'est sélectionné, afficher uniquement le message de l'utilisateur
-        msgTextDj:SetText(userInputMessage)
-        msgTextRaids:SetText(userInputMessage)
-    else
-        -- Sinon, afficher le message combiné avec le message de l'utilisateur
-        local rolesMessage = (rolesSegment ~= "" and rolesSegment or "")  -- Assurer que les rôles sont correctement formatés
-        userInputMessage = userInputMessage ~= "" and userInputMessage or ""  -- Gérer les entrées vides
-
-        -- Formater le message complet pour Donjons
-        msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesMessage .. " " .. userInputMessage)
-        
-        -- Formater le message complet pour Raids
-        msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesMessage .. " " .. userInputMessage)
-    end
+  if userInputMessage ~= "" then
+    userInputMessage = userInputMessage
+    msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+    msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+  else
+    userInputMessage = ""
+    msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+    msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+  end
+  combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
 end
 
 -- Fonction pour gérer le changement de texte
 editBox:SetScript("OnTextChanged", function(self)
   -- print("Texte saisi : " .. this:GetText())  -- Afficher le texte dans la console
   userInputMessage = this:GetText()
-  combinedMessage = userInputMessage
       -- Vérifier si un message saisi existe
   if userInputMessage ~= "" then
       return updateMsgFrameCombined(userInputMessage)
