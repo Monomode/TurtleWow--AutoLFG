@@ -188,7 +188,6 @@ end
 -- Liste des canaux sélectionnés (chargée depuis les variables sauvegardées)
 local selectedChannels = AutoLFM_SavedVariables.selectedChannels or {}
 
--- Fonction pour sauvegarder les canaux sélectionnés dans les CVars
 -- Fonction pour sauvegarder les canaux sélectionnés
 local function SaveSelectedChannels()
     -- Obtenir le nom du personnage et du serveur actuel
@@ -208,7 +207,6 @@ local function SaveSelectedChannels()
         selectedChannels = selectedChannels
     }
 
-    -- Afficher un message de confirmation
     -- DEFAULT_CHAT_FRAME:AddMessage("Channels saved for " .. uniqueIdentifier .. ": " .. table.concat(selectedChannels, ", "))
 end
 
@@ -244,9 +242,6 @@ local function ToggleChannelSelection(channelName, isSelected)
 end
 
 
--- Chargement des canaux sélectionnés lors du démarrage de l'interface
-
-
 ---------------------------------------------------------------------------------
 --                            Log Message                                      --
 ---------------------------------------------------------------------------------
@@ -276,7 +271,6 @@ local function OnPlayerEnteringWorld(self, event)
   DisplayDungeonsByColor()
   findChannels()
   LoadSelectedChannels()
-  -- Unregister PLAYER_LOGIN event to avoid repeated execution
   msglog:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
