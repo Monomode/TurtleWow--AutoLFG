@@ -175,6 +175,78 @@ end
 
   -- Appel initial pour rechercher les canaux à l'ouverture de l'addon
 
+  -- Initialisation des variables sauvegardées
+if not AutoLFM_SavedVariables then
+    AutoLFM_SavedVariables = {}  -- Si les variables n'existent pas encore, on les initialise
+end
+
+-- Initialisation de selectedChannels dans AutoLFM_SavedVariables si nécessaire
+if not AutoLFM_SavedVariables.selectedChannels then
+    AutoLFM_SavedVariables.selectedChannels = {}
+end
+
+-- Liste des canaux sélectionnés (chargée depuis les variables sauvegardées)
+local selectedChannels = AutoLFM_SavedVariables.selectedChannels or {}
+
+-- Fonction pour sauvegarder les canaux sélectionnés dans les CVars
+-- Fonction pour sauvegarder les canaux sélectionnés
+local function SaveSelectedChannels()
+    -- Obtenir le nom du personnage et du serveur actuel
+    local charName = UnitName("player")  -- Nom du personnage
+    local realmName = GetRealmName()    -- Nom du serveur (réalm)
+
+    -- Créer un identifiant unique basé sur le nom du personnage et du serveur
+    local uniqueIdentifier = charName .. "-" .. realmName
+
+    -- Initialiser la table si elle n'existe pas encore
+    if not AutoLFM_SavedVariables then
+        AutoLFM_SavedVariables = {}
+    end
+
+    -- Sauvegarder les canaux sélectionnés pour ce personnage et serveur
+    AutoLFM_SavedVariables[uniqueIdentifier] = {
+        selectedChannels = selectedChannels
+    }
+
+    -- Afficher un message de confirmation
+    -- DEFAULT_CHAT_FRAME:AddMessage("Channels saved for " .. uniqueIdentifier .. ": " .. table.concat(selectedChannels, ", "))
+end
+
+
+-- Fonction pour charger les canaux sélectionnés lors du démarrage
+local function LoadSelectedChannels()
+    -- Obtenir le nom du personnage et du serveur actuel
+    local charName = UnitName("player")  -- Nom du personnage
+    local realmName = GetRealmName()    -- Nom du serveur (réalm)
+
+    -- Créer un identifiant unique basé sur le nom du personnage et du serveur
+    local uniqueIdentifier = charName .. "-" .. realmName
+
+    -- Vérifier si les canaux sont déjà sauvegardés pour ce personnage et serveur
+    if AutoLFM_SavedVariables[uniqueIdentifier] then
+        selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
+    else
+        selectedChannels = {}  -- Si aucune donnée sauvegardée, initialiser la table vide
+    end
+end
+
+
+-- Fonction pour mettre à jour le canal sélectionné dans la table
+local function ToggleChannelSelection(channelName, isSelected)
+    if isSelected then
+        selectedChannels[channelName] = true  -- Ajouter le canal aux sélectionnés
+    else
+        selectedChannels[channelName] = nil  -- Retirer le canal des sélectionnés
+    end
+
+    -- Sauvegarder après chaque modification
+    SaveSelectedChannels()
+end
+
+
+-- Chargement des canaux sélectionnés lors du démarrage de l'interface
+
+
 ---------------------------------------------------------------------------------
 --                            Log Message                                      --
 ---------------------------------------------------------------------------------
@@ -203,6 +275,7 @@ local function OnPlayerEnteringWorld(self, event)
 
   DisplayDungeonsByColor()
   findChannels()
+  LoadSelectedChannels()
   -- Unregister PLAYER_LOGIN event to avoid repeated execution
   msglog:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
@@ -301,9 +374,9 @@ title:SetBackdrop({
 
 -- Création du cadre pour les canaux
 local channelsFrame = CreateFrame("Frame", nil, AutoLFM)
-channelsFrame:SetWidth(150)
+channelsFrame:SetWidth(180)
 channelsFrame:SetHeight(150)
-channelsFrame:SetPoint("RIGHT", AutoLFM, "RIGHT", 155, 0)
+channelsFrame:SetPoint("RIGHT", AutoLFM, "RIGHT", 180, 0)
 
 -- Ajouter un fond pour le cadre des canaux
 channelsFrame:SetBackdrop({
@@ -320,62 +393,8 @@ titleText:SetText("Select Channel Broadcast")
 titleText:SetTextColor(1, 1, 0)  -- Couleur dorée pour le titre
 titleText:SetJustifyH("CENTER")
 
--- Liste des canaux
-local selectedChannels = {}  -- Table pour les canaux sélectionnés
 
 
--- Fonction pour mettre à jour les canaux sélectionnés
-local function UpdateSelectedChannels()
-    -- Assurez-vous que selectedChannels est bien une table
-    if type(selectedChannels) ~= "table" then
-        selectedChannels = {}  -- Si ce n'est pas une table, réinitialisez-la
-    end
-
-    -- Initialisation de selectedChannelsText comme une chaîne
-    local selectedChannelsText = "Channels selected : "
-
-    -- Vérifier si des canaux sont sélectionnés
-    if next(selectedChannels) then
-        for channelName, _ in pairs(selectedChannels) do
-            selectedChannelsText = selectedChannelsText .. channelName .. ", "
-        end
-
-        -- Afficher après la modification pour diagnostic
-        DEFAULT_CHAT_FRAME:AddMessage("" .. selectedChannelsText)
-    else
-        selectedChannelsText = selectedChannelsText .. "Not available"
-    end
-
-    -- S'assurer que selectedChannelsText est une chaîne avant d'afficher
-    if type(selectedChannelsText) == "string" then
-        -- DEFAULT_CHAT_FRAME:AddMessage(selectedChannelsText)
-    else
-        DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid chain value.")
-    end
-end
-
-
--- Fonction pour mettre à jour le canal sélectionné dans la table
-local function ToggleChannelSelection(channelName, isSelected)
-    if isSelected then
-        selectedChannels[channelName] = true  -- Ajouter le canal aux sélectionnés
-    else
-        selectedChannels[channelName] = nil  -- Retirer le canal des sélectionnés
-    end
-
-    -- Si vous voulez seulement un canal sélectionné à la fois, définissez `selectedChannel` comme suit :
-    if isSelected then
-        selectedChannel = channelName  -- Mettre à jour le canal sélectionné
-    else
-        -- Si le canal est désélectionné, vous pouvez soit garder selectedChannel inchangé
-        -- soit le réinitialiser à une valeur par défaut.
-        -- Par exemple, réinitialisez-le à une chaîne vide si vous ne voulez plus de canal sélectionné.
-        selectedChannel = ""  -- Réinitialisation (si nécessaire)
-    end
-
-    -- Mettre à jour l'affichage des canaux sélectionnés
-    UpdateSelectedChannels()
-end
 
 -- Créer un cadre interne pour contenir les boutons et les organiser
 local buttonFrame = CreateFrame("Frame", nil, channelsFrame)
@@ -385,32 +404,32 @@ buttonFrame:SetHeight(channelsFrame:GetHeight() - 50)  -- Réduit la hauteur pou
 
 
 
--- Définir une commande slash pour vérifier les canaux sélectionnés
-SLASH_CHECKSELECTEDCHANNEL1 = "/ccs"
-SlashCmdList["CHECKSELECTEDCHANNEL"] = function()
-    -- Affiche les canaux sélectionnés dans la fenêtre de chat
-    UpdateSelectedChannels()
-end
+-- -- Définir une commande slash pour vérifier les canaux sélectionnés
+-- SLASH_CHECKSELECTEDCHANNEL1 = "/ccs"
+-- SlashCmdList["CHECKSELECTEDCHANNEL"] = function()
+--     -- Affiche les canaux sélectionnés dans la fenêtre de chat
+--     UpdateSelectedChannels()
+-- end
 
--- Commande slash pour vérifier l'état de la table channelsToFind et foundChannels
-SLASH_CHECKTABLES1 = "/cct"
-SlashCmdList["CHECKTABLES"] = function()
-    -- Vérifier le contenu de la table channelsToFind
-    DEFAULT_CHAT_FRAME:AddMessage("Liste des canaux à rechercher :")
-    for _, channel in ipairs(channelsToFind) do
-        DEFAULT_CHAT_FRAME:AddMessage("Canal à rechercher : " .. channel)
-    end
+-- -- Commande slash pour vérifier l'état de la table channelsToFind et foundChannels
+-- SLASH_CHECKTABLES1 = "/cct"
+-- SlashCmdList["CHECKTABLES"] = function()
+--     -- Vérifier le contenu de la table channelsToFind
+--     DEFAULT_CHAT_FRAME:AddMessage("Liste des canaux à rechercher :")
+--     for _, channel in ipairs(channelsToFind) do
+--         DEFAULT_CHAT_FRAME:AddMessage("Canal à rechercher : " .. channel)
+--     end
 
-    -- Vérifier le contenu de la table foundChannels
-    if next(foundChannels) then
-        DEFAULT_CHAT_FRAME:AddMessage("Canaux trouvés :")
-        for _, channel in ipairs(foundChannels) do
-            DEFAULT_CHAT_FRAME:AddMessage("Canal trouvé : " .. channel.name .. " (ID: " .. channel.id .. ")")
-        end
-    else
-        DEFAULT_CHAT_FRAME:AddMessage("Aucun canal trouvé.")
-    end
-end
+--     -- Vérifier le contenu de la table foundChannels
+--     if next(foundChannels) then
+--         DEFAULT_CHAT_FRAME:AddMessage("Canaux trouvés :")
+--         for _, channel in ipairs(foundChannels) do
+--             DEFAULT_CHAT_FRAME:AddMessage("Canal trouvé : " .. channel.name .. " (ID: " .. channel.id .. ")")
+--         end
+--     else
+--         DEFAULT_CHAT_FRAME:AddMessage("Aucun canal trouvé.")
+--     end
+-- end
 
 
 
@@ -509,7 +528,7 @@ end)
 local function CreateChannelButtons()
     -- Vérifier si des canaux ont été trouvés avant de créer les boutons
     if not next(foundChannels) then
-        DEFAULT_CHAT_FRAME:AddMessage("Unable to create buttons : No channel found.")
+        -- DEFAULT_CHAT_FRAME:AddMessage("Unable to create buttons : No channel found.")
         return
     end
 
@@ -633,6 +652,7 @@ AutoLFMMinimapBtn:SetScript("OnClick", function()
         AutoLFM:Show()
         findChannels()
         CreateChannelButtons()
+        LoadSelectedChannels()
     end
 end)
 

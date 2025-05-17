@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.4.1
+Add SavedVariables
+
 Version: 1.4.0
 Add Selected Chan World LGF and Hardcore
 
