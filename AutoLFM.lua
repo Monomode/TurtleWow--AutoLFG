@@ -96,10 +96,88 @@ local roles = {
 }
 
 
+
+---------------------------------------------------------------------------------
+--                          Canaux World & LFG                                 --
+---------------------------------------------------------------------------------
+
+-- Fonction pour capturer les messages du canal Hardcore
+local function OnHardcoreChatMessage(self, event, msg, author, _, _, _, _, _, _, _, channelId, channelName)
+    -- Vérifier si l'événement est bien CHAT_MSG_HARDCORE (événement personnalisé)
+    if "CHAT_MSG_HARDCORE" then
+        -- Afficher le message reçu dans la fenêtre de chat
+        -- DEFAULT_CHAT_FRAME:AddMessage("Message reçu dans")
+    end
+end
+
+-- Créer un cadre pour écouter les événements personnalisés
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("CHAT_MSG_HARDCORE")  -- S'abonner à l'événement personnalisé CHAT_MSG_HARDCORE
+frame:SetScript("OnEvent", OnHardcoreChatMessage)
+
+-- Liste des canaux à rechercher
+local channelsToFind = {"WORLD", "LookingForGroup", "Hardcore"}
+
+-- Table pour stocker les canaux trouvés
+local foundChannels = {}
+
+-- Fonction pour rechercher et stocker les canaux
+local function findChannels()
+    -- Effacer la table foundChannels avant de la remplir
+    foundChannels = {}
+
+    -- Recherche des canaux définis
+    for _, channel in ipairs(channelsToFind) do
+        if channel == "Hardcore" then
+            -- Ajoute un canal personnalisé "Hardcore" à la table foundChannels
+            table.insert(foundChannels, {name = "Hardcore", id = "hardcore_channel"})
+        else
+            -- Recherche l'ID du canal standard avec GetChannelName
+            local channelId = GetChannelName(channel)
+            if channelId and channelId > 0 then
+                -- Ajoute l'ID du canal trouvé à la table foundChannels
+                table.insert(foundChannels, {name = channel, id = channelId})
+            else
+                -- DEFAULT_CHAT_FRAME:AddMessage("Canal " .. channel .. " non trouvé ou non ouvert.")
+            end
+        end
+    end
+
+    -- Afficher les canaux trouvés dans la fenêtre de chat pour vérifier
+    if next(foundChannels) then
+        for _, channel in ipairs(foundChannels) do
+            -- DEFAULT_CHAT_FRAME:AddMessage("Canal trouvé : " .. channel.name)
+        end
+    else
+        -- DEFAULT_CHAT_FRAME:AddMessage("Aucun canal trouvé.")
+    end
+end
+
+-- -- Fonction pour afficher les canaux trouvés
+-- local function displayFoundChannels()
+--     -- Vérifier si la table foundChannels est vide sans utiliser #
+--     if next(foundChannels) == nil then
+--          DEFAULT_CHAT_FRAME:AddMessage("Aucun canal trouvé.")
+--     else
+--         for _, channel in ipairs(foundChannels) do
+--              DEFAULT_CHAT_FRAME:AddMessage("Canal trouvé : " .. channel.name .. " (ID: " .. channel.id .. ")")
+--         end
+--     end
+-- end
+
+-- -- Commande slash pour afficher les canaux trouvés
+-- SLASH_CHECKCHANNELS1 = "/cc"
+-- SlashCmdList["CHECKCHANNELS"] = function()
+--     -- Appel de la fonction pour rechercher et afficher les canaux
+--     displayFoundChannels()  -- Affiche les canaux trouvés
+-- end
+
+
+  -- Appel initial pour rechercher les canaux à l'ouverture de l'addon
+
 ---------------------------------------------------------------------------------
 --                            Log Message                                      --
 ---------------------------------------------------------------------------------
-
 
 local msglog = CreateFrame("Frame")
 msglog:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -124,36 +202,12 @@ local function OnPlayerEnteringWorld(self, event)
   DEFAULT_CHAT_FRAME:AddMessage(seg10 .. seg11)
 
   DisplayDungeonsByColor()
-
+  findChannels()
   -- Unregister PLAYER_LOGIN event to avoid repeated execution
   msglog:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 msglog:SetScript("OnEvent", OnPlayerEnteringWorld)
-
-
-
----------------------------------------------------------------------------------
---                          Canaux World & LFG                                 --
----------------------------------------------------------------------------------
-
-
--- Table des canaux à rechercher
-local channelsToFind = {"WORLD", "LookingForGroup"}
--- Table pour stocker les canaux trouvés
-local foundChannels = {}
-
--- Fonction pour envoyer un message dans les canaux trouvés
-local function sendMessageToChannels(message)
-    for _, channel in ipairs(channelsToFind) do
-        -- Recherche l'ID du canal en utilisant "/join" pour s'assurer qu'il est ouvert
-        local channelId = GetChannelName(channel)
-        if channelId and channelId > 0 then
-            SendChatMessage(message, "CHANNEL", nil, channelId)
-            -- DEFAULT_CHAT_FRAME:AddMessage(message, 0, 1, 1) -- Test Message
-        end
-    end
-end
 
 
 ---------------------------------------------------------------------------------
@@ -239,6 +293,128 @@ title:SetBackdrop({
     tile = true, tileSize = 32, edgeSize = 32,
     insets = { left = 10, right = 10, top = 10, bottom = 10 },
 })
+
+---------------------------------------------------------------------------------
+--                           Select Channel                                    --
+---------------------------------------------------------------------------------
+
+
+-- Création du cadre pour les canaux
+local channelsFrame = CreateFrame("Frame", nil, AutoLFM)
+channelsFrame:SetWidth(150)
+channelsFrame:SetHeight(150)
+channelsFrame:SetPoint("RIGHT", AutoLFM, "RIGHT", 155, 0)
+
+-- Ajouter un fond pour le cadre des canaux
+channelsFrame:SetBackdrop({
+    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+    tile = true, tileSize = 32, edgeSize = 32,
+    insets = { left = 10, right = 10, top = 10, bottom = 10 },
+})
+
+-- Ajouter un titre en haut du cadre
+local titleText = channelsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+titleText:SetPoint("TOP", channelsFrame, "TOP", 0, -10)
+titleText:SetText("Select Channel Broadcast")
+titleText:SetTextColor(1, 1, 0)  -- Couleur dorée pour le titre
+titleText:SetJustifyH("CENTER")
+
+-- Liste des canaux
+local selectedChannels = {}  -- Table pour les canaux sélectionnés
+
+
+-- Fonction pour mettre à jour les canaux sélectionnés
+local function UpdateSelectedChannels()
+    -- Assurez-vous que selectedChannels est bien une table
+    if type(selectedChannels) ~= "table" then
+        selectedChannels = {}  -- Si ce n'est pas une table, réinitialisez-la
+    end
+
+    -- Initialisation de selectedChannelsText comme une chaîne
+    local selectedChannelsText = "Channels selected : "
+
+    -- Vérifier si des canaux sont sélectionnés
+    if next(selectedChannels) then
+        for channelName, _ in pairs(selectedChannels) do
+            selectedChannelsText = selectedChannelsText .. channelName .. ", "
+        end
+
+        -- Afficher après la modification pour diagnostic
+        DEFAULT_CHAT_FRAME:AddMessage("" .. selectedChannelsText)
+    else
+        selectedChannelsText = selectedChannelsText .. "Not available"
+    end
+
+    -- S'assurer que selectedChannelsText est une chaîne avant d'afficher
+    if type(selectedChannelsText) == "string" then
+        -- DEFAULT_CHAT_FRAME:AddMessage(selectedChannelsText)
+    else
+        DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid chain value.")
+    end
+end
+
+
+-- Fonction pour mettre à jour le canal sélectionné dans la table
+local function ToggleChannelSelection(channelName, isSelected)
+    if isSelected then
+        selectedChannels[channelName] = true  -- Ajouter le canal aux sélectionnés
+    else
+        selectedChannels[channelName] = nil  -- Retirer le canal des sélectionnés
+    end
+
+    -- Si vous voulez seulement un canal sélectionné à la fois, définissez `selectedChannel` comme suit :
+    if isSelected then
+        selectedChannel = channelName  -- Mettre à jour le canal sélectionné
+    else
+        -- Si le canal est désélectionné, vous pouvez soit garder selectedChannel inchangé
+        -- soit le réinitialiser à une valeur par défaut.
+        -- Par exemple, réinitialisez-le à une chaîne vide si vous ne voulez plus de canal sélectionné.
+        selectedChannel = ""  -- Réinitialisation (si nécessaire)
+    end
+
+    -- Mettre à jour l'affichage des canaux sélectionnés
+    UpdateSelectedChannels()
+end
+
+-- Créer un cadre interne pour contenir les boutons et les organiser
+local buttonFrame = CreateFrame("Frame", nil, channelsFrame)
+buttonFrame:SetPoint("TOP", titleText, "BOTTOM", 0, -10)
+buttonFrame:SetWidth(channelsFrame:GetWidth() - 20)  -- Légèrement plus petit que la largeur du cadre principal
+buttonFrame:SetHeight(channelsFrame:GetHeight() - 50)  -- Réduit la hauteur pour que les boutons tiennent dans la frame
+
+
+
+-- Définir une commande slash pour vérifier les canaux sélectionnés
+SLASH_CHECKSELECTEDCHANNEL1 = "/ccs"
+SlashCmdList["CHECKSELECTEDCHANNEL"] = function()
+    -- Affiche les canaux sélectionnés dans la fenêtre de chat
+    UpdateSelectedChannels()
+end
+
+-- Commande slash pour vérifier l'état de la table channelsToFind et foundChannels
+SLASH_CHECKTABLES1 = "/cct"
+SlashCmdList["CHECKTABLES"] = function()
+    -- Vérifier le contenu de la table channelsToFind
+    DEFAULT_CHAT_FRAME:AddMessage("Liste des canaux à rechercher :")
+    for _, channel in ipairs(channelsToFind) do
+        DEFAULT_CHAT_FRAME:AddMessage("Canal à rechercher : " .. channel)
+    end
+
+    -- Vérifier le contenu de la table foundChannels
+    if next(foundChannels) then
+        DEFAULT_CHAT_FRAME:AddMessage("Canaux trouvés :")
+        for _, channel in ipairs(foundChannels) do
+            DEFAULT_CHAT_FRAME:AddMessage("Canal trouvé : " .. channel.name .. " (ID: " .. channel.id .. ")")
+        end
+    else
+        DEFAULT_CHAT_FRAME:AddMessage("Aucun canal trouvé.")
+    end
+end
+
+
+
+
 
 
 ---------------------------------------------------------------------------------
@@ -329,6 +505,69 @@ end)
 --                            Minimap Buton                                    --
 ---------------------------------------------------------------------------------
 
+-- Créer un bouton de case à cocher pour chaque canal
+local function CreateChannelButtons()
+    -- Vérifier si des canaux ont été trouvés avant de créer les boutons
+    if not next(foundChannels) then
+        DEFAULT_CHAT_FRAME:AddMessage("Unable to create buttons : No channel found.")
+        return
+    end
+
+    -- Effacer les anciens boutons avant de créer de nouveaux boutons
+    for _, button in ipairs(channelsFrame.buttons or {}) do
+        button:Hide()  -- Masquer les anciens boutons
+    end
+    channelsFrame.buttons = {}  -- Réinitialiser la liste des boutons
+
+    local lastButton = nil
+    -- Créer un bouton pour chaque canal trouvé
+    for _, channel in ipairs(foundChannels) do
+        -- Vérifier si channel est valide avant de créer le bouton
+        if channel and channel.name then
+            -- Créer le bouton de case à cocher
+            local button = CreateFrame("CheckButton", nil, channelsFrame, "UICheckButtonTemplate")
+            button:SetWidth(24)
+            button:SetHeight(24)
+            if lastButton then
+                button:SetPoint("TOP", lastButton, "BOTTOM", 0, -5)  -- Espacer les boutons
+            else
+                button:SetPoint("TOPLEFT", buttonFrame, "TOPLEFT", 10, -5)  -- Premier bouton sous le titre
+            end
+
+
+            -- Créer un texte à afficher à côté de la case à cocher
+            local channelText = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+            channelText:SetPoint("LEFT", button, "RIGHT", 5, 0)
+            channelText:SetText(channel.name)
+
+            -- Vérifier si le canal est sélectionné
+            button:SetChecked(selectedChannels[channel.name])  -- Vérifier si le canal est dans la liste des sélectionnés
+
+            -- Capturer explicitement la valeur du canal dans une variable locale
+            local currentChannel = channel
+
+            -- Fonction à appeler lorsque la case à cocher est modifiée
+            button:SetScript("OnClick", function()
+                if currentChannel and currentChannel.name then
+                    -- Afficher le contenu de channel dans le chat pour déboguer
+                    -- DEFAULT_CHAT_FRAME:AddMessage("Canal dans OnClick: " .. tostring(currentChannel) .. ", Name: " .. tostring(currentChannel.name))
+
+                    -- Mettre à jour la sélection du canal dans la table
+                    ToggleChannelSelection(currentChannel.name, button:GetChecked())
+                else
+                    -- DEFAULT_CHAT_FRAME:AddMessage("Erreur : canal non valide dans OnClick. Canal : " .. tostring(currentChannel))
+                end
+            end)
+
+            -- Ajouter le bouton dans le tableau pour pouvoir les masquer/mettre à jour plus tard
+            table.insert(channelsFrame.buttons, button)
+
+            lastButton = button  -- Référence au dernier bouton créé pour la position suivante
+        else
+            -- DEFAULT_CHAT_FRAME:AddMessage("Erreur : canal invalide lors de la création du bouton. Canal : " .. tostring(channel))
+        end
+    end
+end
 
 -- Création du bouton de la mini-carte
 local AutoLFMMinimapBtn = CreateFrame("Button", "AutoLFMMinimapBtn", Minimap)
@@ -389,8 +628,11 @@ AutoLFMMinimapBtn:SetScript("OnClick", function()
     -- Si Ctrl n'est pas enfoncé, gérer l'ouverture/fermeture de l'interface
     if AutoLFM:IsShown() then
         AutoLFM:Hide()
+        
     else
         AutoLFM:Show()
+        findChannels()
+        CreateChannelButtons()
     end
 end)
 
@@ -824,16 +1066,16 @@ local function updateMsgFrameCombined()
     mate = ""
   end
 
-  if userInputMessage ~= "" then
-    userInputMessage = userInputMessage
-    msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-    msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-  else
-    userInputMessage = ""
-    msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-    msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-  end
-  combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
+    if userInputMessage ~= "" then
+        userInputMessage = userInputMessage
+        msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+        msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+    else
+        userInputMessage = ""
+        msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+        msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+    end
+        combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
 end
 
 -- Fonction pour gérer le changement de texte
@@ -901,6 +1143,9 @@ function GetSelectedRaids()
 end
 
 
+
+-- Appeler la fonction pour rechercher les canaux et créer les boutons
+CreateChannelButtons()  -- Créer les boutons après avoir trouvé les canaux
 ---------------------------------------------------------------------------------
 --                            Role Fonction                                    --
 ---------------------------------------------------------------------------------
@@ -1684,13 +1929,67 @@ end
 -- Fonction pour arrêter la diffusion du message
 local function stopMessageBroadcast()
     isBroadcasting = false
-    print("Broadcast stopped")
+    DEFAULT_CHAT_FRAME:AddMessage("Broadcast stopped")
     -- Réinitialiser l'icône du bouton lorsque la diffusion s'arrête
     AutoLFMMinimapBtn:SetNormalTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png")
     AutoLFMMinimapBtn:SetPushedTexture("Interface\\AddOns\\AutoLFM\\icon\\fermer.png")
     -- Désactiver la mise à jour de l'icône
     iconUpdateFrame:SetScript("OnUpdate", nil)
 end
+
+-- Fonction pour envoyer un message dans tous les canaux sélectionnés
+local function sendMessageToSelectedChannels(message)
+    -- Vérifier si des canaux ont été sélectionnés
+    if next(selectedChannels) then
+        local allChannelsValid = true  -- Indicateur pour vérifier si tous les canaux sont valides
+
+        -- Itérer sur tous les canaux sélectionnés
+        for channelName, _ in pairs(selectedChannels) do
+            -- Ignorer "Hardcore" lors de la vérification des autres canaux
+            if channelName ~= "Hardcore" then
+                -- Recherche l'ID du canal en utilisant GetChannelName pour s'assurer qu'il est ouvert
+                local channelId = GetChannelName(channelName)
+
+                -- Si le canal est invalide (ID non valide)
+                if not (channelId and channelId > 0) then
+                    DEFAULT_CHAT_FRAME:AddMessage("Error : The channel " .. channelName .. " is invalid or closed.")
+                    allChannelsValid = false  -- Un canal invalide a été trouvé, donc on arrête l'envoi
+                    break  -- Quitte la boucle dès qu'un canal invalide est trouvé
+                end
+            end
+        end
+
+        -- Si tous les canaux sont valides (en ignorant "Hardcore"), envoyer le message
+        if allChannelsValid then
+            -- Envoi du message dans tous les canaux sélectionnés
+            for channelName, _ in pairs(selectedChannels) do
+                -- Si le canal est "Hardcore", ajouter le préfixe "/h"
+                if channelName == "Hardcore" then
+                    -- Ajouter "/h" au message pour le canal Hardcore
+                    local hardcoreMessage = message
+                    -- Envoie le message comme une commande dans le canal "Hardcore"
+                    SendChatMessage(hardcoreMessage, "Hardcore")  -- Utiliser "SAY" ou un autre canal pour simuler l'envoi
+                    -- Affiche dans le chat du jeu le message envoyé (facultatif)
+                    -- DEFAULT_CHAT_FRAME:AddMessage("Message envoyé au canal : " .. channelName .. " avec le préfixe /h : " .. hardcoreMessage)
+                else
+                    -- Pour les autres canaux, envoyer le message normalement
+                    local channelId = GetChannelName(channelName)
+                    SendChatMessage(message, "CHANNEL", nil, channelId)
+                    -- Affiche dans le chat du jeu le message envoyé (facultatif)
+                    -- DEFAULT_CHAT_FRAME:AddMessage("Message envoyé au canal : " .. channelName)
+                end
+            end
+        else
+            print("1977 : The message has not been sent, because one or more channels are invalid.")
+        end
+    else
+        DEFAULT_CHAT_FRAME:AddMessage("Error: No channel selected.")
+    end
+end
+
+
+
+
 
 -- Fonction pour démarrer la diffusion du message
 local function startMessageBroadcast()
@@ -1703,10 +2002,10 @@ local function startMessageBroadcast()
     isBroadcasting = true
     broadcastStartTime = GetTime()
     lastBroadcastTime = broadcastStartTime
-    print("Broadcast started.")
+    DEFAULT_CHAT_FRAME:AddMessage("Broadcast started.")
 
     -- Diffuser immédiatement le message dès le démarrage
-    sendMessageToChannels(combinedMessage)
+    sendMessageToSelectedChannels(combinedMessage)
 
     -- Alterner les icônes toutes les 2 secondes pendant la diffusion
     iconUpdateFrame:SetScript("OnUpdate", function(self, elapsed)
@@ -1755,7 +2054,7 @@ broadcastFrame:SetScript("OnUpdate", function(self, elapsed)
       if timeElapsed >= sliderValue then
           -- Diffuser le message
           if combinedMessage ~= "" then
-              sendMessageToChannels(combinedMessage)
+              sendMessageToSelectedChannels(combinedMessage)
           end
 
           -- Réinitialiser le temps pour la prochaine diffusion
@@ -1779,7 +2078,7 @@ local toggleButton = CreateFrame("Button", "ToggleButton", msgFrame, "UIPanelBut
 toggleButton:SetWidth(120)
 toggleButton:SetHeight(30)
 
--- Positionner le bouton en bas centré, sous roleframe et msgFrame par rapport a autolfm
+-- Positionner le bouton en bas centré, sous roleframe et msgFrame par rapport à AutoLFM
 toggleButton:SetPoint("CENTER", msgFrame, "CENTER", 0, -10)  -- Placer 10 pixels sous msgFrame
 toggleButton:SetPoint("BOTTOM", AutoLFM, 0, 20)
 
@@ -1789,23 +2088,44 @@ toggleButton:SetText("Start")
 toggleButton:SetScript("OnClick", function()
     -- Vérifier si le message combiné est vide ou ne contient que des espaces
     if combinedMessage == " " or combinedMessage == "" then
-        -- Si le message est vide, ne pas démarrer la diffusion et vider la variable
-        combinedMessage = ""
-        toggleButton:SetText("Start")
-        print("The message is empty. The broadcast cannot start.")
-        return
+        -- Si le message est vide, ne pas démarrer la diffusion
+        if not isBroadcasting then
+            print("The message is empty. The broadcast cannot begin.")
+            -- Ne pas changer le texte du bouton si la diffusion ne commence pas
+            return
+        end
     end
 
-    if isBroadcasting then
-      stopMessageBroadcast()
-      toggleButton:SetText("Start")
-      PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")
+    -- Vérifier la validité des canaux avant de commencer la diffusion
+    local allChannelsValid = true  -- Indicateur pour vérifier si tous les canaux sont valides
+    for channelName, _ in pairs(selectedChannels) do
+        -- Ignorer "Hardcore" lors de la vérification
+        if channelName ~= "Hardcore" then
+            local channelId = GetChannelName(channelName)
+            if not (channelId and channelId > 0) then
+                allChannelsValid = false
+                break  -- Arrêter dès qu'un canal invalide est trouvé
+            end
+        end
+    end
+
+    -- Si tous les canaux sont valides (en ignorant "Hardcore"), démarrer la diffusion
+    if allChannelsValid then
+        if isBroadcasting then
+            stopMessageBroadcast()
+            toggleButton:SetText("Start")  -- Réinitialiser le texte à "Start" si on arrête
+            PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")
+        else
+            -- Démarrer la diffusion si elle n'est pas encore en cours
+            startMessageBroadcast()
+            toggleButton:SetText("Stop")  -- Changer le texte à "Stop" lorsqu'on commence
+            PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_RoleCheck.ogg")
+        end
     else
-      startMessageBroadcast()
-      toggleButton:SetText("Stop")
-      PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_RoleCheck.ogg")
+        DEFAULT_CHAT_FRAME:AddMessage("2112 : Broadcast has not started because one or more channels are invalid.")
     end
 end)
+
 
 
 ---------------------------------------------------------------------------------

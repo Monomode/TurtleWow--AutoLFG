@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.4.0
+Add Selected Chan World LGF and Hardcore
+
 Version: 1.3.9
 Add Sounds
 
