@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.4.3
+Refactor dungeon and raid definitions; add slider for raid size selection
+
 Version: 1.4.2
 Refactor channel selection functions
 

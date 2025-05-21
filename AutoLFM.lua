@@ -54,15 +54,12 @@ local donjons = {
   { nom = "Dire Maul North", abrev = "DM N", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
   { nom = "Dire Maul Tribute", abrev = "DM Tribute", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
   { nom = "Scholomance 5", abrev = "Scholo 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
-  { nom = "Scholomance 10", abrev = "Scholo 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
   { nom = "Stratholme Live 5", abrev = "Strat Live 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
-  { nom = "Stratholme Live 10", abrev = "Strat Live 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
   { nom = "Karazhan Crypt", abrev = "Kara Crypt", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
   { nom = "Stratholme UD 5", abrev = "Strat UD 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
-  { nom = "Stratholme UD 10", abrev = "Strat UD 10", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
   { nom = "Caverns of Time. Black Morass", abrev = "Black Morass", size = 5, lvl = "60", lvl_min = 60, lvl_max = 60 },
   { nom = "Stormwind Vault", abrev = "SWV", size = 5, lvl = "60", lvl_min = 60, lvl_max = 60 },
-  { nom = "Upper Blackrock Spire", abrev = "UBRS", size = 10, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
+  
 }
 
 
@@ -72,15 +69,19 @@ local donjons = {
 
 
 local raids = {
-  { nom = "Zul'Gurub", abrev = "ZG", size_min = 12, size_max = 20},
-  { nom = "Ruins of Ahn'Qiraj", abrev = "AQ20", size_min = 12, size_max = 20},
-  { nom = "Molten Core", abrev = "MC", size_min = 20, size_max = 40},
-  { nom = "Onyxia's Lair", abrev = "Ony", size_min = 20, size_max = 40},
-  { nom = "Lower Karazhan Halls", abrev = "Kara10", size_min = 10, size_max = 10},
-  { nom = "Blackwing Lair", abrev = "BWL", size_min = 20, size_max = 40},
-  { nom = "Emerald Sanctum", abrev = "ES", size_min = 30, size_max = 40},
-  { nom = "Temple of Ahn'Qiraj", abrev = "AQ40", size_min = 20, size_max = 40},
-  { nom = "Naxxramas", abrev = "Naxx", size_min = 30, size_max = 40},
+    { nom = "Scholomance 10", abrev = "Scholo 10", size_min = 10, size_max = 10},
+    { nom = "Stratholme Live 10", abrev = "Strat Live 10", size_min = 10, size_max = 10},
+    { nom = "Stratholme UD 10", abrev = "Strat UD 10", size_min = 10, size_max = 10},
+    { nom = "Upper Blackrock Spire", abrev = "UBRS", size_min = 10, size_max = 10 },
+    { nom = "Zul'Gurub", abrev = "ZG", size_min = 12, size_max = 20},
+    { nom = "Ruins of Ahn'Qiraj", abrev = "AQ20", size_min = 12, size_max = 20},
+    { nom = "Molten Core", abrev = "MC", size_min = 20, size_max = 40},
+    { nom = "Onyxia's Lair", abrev = "Ony", size_min = 20, size_max = 40},
+    { nom = "Lower Karazhan Halls", abrev = "Kara10", size_min = 10, size_max = 10},
+    { nom = "Blackwing Lair", abrev = "BWL", size_min = 20, size_max = 40},
+    { nom = "Emerald Sanctum", abrev = "ES", size_min = 30, size_max = 40},
+    { nom = "Temple of Ahn'Qiraj", abrev = "AQ40", size_min = 20, size_max = 40},
+    { nom = "Naxxramas", abrev = "Naxx", size_min = 30, size_max = 40},
 }
 
 
@@ -763,6 +764,12 @@ raidFrame:SetBackdrop({
     insets = { left = 2, right = 2, top = 2, bottom = 2 }
 })
 
+local raidScrollFrame = CreateFrame("ScrollFrame", "AutoLFM_ScrollFrame_Raids", raidFrame, "UIPanelScrollFrameTemplate")
+raidScrollFrame:SetPoint("TOPLEFT", raidFrame, "TOPLEFT", 10, -40)
+raidScrollFrame:SetWidth(240)
+raidScrollFrame:SetHeight(330)
+
+
 
 ---------------------------------------------------------------------------------
 --                           Init Donjons & Raids                              --
@@ -773,6 +780,7 @@ contentFrame:Show()
 djframe:Show()
 djScrollFrame:Show()
 raidFrame:Hide()
+raidScrollFrame:Hide()
 AutoLFMMinimapBtn:Show()
 
 
@@ -944,7 +952,6 @@ editBox:SetTextColor(1, 1, 1)  -- Couleur du texte blanc
 local sliderframe = CreateFrame("Frame", nil, AutoLFM)
 sliderframe:SetBackdrop({
     bgFile = nil,
-    -- edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  -- Bordure blanche dev position
     edgeSize = 16,  -- Taille de la bordure
     insets = { left = 4, right = 2, top = 4, bottom = 4 },
 })
@@ -965,6 +972,121 @@ slider:SetMinMaxValues(40, 120)
 slider:SetValue(80)
 slider:SetValueStep(10)
 
+--------------------------- SLIDER DE TAILLE ---------------------------
+
+-- Créer un cadre pour le slider
+local sliderSizeFrame = CreateFrame("Frame", nil, AutoLFM)
+sliderSizeFrame:SetBackdropColor(1, 1, 1, 0.3)
+sliderSizeFrame:SetBackdropBorderColor(1, 1, 1, 1)
+sliderSizeFrame:SetWidth(220)  -- Largeur du slider
+sliderSizeFrame:SetHeight(100)  -- Hauteur du cadre (augmentée pour laisser de la place au texte supplémentaire)
+sliderSizeFrame:SetPoint("TOP", AutoLFM, "BOTTOM", 0, 0)  -- Positionner le cadre en bas au centre du panneau principal
+
+sliderSizeFrame:SetBackdrop{
+    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+    edgeSize = 12,
+    insets = { left = 5, right = 5, top = 5, bottom = 5 },
+}
+
+sliderSizeFrame:Hide()  -- Masquer le cadre au départ
+
+-- Créer le slider
+local sliderSize = CreateFrame("Slider", nil, sliderSizeFrame, "OptionsSliderTemplate")
+sliderSize:SetWidth(200)
+sliderSize:SetHeight(20)
+sliderSize:SetPoint("CENTER", sliderSizeFrame, "CENTER", 0, 0)
+
+-- Initialiser la valeur
+sliderSize:SetValueStep(1)  -- Pas de valeur du slider
+
+-- Variable globale pour stocker la valeur du slider
+local sliderValue = 0
+
+-- Variable pour stocker la référence du slider
+local currentSliderFrame = nil
+local sliderValueText = nil  -- Texte pour afficher la plage
+local sliderCurrentValueText = nil  -- Texte pour afficher la valeur actuelle
+
+-- Fonction pour mettre à jour le texte en fonction de la valeur du slider
+local function UpdateSliderText(value)
+    if value then  -- Vérifier que value est défini et est un nombre
+        local minValue, maxValue = sliderSize:GetMinMaxValues()
+
+        -- Afficher la plage de valeurs du slider
+        sliderValueText:SetText(value)
+
+        -- Afficher la valeur actuelle du slider
+        sliderCurrentValueText:SetText("Raid Size: " .. minValue .. " at " .. maxValue)
+    else
+        -- Afficher un message par défaut si la valeur est nil
+        sliderValueText:SetText("Raid Size: N/A")
+        sliderCurrentValueText:SetText("Valeur actuelle: N/A")
+    end
+end
+
+
+-- Fonction pour afficher le slider pour un raid sélectionné
+local function ShowSliderForRaid(raid)
+
+    if currentSliderFrame then
+        currentSliderFrame:Hide()  -- Masquer le précédent slider
+    end
+
+    -- Vérifier si les valeurs de raid sont valides
+    if not raid.size_min or not raid.size_max then
+        print("Erreur: Les valeurs size_min ou size_max ne sont pas définies correctement.")
+        return
+    end
+
+    -- Créer les textes si ils n'existent pas encore
+    if not sliderValueText then
+        sliderValueText = sliderSizeFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        sliderValueText:SetPoint("CENTER", sliderSize, "TOP", 0, 10)
+    end
+
+    if not sliderCurrentValueText then
+        sliderCurrentValueText = sliderSizeFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        sliderCurrentValueText:SetPoint("CENTER", sliderSize, "BOTTOM", 0, -10)  -- Placer sous le slider
+    end
+
+    -- Définir les valeurs min et max pour le slider en fonction du raid sélectionné
+    sliderSize:SetMinMaxValues(raid.size_min, raid.size_max)
+
+    -- **Vérification de la valeur initiale** (on la force à la valeur précédemment sauvegardée ou à la valeur par défaut)
+    local initialSliderValue = sliderValue ~= 0 and sliderValue or raid.size_min  -- Si une valeur est déjà enregistrée, on l'utilise
+    sliderSize:SetValue(initialSliderValue)  -- Définir la valeur initiale
+
+    -- Mettre à jour le texte avec la valeur actuelle
+    UpdateSliderText(sliderSize:GetValue())
+
+    -- Afficher le cadre du slider
+    sliderSizeFrame:Show()
+
+    -- Sauvegarder la référence du slider pour pouvoir le masquer plus tard
+    currentSliderFrame = sliderSizeFrame
+end
+
+-- Mettre à jour le texte chaque fois que la valeur du slider change
+sliderSize:SetScript("OnValueChanged", function(value)
+    sliderValue = value  -- Sauvegarder la nouvelle valeur du slider
+    UpdateSliderText(value)  -- Mettre à jour le texte avec la valeur actuelle
+end)
+
+
+
+
+
+-- Fonction pour cacher le slider lorsqu'un raid est décoché
+local function HideSliderForRaid()
+    if currentSliderFrame then
+        currentSliderFrame:Hide()  -- Masquer le cadre du slider
+        currentSliderFrame = nil   -- Réinitialiser la référence
+    end
+end
+
+
+
 
 ---------------------------------------------------------------------------------
 --                            Msg Dynamique                                    --
@@ -973,124 +1095,149 @@ slider:SetValueStep(10)
 
 -- Fonction pour compter les membres du groupe
 local function countGroupMembers()
-  local groupSize
+    local groupSize
+    groupSize = GetNumPartyMembers() + 1
+    return groupSize
+end
 
-  groupSize = GetNumPartyMembers() + 1
-
-  return groupSize
+-- Fonction pour compter les membres du raid
+local function countRaidMembers()
+  local raidSize = GetNumRaidMembers()-- Nombre de membres dans le raid
+  return raidSize
 end
 
 -- Fonction pour générer le message dynamique
 local function updateMsgFrameCombined()
+    local totalPlayersInGroup = countGroupMembers()
+    local totalPlayersInRaid = countRaidMembers()
 
-  local totalPlayersInGroup = countGroupMembers()
+    local totalGroupSize = 0
+    local textWidth = msgTextDj:GetStringWidth()  -- Largeur du texte
 
-  local totalGroupSize = 0
+    -- Segment des donjons ou raids sélectionnés
+    local contentMessage = ""
+    local selectedContent = {}
 
-  local textWidth = msgTextDj:GetStringWidth()  -- Largeur du texte
+    -- Segment des rôles sélectionnés
+    local selectedCountRoles = 0
 
-  -- Segment des donjons ou raids sélectionnés
-  local contentMessage = ""
-  local selectedContent = {}
+    -- Comptage des rôles sélectionnés
+    for _, role in pairs(selectedRoles) do
+        selectedCountRoles = selectedCountRoles + 1
+    end
 
-  -- Segment des rôles sélectionnés
-  local selectedCountRoles = 0
+    -- Segment des rôles
+    local rolesSegmentFix = "Need "
+    local rolesSegment = ""
 
-  -- Comptage des rôles sélectionnés
-  for _, role in pairs(selectedRoles) do
-    selectedCountRoles = selectedCountRoles + 1
-  end
-
-  -- Segment des rôles
-  local rolesSegmentFix = "Need "
-  local rolesSegment = ""
-
-  if selectedCountRoles == 3 then
-    rolesSegment = "Need All"
-  elseif selectedCountRoles > 0 then
-    rolesSegment = rolesSegmentFix .. table.concat(selectedRoles, " & ")
-  end
+    if selectedCountRoles == 3 then
+        rolesSegment = "Need All"
+    elseif selectedCountRoles > 0 then
+        rolesSegment = rolesSegmentFix .. table.concat(selectedRoles, " & ")
+    end
 
     -- Si un raid est sélectionné, utiliser les raids
-  local selectedRaids = GetSelectedRaids()
+    local selectedRaids = GetSelectedRaids()
 
-  if table.getn(selectedRaids) > 0 then
-    for _, raidAbrev in pairs(selectedRaids) do
-        -- Rechercher le raid correspondant dans la table 'raids'
-        for _, raid in pairs(raids) do
-            if raid.abrev == raidAbrev then
-                local raidMessage = ""
-                raidMessage = raid.abrev
-                table.insert(selectedContent, raidMessage)
-                break
+    -- Flag pour déterminer si un raid est sélectionné
+    local isRaidSelected = false
+
+    if table.getn(selectedRaids) > 0 then
+        for _, raidAbrev in pairs(selectedRaids) do
+            -- Rechercher le raid correspondant dans la table 'raids'
+            for _, raid in pairs(raids) do
+                if raid.abrev == raidAbrev then
+                    local raidMessage = ""
+                    raidMessage = raid.abrev
+                    table.insert(selectedContent, raidMessage)
+                    -- Afficher le slider pour ce raid
+                    ShowSliderForRaid(raid)
+                    if raid.size_min == raid.size_max then
+                        sliderSizeFrame:Hide()  -- Masquer le slider si la taille est fixe
+                    end
+                    isRaidSelected = true  -- Marquer que c'est un raid
+                    break
+                end
             end
         end
     end
-  end
 
-  -- Sinon, utiliser les donjons
-  for _, donjonAbrev in pairs(selectedDungeons) do
-      -- Rechercher le donjon correspondant dans la table 'donjons'
-      for _, donjon in pairs(donjons) do
-          if donjon.abrev == donjonAbrev then
-              -- Vérifier que 'donjon.size' n'est pas nil avant de l'utiliser
-              if donjon.size and totalPlayersInGroup then
-                  totalGroupSize = donjon.size
+    -- Sinon, utiliser les donjons
+    if not isRaidSelected then
+        for _, donjonAbrev in pairs(selectedDungeons) do
+            -- Rechercher le donjon correspondant dans la table 'donjons'
+            for _, donjon in pairs(donjons) do
+                if donjon.abrev == donjonAbrev then
+                    -- Vérifier que 'donjon.size' n'est pas nil avant de l'utiliser
+                    if donjon.size and totalPlayersInGroup then
+                        totalGroupSize = donjon.size
 
-                  -- Calcul du nombre de joueurs manquants pour chaque donjon
-                  local missingPlayers = totalGroupSize - totalPlayersInGroup
-                  if missingPlayers < 0 then
-                      missingPlayers = 0
-                      stopMessageBroadcast()
-                  end
+                        -- Calcul du nombre de joueurs manquants pour chaque donjon
+                        local missingPlayers = totalGroupSize - totalPlayersInGroup
+                        if missingPlayers < 0 then
+                            missingPlayers = 0
+                            stopMessageBroadcast()
+                        end
 
-                  -- Générer le message pour ce donjon sous le format "LF M for Donjonselect"
-                  local donjonMessage = ""
-                  if missingPlayers > 0 then
-                      donjonMessage = donjon.abrev
-                  end
+                        -- Générer le message pour ce donjon sous le format "LF M for Donjonselect"
+                        local donjonMessage = ""
+                        if missingPlayers > 0 then
+                            donjonMessage = donjon.abrev
+                        end
 
-                  -- Ajouter le message pour ce donjon à la liste des contenus sélectionnés
-                  table.insert(selectedContent, donjonMessage)
-              else
-                  -- Si 'donjon.size' est nil ou 'totalPlayersInGroup' est nil, afficher un message d'erreur
-                  DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid dungeon size or number of players for " .. donjon.abrev " " .. donjon.size)
-              end
-              break  -- Stopper la recherche dès qu'on a trouvé le bon donjon
-          end
-      end
-  end
-
-  -- Si aucun contenu n'est sélectionné, ne rien afficher
-  if table.getn(selectedContent) == 0 and selectedCountRoles == 0 and userInputMessage == "" then
-      combinedMessage = ""
-      msgTextDj:SetText(combinedMessage)
-      msgTextRaids:SetText(combinedMessage)
-      return
-  end
-
-  -- Créer un message combiné pour chaque donjon
-  if table.getn(selectedContent) > 0 then
-      contentMessage = table.concat(selectedContent, ", ")
-  end
-
-  local mate = totalGroupSize - totalPlayersInGroup
-
-  if mate == -totalPlayersInGroup then
-    mate = ""
-  end
-
-    if userInputMessage ~= "" then
-        userInputMessage = userInputMessage
-        msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-        msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-    else
-        userInputMessage = ""
-        msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-        msgTextRaids:SetText("LFM " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+                        -- Ajouter le message pour ce donjon à la liste des contenus sélectionnés
+                        table.insert(selectedContent, donjonMessage)
+                    else
+                        -- Si 'donjon.size' est nil ou 'totalPlayersInGroup' est nil, afficher un message d'erreur
+                        DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid dungeon size or number of players for " .. donjon.abrev .. " " .. donjon.size)
+                    end
+                    break  -- Stopper la recherche dès qu'on a trouvé le bon donjon
+                end
+            end
+        end
     end
-        combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
+
+    -- Si aucun contenu n'est sélectionné, ne rien afficher
+    if table.getn(selectedContent) == 0 and selectedCountRoles == 0 and userInputMessage == "" then
+        combinedMessage = ""
+        msgTextDj:SetText(combinedMessage)
+        msgTextRaids:SetText(combinedMessage)
+        return
+    end
+
+    -- Créer un message combiné pour chaque donjon
+    if table.getn(selectedContent) > 0 then
+        contentMessage = table.concat(selectedContent, ", ")
+    end
+
+    -- Vérifier si un raid a été sélectionné et utiliser la taille du raid ou du donjon
+    local mate = 0
+    if isRaidSelected then
+        value = sliderValue
+        -- Utiliser la valeur du slider pour ajuster la taille du groupe (en raid)
+        mate = value - totalPlayersInRaid
+        if mate == -totalPlayersInGroup then
+            mate = ""
+        end
+    else
+        -- Utiliser la taille des donjons comme d'habitude
+        mate = totalGroupSize - totalPlayersInGroup
+        if mate < 0 then
+            mate = 0
+        end
+    end
+
+    -- Générer le message pour les donjons ou raids
+    if userInputMessage ~= "" then
+        msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+        msgTextRaids:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+    else
+        msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+        msgTextRaids:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
+    end
+    combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
 end
+
 
 -- Fonction pour gérer le changement de texte
 editBox:SetScript("OnTextChanged", function(self)
@@ -1102,6 +1249,17 @@ editBox:SetScript("OnTextChanged", function(self)
   end
   updateMsgFrameCombined()
 end)
+
+-- Mettre à jour le texte chaque fois que la valeur du slider change
+sliderSize:SetScript("OnValueChanged", function(value)
+    value = sliderSize:GetValue()  -- Obtenir la valeur actuelle du slider
+    sliderValue = value  -- Sauvegarder la nouvelle valeur du slider
+    UpdateSliderText(sliderValue)  -- Mettre à jour le texte avec la valeur actuelle
+    updateMsgFrameCombined()
+end)
+
+-- Fonction pour mettre à jour le message dans msgFrame
+
 
 AutoLFM:RegisterEvent("PARTY_MEMBERS_CHANGED")
 AutoLFM:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -1160,6 +1318,7 @@ end
 
 -- Appeler la fonction pour rechercher les canaux et créer les boutons
 CreateChannelButtons()  -- Créer les boutons après avoir trouvé les canaux
+
 ---------------------------------------------------------------------------------
 --                            Role Fonction                                    --
 ---------------------------------------------------------------------------------
@@ -1671,38 +1830,6 @@ end
 --                             Raids Fonctions                                 --
 ---------------------------------------------------------------------------------
 
---------------------------- SLIDER DE TAILLE ---------------------------
-
--- -- Créer le cadre du slider
--- local sliderSizeFrame = CreateFrame("Frame", nil, AutoLFM)
--- sliderSizeFrame:SetBackdrop({
---     bgFile = nil,
---     -- edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  -- Bordure blanche dev position
---     edgeSize = 16,  -- Taille de la bordure
---     insets = { left = 4, right = 2, top = 4, bottom = 4 },
--- })
--- sliderSizeFrame:SetBackdropColor(1, 1, 1, 0.3)
--- sliderSizeFrame:SetBackdropBorderColor(1, 1, 1, 1)
-
--- sliderSizeFrame:SetWidth(raidFrame:GetWidth())  -- Utiliser raidFrame si roleframe est nil
--- sliderSizeFrame:SetHeight(50)
--- sliderSizeFrame:SetPoint("TOPRIGHT", raidFrame, "BOTTOMRIGHT", 0, -40)
-
--- sliderSizeFrame:Hide()
-
--- -- Créer le slider
--- local sliderSize = CreateFrame("Slider", nil, sliderSizeFrame, "OptionsSliderTemplate")
--- sliderSize:SetWidth(200)
--- sliderSize:SetHeight(20)
--- sliderSize:SetPoint("CENTER", sliderSizeFrame, "CENTER", 0, 0)
-
--- -- Initialiser la valeur
--- sliderSize:SetValueStep(1)  -- Pas de valeur du slider
--- sliderSize:Hide()
-
--- -- Définir le texte du slider
--- local sliderValueText = sliderSizeFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
--- sliderValueText:SetPoint("CENTER", sliderSize, "TOP", 0, 10)
 
 
 ---------------------------------------------------------------------------------
@@ -1715,10 +1842,11 @@ local raidCount = 0
 local maxRaids = 100
 
 -- Créer le contenu du ScrollFrame pour les raids
-local raidContentFrame = CreateFrame("Frame", nil, raidFrame)
+local raidContentFrame = CreateFrame("Frame", nil, raidScrollFrame)
 raidContentFrame:SetWidth(raidFrame:GetWidth() - 20)
 raidContentFrame:SetHeight(raidFrame:GetHeight() - 60)
-raidContentFrame:SetPoint("TOPLEFT", raidFrame, "TOPLEFT", 10, -40)
+raidScrollFrame:SetScrollChild(raidContentFrame)
+
 
 raidCheckButtons = {}
 
@@ -1783,7 +1911,7 @@ for index, raid in pairs(raids) do
       else
           -- Si la case est décochée, retirer l'abréviation du raid de la liste
           selectedRaids = {}
-          -- sliderSizeFrame:Hide()
+          sliderSizeFrame:Hide()
       end
       -- Mettre à jour l'affichage après chaque changement
       updateMsgFrameCombined()
@@ -1891,6 +2019,8 @@ swapButton:SetScript("OnClick", function()
         swapButton:SetText("Dungeons List")
         raidFrame:Show()
         raidContentFrame:Show()
+        raidScrollFrame:Show()
+        raidFrame:Show()
         msgFrameDj:Hide()
         msgFrameRaids:Show()
         clearSelectedDungeons()
@@ -1903,12 +2033,14 @@ swapButton:SetScript("OnClick", function()
         djScrollFrame:Show()
         msgFrameRaids:Hide()
         raidContentFrame:Hide()
+        raidScrollFrame:Hide()
         raidFrame:Hide()
         msgFrameDj:Show()
         clearSelectedRaids()
         clearSelectedRoles()
         resetUserInputMessage()
         updateMsgFrameCombined()
+        HideSliderForRaid()
         -- sliderSizeFrame:Hide()
     end
 end)
