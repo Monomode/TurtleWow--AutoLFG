@@ -225,6 +225,7 @@ local function LoadSelectedChannels()
     if AutoLFM_SavedVariables[uniqueIdentifier] then
         selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
     else
+        channelsFrame:Show()  -- Afficher le cadre des canaux si aucune donnée n'est sauvegardée
         selectedChannels = {}  -- Si aucune donnée sauvegardée, initialiser la table vide
     end
 end
@@ -363,6 +364,30 @@ title:SetBackdrop({
 })
 
 ---------------------------------------------------------------------------------
+--                        Icone en haut à gauche                              --
+---------------------------------------------------------------------------------
+
+-- Frame pour l'icône en haut à gauche
+local iconFrame = CreateFrame("Frame", nil, AutoLFM)
+iconFrame:SetHeight(50)
+iconFrame:SetWidth(50)
+iconFrame:SetPoint("TOPLEFT", AutoLFM, "TOPLEFT", -15, 15) 
+
+-- Texture ronde (cercle)
+local border = iconFrame:CreateTexture(nil, "BORDER")
+border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+border:SetHeight(100)
+border:SetWidth(100)
+border:SetPoint("TOPLEFT", -5, 4)
+
+-- Icône centrale
+local iconTexture = iconFrame:CreateTexture(nil, "ARTWORK")
+iconTexture:SetTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png") 
+iconTexture:SetHeight(50)
+iconTexture:SetWidth(50)
+iconTexture:SetPoint("CENTER", iconFrame, "CENTER", 0, 0)
+
+---------------------------------------------------------------------------------
 --                           Select Channel                                    --
 ---------------------------------------------------------------------------------
 
@@ -371,7 +396,7 @@ title:SetBackdrop({
 local channelsFrame = CreateFrame("Frame", nil, AutoLFM)
 channelsFrame:SetWidth(180)
 channelsFrame:SetHeight(150)
-channelsFrame:SetPoint("RIGHT", AutoLFM, "RIGHT", 180, 0)
+channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 180, 0)
 
 -- Ajouter un fond pour le cadre des canaux
 channelsFrame:SetBackdrop({
@@ -380,6 +405,8 @@ channelsFrame:SetBackdrop({
     tile = true, tileSize = 32, edgeSize = 32,
     insets = { left = 10, right = 10, top = 10, bottom = 10 },
 })
+
+channelsFrame:Hide()  -- Masquer le cadre par défaut
 
 -- Ajouter un titre en haut du cadre
 local titleText = channelsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -595,9 +622,9 @@ AutoLFMMinimapBtn:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", -10, -10)  -- Ajuste
 -- Texture de bordure (au-dessus du bouton)
 local borderTexture = AutoLFMMinimapBtn:CreateTexture(nil, "BORDER")
 borderTexture:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-borderTexture:SetHeight(64)
-borderTexture:SetWidth(64)
-borderTexture:SetPoint("TOPLEFT", -5, 5)
+borderTexture:SetHeight(60)
+borderTexture:SetWidth(60)
+borderTexture:SetPoint("TOPLEFT", -3, 3)
 
 -- Icône de l'addon (en dessous de la bordure)
 AutoLFMMinimapBtn:SetNormalTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png")  -- Icône de l'addon
@@ -975,12 +1002,12 @@ slider:SetValueStep(10)
 --------------------------- SLIDER DE TAILLE ---------------------------
 
 -- Créer un cadre pour le slider
-local sliderSizeFrame = CreateFrame("Frame", nil, AutoLFM)
+local sliderSizeFrame = CreateFrame("Frame", nil, msgFrame)
 sliderSizeFrame:SetBackdropColor(1, 1, 1, 0.3)
 sliderSizeFrame:SetBackdropBorderColor(1, 1, 1, 1)
 sliderSizeFrame:SetWidth(220)  -- Largeur du slider
 sliderSizeFrame:SetHeight(100)  -- Hauteur du cadre (augmentée pour laisser de la place au texte supplémentaire)
-sliderSizeFrame:SetPoint("TOP", AutoLFM, "BOTTOM", 0, 0)  -- Positionner le cadre en bas au centre du panneau principal
+sliderSizeFrame:SetPoint("CENTER", msgFrame, "CENTER", 260, 5)  -- Positionner le cadre en bas au centre du panneau principal
 
 sliderSizeFrame:SetBackdrop{
     bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -2072,6 +2099,7 @@ local function toggleMinimapButtonIcon()
     end
 end
 
+
 -- Fonction pour arrêter la diffusion du message
 local function stopMessageBroadcast()
     isBroadcasting = false
@@ -2120,9 +2148,9 @@ local function sendMessageToSelectedChannels(message)
                 else
                     -- Pour les autres canaux, envoyer le message normalement
                     local channelId = GetChannelName(channelName)
-                    SendChatMessage(message, "CHANNEL", nil, channelId)
+                    -- SendChatMessage(message, "CHANNEL", nil, channelId)
                     -- Affiche dans le chat du jeu le message envoyé (facultatif)
-                    -- DEFAULT_CHAT_FRAME:AddMessage("Message envoyé au canal : " .. channelName)
+                    DEFAULT_CHAT_FRAME:AddMessage("Message envoyé au canal : " .. channelName)
                 end
             end
         else
@@ -2164,6 +2192,7 @@ local function startMessageBroadcast()
         else
             -- Si la diffusion est arrêtée, arrêter de changer l'icône
             iconUpdateFrame:SetScript("OnUpdate", nil)
+
         end
     end)
 end
@@ -2281,9 +2310,11 @@ end)
 
 -- Définir les slash commandes
 SLASH_LFM1 = "/lfm"
+SLASH_LFM2 = "/lfm broadcast"
 SLASH_LFM3 = "/lfm help"
 SLASH_LFM5 = "/lfm minimap show"
 SLASH_LFM6 = "/lfm minimap hide"
+
 
 -- Fonction principale des commandes Slash
 SlashCmdList["LFM"] = function(msg)
@@ -2295,6 +2326,7 @@ SlashCmdList["LFM"] = function(msg)
         -- Afficher les commandes disponibles dans le chat avec des couleurs
         DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Available commands :")
         DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm  |cffFFFFFFOpens AutoLFM window.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm broadcast   |cffFFFFFFOpen Broadcast settings.")  -- Bleu clair pour la commande et blanc pour l'explication
         DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm help   |cffFFFFFFDisplays all available orders.")  -- Bleu clair pour la commande et blanc pour l'explication
         DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm minimap show   |cffFFFFFFDisplays the minimap button.")
         DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm minimap hide   |cffFFFFFFHide minimap button.")
@@ -2333,6 +2365,19 @@ SlashCmdList["LFM"] = function(msg)
         DEFAULT_CHAT_FRAME:AddMessage("The minimap button is already hidden.", 1.0, 0.0, 0.0)  -- Texte rouge
       end
       return
+    end
+
+    if args[1] == "broadcast" then
+        if channelsFrame:IsVisible() then
+            channelsFrame:Hide()  -- Cacher le cadre des canaux
+            DEFAULT_CHAT_FRAME:AddMessage("Channels frame hidden.")  -- Message de confirmation
+        else
+            CreateChannelButtons()
+            LoadSelectedChannels()
+            channelsFrame:Show()  -- Afficher le cadre des canaux
+            DEFAULT_CHAT_FRAME:AddMessage("Channels frame displayed.")  -- Message de confirmation
+        end
+        return
     end
 
     -- Si la commande est incorrecte

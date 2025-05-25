@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.4.4
+Add channel frame display logic and enhance slash command functionality
+
 Version: 1.4.3
 Refactor dungeon and raid definitions; add slider for raid size selection
 
