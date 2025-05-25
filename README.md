@@ -29,7 +29,7 @@ https://github.com/FSuhas/AutoLFM
 Les commandes Slash permettent d'interagir facilement avec l'addon via la fenêtre de discussion. Voici les principales commandes disponibles :
 
 - `/lfm` : Ouvre la fenêtre de l'addon **AutoLFM**.
-- `/lfm` : Ouvre la selection des channels.
+- `/lfm broadcast` : Ouvre la selection des channels.
 - `/lfm help` : Affiche la liste de toutes les commandes disponibles avec une brève description de chacune.
 - `/lfm minimap show` : Affiche le bouton de la mini-carte pour un accès rapide à l'addon.
 - `/lfm minimap hide` : Masque le bouton de la mini-carte si vous ne souhaitez pas qu'il soit visible.
