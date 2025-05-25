@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+version: 1.4.6
+Update channel selection logic and increment version to 1.4.6
+
 Version: 1.4.5
 Update channel frame visibility logic and increment version to 1.4.5
 
