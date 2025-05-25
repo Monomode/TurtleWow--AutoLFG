@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.4.5
+Update channel frame visibility logic and increment version to 1.4.5
+
 Version: 1.4.4
 Add channel frame display logic and enhance slash command functionality
 

@@ -225,7 +225,6 @@ local function LoadSelectedChannels()
     if AutoLFM_SavedVariables[uniqueIdentifier] then
         selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
     else
-        channelsFrame:Show()  -- Afficher le cadre des canaux si aucune donnée n'est sauvegardée
         selectedChannels = {}  -- Si aucune donnée sauvegardée, initialiser la table vide
     end
 end
@@ -674,7 +673,11 @@ AutoLFMMinimapBtn:SetScript("OnClick", function()
         AutoLFM:Show()
         findChannels()
         CreateChannelButtons()
-        LoadSelectedChannels()
+        if tableContains(selectedChannels) == nil then
+            channelsFrame:Show()  -- Afficher le cadre des canaux
+        else
+            channelsFrame:Hide()  -- Masquer le cadre des canaux si aucun canal n'est sélectionné
+        end
     end
 end)
 
