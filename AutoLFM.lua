@@ -677,7 +677,6 @@ AutoLFMMinimapBtn:SetScript("OnClick", function()
         if next(selectedChannels) == nil then
             channelsFrame:Show()  -- Afficher le cadre des canaux
         else
-            LoadSelectedChannels()
             channelsFrame:Hide()  -- Masquer le cadre des canaux si aucun canal n'est sélectionné
         end
     end
