@@ -660,7 +660,6 @@ end)
 
 -- Clic gauche pour ouvrir/fermer l'interface
 AutoLFMMinimapBtn:SetScript("OnClick", function()
-    selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
     -- Vérifier si la touche Ctrl est enfoncée
     if IsControlKeyDown() then
         return
@@ -669,14 +668,15 @@ AutoLFMMinimapBtn:SetScript("OnClick", function()
     -- Si Ctrl n'est pas enfoncé, gérer l'ouverture/fermeture de l'interface
     if AutoLFM:IsShown() then
         AutoLFM:Hide()
-        
     else
         AutoLFM:Show()
         findChannels()
         CreateChannelButtons()
+        -- Vérifier si des canaux sont sélectionnés
         if next(selectedChannels) == nil then
             channelsFrame:Show()  -- Afficher le cadre des canaux
         else
+            LoadSelectedChannels()
             channelsFrame:Hide()  -- Masquer le cadre des canaux si aucun canal n'est sélectionné
         end
     end
