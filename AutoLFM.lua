@@ -2148,9 +2148,9 @@ local function sendMessageToSelectedChannels(message)
                 else
                     -- Pour les autres canaux, envoyer le message normalement
                     local channelId = GetChannelName(channelName)
-                    -- SendChatMessage(message, "CHANNEL", nil, channelId)
-                    -- Affiche dans le chat du jeu le message envoyé (facultatif)
-                    DEFAULT_CHAT_FRAME:AddMessage("Message envoyé au canal : " .. channelName)
+                    SendChatMessage(message, "CHANNEL", nil, channelId)
+                    -- Affiche dans le chat du jeu le message envoyé (dev mode)
+                    -- DEFAULT_CHAT_FRAME:AddMessage("Message envoyé au canal : " .. channelName)
                 end
             end
         else
