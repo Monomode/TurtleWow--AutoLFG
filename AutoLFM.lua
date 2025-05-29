@@ -1886,6 +1886,20 @@ raidCheckButtons = {}
 --                       CRÉATION DES CASES À COCHER                           --
 ---------------------------------------------------------------------------------
 
+local function CheckRaidStatus()
+    if UnitInRaid("player") then
+        return true
+    else
+        return false
+    end
+end
+
+-- Utilisation avec un frame événement
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("GROUP_ROSTER_UPDATE")
+frame:SetScript("OnEvent", function()
+    CheckRaidStatus()
+end)
 
 -- Fonction pour créer et gérer les cases à cocher des raids
 for index, raid in pairs(raids) do
@@ -1968,46 +1982,6 @@ for index, raid in pairs(raids) do
       clickableFrame:SetBackdrop(nil)  -- Réinitialiser l'arrière-plan
   end)
 end
-
-
---------------------------- FONCTIONS DE MISE À JOUR ---------------------------
-
-
--- -- Fonction pour mettre à jour le slider en fonction du raid sélectionné
--- function updateSliderForSelectedRaid(raid, sizeMin, sizeMax)
---   sliderSizeFrame:Show()
---   sliderSize:Show()
-
---   sizeMin = sizeMin
---   sizeMax = sizeMax
-
---   -- Vérification si `raid` est défini
---   if raid and sizeMin and sizeMax then
---     local sizeMidle = (sizeMax / 2)
---       -- Debug : afficher les valeurs min et max dans le chat
---       DEFAULT_CHAT_FRAME:AddMessage("Raid = " .. name .. " | Size : " .. sizeMin .. " & " .. sizeMax .. " | middle at : " .. sizeMidle .. "")
-
-
---       -- Mettre à jour les valeurs min et max du slider
---       sliderSize:SetMinMaxValues(sizeMin, sizeMax)
---       sliderSize:SetValue(sizeMidle)  -- Valeur initiale au milieu de size_min et size_max
-
---       -- Mettre à jour le texte du slider
---       sliderValueText:SetText(string.format("Min: %d / Max: %d", sizeMin, sizeMax))
---   else
---       DEFAULT_CHAT_FRAME:AddMessage("Erreur : Raid invalide.")
---   end
--- end
-
--- -- Assurez-vous que `selectedRaid` est initialisé avec une valeur valide
--- if not selectedRaid then
---   selectedRaid = raids[1]  -- Utiliser le premier raid si aucun raid n'est sélectionné
--- end
-
--- updateSliderForSelectedRaid(selectedRaid)
-
--- -- Afficher le slider
--- sliderSizeFrame:Hide()
 
 
 ---------------------------------------------------------------------------------
@@ -2295,6 +2269,10 @@ toggleButton:SetScript("OnClick", function()
             toggleButton:SetText("Start")  -- Réinitialiser le texte à "Start" si on arrête
             PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")
         else
+            if not CheckRaidStatus() then
+                DEFAULT_CHAT_FRAME:AddMessage("You are not in a raid group. Please join a raid before starting the broadcast.")
+                return  -- Ne pas démarrer la diffusion si le joueur n'est pas dans un raid
+            end
             -- Démarrer la diffusion si elle n'est pas encore en cours
             startMessageBroadcast()
             toggleButton:SetText("Stop")  -- Changer le texte à "Stop" lorsqu'on commence

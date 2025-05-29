@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.4.8
+Add raid status check and update version to 1.4.8
+
 Version: 1.4.7
 Refactor code structure for improved readability and maintainability
 
