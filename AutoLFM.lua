@@ -1254,7 +1254,7 @@ local function updateMsgFrameCombined()
         -- Utiliser la taille des donjons comme d'habitude
         mate = totalGroupSize - totalPlayersInGroup
         if mate < 0 then
-            mate = 0
+            mate = ""
         end
     end
 
@@ -2314,8 +2314,8 @@ end)
 
 -- Définir les slash commandes
 SLASH_LFM1 = "/lfm"
-SLASH_LFM2 = "/lfm broadcast"
 SLASH_LFM3 = "/lfm help"
+SLASH_LFM2 = "/lfm broadcast"
 SLASH_LFM5 = "/lfm minimap show"
 SLASH_LFM6 = "/lfm minimap hide"
 
@@ -2330,8 +2330,8 @@ SlashCmdList["LFM"] = function(msg)
         -- Afficher les commandes disponibles dans le chat avec des couleurs
         DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Available commands :")
         DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm  |cffFFFFFFOpens AutoLFM window.")
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm broadcast   |cffFFFFFFOpen Broadcast settings.")  -- Bleu clair pour la commande et blanc pour l'explication
         DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm help   |cffFFFFFFDisplays all available orders.")  -- Bleu clair pour la commande et blanc pour l'explication
+        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm broadcast   |cffFFFFFFOpen Broadcast settings.")  -- Bleu clair pour la commande et blanc pour l'explication
         DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm minimap show   |cffFFFFFFDisplays the minimap button.")
         DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm minimap hide   |cffFFFFFFHide minimap button.")
         return
