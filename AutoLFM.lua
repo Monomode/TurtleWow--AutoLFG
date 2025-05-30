@@ -323,6 +323,21 @@ function tableContains(table, value)
   return false
 end
 
+local function CheckRaidStatus()
+    if UnitInRaid("player") then
+        return true
+    else
+        return false
+    end
+end
+
+-- Utilisation avec un frame événement
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("GROUP_ROSTER_UPDATE")
+frame:SetScript("OnEvent", function()
+    CheckRaidStatus()
+end)
+
 
 ---------------------------------------------------------------------------------
 --                       Cadre Principal AutoLFM                               --
@@ -1886,20 +1901,6 @@ raidCheckButtons = {}
 --                       CRÉATION DES CASES À COCHER                           --
 ---------------------------------------------------------------------------------
 
-local function CheckRaidStatus()
-    if UnitInRaid("player") then
-        return true
-    else
-        return false
-    end
-end
-
--- Utilisation avec un frame événement
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("GROUP_ROSTER_UPDATE")
-frame:SetScript("OnEvent", function()
-    CheckRaidStatus()
-end)
 
 -- Fonction pour créer et gérer les cases à cocher des raids
 for index, raid in pairs(raids) do
@@ -2269,10 +2270,19 @@ toggleButton:SetScript("OnClick", function()
             toggleButton:SetText("Start")  -- Réinitialiser le texte à "Start" si on arrête
             PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")
         else
-            if not CheckRaidStatus() then
+            -- Vérifier si la diffusion nécessite d'être en raid
+            local requiresRaid = true
+
+            -- Si le canal "Hardcore" est sélectionné, on n'exige pas d'être en raid
+            if selectedChannels["Hardcore"] then
+                requiresRaid = false
+            end
+
+            if requiresRaid and not CheckRaidStatus() then
                 DEFAULT_CHAT_FRAME:AddMessage("You are not in a raid group. Please join a raid before starting the broadcast.")
                 return  -- Ne pas démarrer la diffusion si le joueur n'est pas dans un raid
             end
+
             -- Démarrer la diffusion si elle n'est pas encore en cours
             startMessageBroadcast()
             toggleButton:SetText("Stop")  -- Changer le texte à "Stop" lorsqu'on commence
@@ -2282,6 +2292,7 @@ toggleButton:SetScript("OnClick", function()
         DEFAULT_CHAT_FRAME:AddMessage("2112 : Broadcast has not started because one or more channels are invalid.")
     end
 end)
+
 
 
 
