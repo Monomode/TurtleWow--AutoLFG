@@ -2270,23 +2270,16 @@ toggleButton:SetScript("OnClick", function()
             toggleButton:SetText("Start")  -- Réinitialiser le texte à "Start" si on arrête
             PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")
         else
-            -- Vérifier si la diffusion nécessite d'être en raid
-            local requiresRaid = true
-
-            -- Si le canal "Hardcore" est sélectionné, on n'exige pas d'être en raid
-            if selectedChannels["Hardcore"] then
-                requiresRaid = false
-            end
-
-            if requiresRaid and not CheckRaidStatus() then
+            local raids = GetSelectedRaids()
+            if next(raids) ~= nil then
+                CheckRaidStatus()
                 DEFAULT_CHAT_FRAME:AddMessage("You are not in a raid group. Please join a raid before starting the broadcast.")
-                return  -- Ne pas démarrer la diffusion si le joueur n'est pas dans un raid
+                -- Si des raids sont sélectionnés, mettre à jour le message combiné avec les raids
+            else 
+                startMessageBroadcast()
+                toggleButton:SetText("Stop")  -- Changer le texte à "Stop" lorsqu'on commence
+                PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_RoleCheck.ogg")
             end
-
-            -- Démarrer la diffusion si elle n'est pas encore en cours
-            startMessageBroadcast()
-            toggleButton:SetText("Stop")  -- Changer le texte à "Stop" lorsqu'on commence
-            PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_RoleCheck.ogg")
         end
     else
         DEFAULT_CHAT_FRAME:AddMessage("2112 : Broadcast has not started because one or more channels are invalid.")
