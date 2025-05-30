@@ -2282,9 +2282,7 @@ AutoLFM:SetScript("OnEvent", function(self, event, ...)
     local donjon = selectedDungeons[1]  -- Récupérer le donjon sélectionné
     if raid ~= nil then
         raidSize = value
-        print("Selected raid size: " .. raidSize)  -- Afficher la taille du raid sélectionné
         local totalPlayersInRaid = countRaidMembers()  -- Récupérer le nombre total de membres du groupe
-        print("Total players in raid: " .. totalPlayersInRaid)  -- Afficher le nombre total de joueurs dans le raid
         if raidSize == totalPlayersInRaid then
             stopMessageBroadcast()  -- Si le groupe a atteint la taille du raid, arrêter la diffusion
             clearSelectedRaids() -- Effacer les donjons sélectionnés
