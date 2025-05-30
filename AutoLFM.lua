@@ -1317,25 +1317,11 @@ local function OnRaidRosterUpdate()
 end
 
 local function OnGroupUpdate()
-  countGroupMembers()
-  updateMsgFrameCombined()
+    countGroupMembers()
+    updateMsgFrameCombined()
 end
 
--- Ajouter un événement pour surveiller les changements dans le raid
-AutoLFM:RegisterEvent("RAID_ROSTER_UPDATE")
 
-AutoLFM:SetScript("OnEvent", function(self, event, ...)
-  if "RAID_ROSTER_UPDATE" then
-    OnRaidRosterUpdate()
-  end
-end)
-
-AutoLFM:SetScript("OnEvent", function(self, event, ...)
-  if "GROUP_ROSTER_UPDATE" then
-      -- Si le groupe a changé, on arrête la diffusion du message
-      OnGroupUpdate()
-  end
-end)
 
 -- Fonction pour réinitialiser le message saisi
 local function resetUserInputMessage()
@@ -2270,16 +2256,9 @@ toggleButton:SetScript("OnClick", function()
             toggleButton:SetText("Start")  -- Réinitialiser le texte à "Start" si on arrête
             PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")
         else
-            local raids = GetSelectedRaids()
-            if next(raids) ~= nil then
-                CheckRaidStatus()
-                DEFAULT_CHAT_FRAME:AddMessage("You are not in a raid group. Please join a raid before starting the broadcast.")
-                -- Si des raids sont sélectionnés, mettre à jour le message combiné avec les raids
-            else 
-                startMessageBroadcast()
-                toggleButton:SetText("Stop")  -- Changer le texte à "Stop" lorsqu'on commence
-                PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_RoleCheck.ogg")
-            end
+            startMessageBroadcast()
+            toggleButton:SetText("Stop")  -- Changer le texte à "Stop" lorsqu'on commence
+            PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_RoleCheck.ogg")
         end
     else
         DEFAULT_CHAT_FRAME:AddMessage("2112 : Broadcast has not started because one or more channels are invalid.")
@@ -2287,6 +2266,53 @@ toggleButton:SetScript("OnClick", function()
 end)
 
 
+-- Ajouter un événement pour surveiller les changements dans le raid
+AutoLFM:RegisterEvent("RAID_ROSTER_UPDATE")
+
+AutoLFM:SetScript("OnEvent", function(self, event, ...)
+  if "RAID_ROSTER_UPDATE" then
+    
+    OnRaidRosterUpdate()
+  end
+end)
+
+AutoLFM:SetScript("OnEvent", function(self, event, ...)
+  if "GROUP_ROSTER_UPDATE" then
+    local raid = selectedRaids[1]  -- Récupérer le raid sélectionné
+    local donjon = selectedDungeons[1]  -- Récupérer le donjon sélectionné
+    if raid ~= nil then
+        raidSize = value
+        print("Selected raid size: " .. raidSize)  -- Afficher la taille du raid sélectionné
+        local totalPlayersInRaid = countRaidMembers()  -- Récupérer le nombre total de membres du groupe
+        print("Total players in raid: " .. totalPlayersInRaid)  -- Afficher le nombre total de joueurs dans le raid
+        if raidSize == totalPlayersInRaid then
+            stopMessageBroadcast()  -- Si le groupe a atteint la taille du raid, arrêter la diffusion
+            clearSelectedRaids() -- Effacer les donjons sélectionnés
+            clearSelectedRoles()  -- Effacer les rôles sélectionnés
+            resetUserInputMessage()  -- Réinitialiser le message d'entrée utilisateur
+            updateMsgFrameCombined()  -- Mettre à jour le message combiné
+            toggleButton:SetText("Start")  -- Réinitialiser le texte du bouton à "Start"
+            PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")  -- Jouer le son d'arrêt
+        else
+            OnGroupUpdate()  -- Mettre à jour le groupe
+        end
+    elseif donjon ~= nil then
+        donjonSize = 5
+        local totalPlayersInRaid = countGroupMembers()  -- Récupérer le nombre total de membres du groupe
+        if donjonSize == totalPlayersInRaid then
+            stopMessageBroadcast()  -- Si le groupe a atteint la taille du donjon, arrêter la diffusion
+            clearSelectedDungeons()  -- Effacer les donjons sélectionnés
+            clearSelectedRoles()  -- Effacer les rôles sélectionnés
+            resetUserInputMessage()  -- Réinitialiser le message d'entrée utilisateur
+            updateMsgFrameCombined()  -- Mettre à jour le message combiné
+            toggleButton:SetText("Start")  -- Réinitialiser le texte du bouton à "Start"
+            PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")  -- Jouer le son d'arrêt
+        else
+            OnGroupUpdate()  -- Mettre à jour le groupe
+        end
+    end
+  end
+end)
 
 
 ---------------------------------------------------------------------------------

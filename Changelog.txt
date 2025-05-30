@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.5.2
+Refactor event handling for raid and group updates; increment version to 1.5.2
+
 Version: 1.5.1
 Add raid status check and increment version to 1.5.1
 
