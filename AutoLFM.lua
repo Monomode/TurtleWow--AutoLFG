@@ -984,6 +984,38 @@ editBox:SetBackdrop({
 })
 editBox:SetTextColor(1, 1, 1)  -- Couleur du texte blanc
 
+local function CreateQuestLink(questIndex)
+    local title, level, _, _, _, _, _, questID = GetQuestLogTitle(questIndex)
+    if not title or title == "" then return nil end
+    if not questID then
+        -- En 1.12, questID est souvent nil, mais on peut essayer d'extraire autrement (limité)
+        questID = 0
+    end
+    -- Construire le lien (format 1.12)
+    local color = "|cffffff00"  -- jaune, couleur des quêtes
+    local link = string.format("%s|Hquest:%d:%d|h[%s]|h|r", color, questID, level or 0, title)
+    return link
+end
+
+-- Sauvegarder la fonction d'origine
+local Original_QuestLogTitleButton_OnClick = QuestLogTitleButton_OnClick
+
+-- Surcharge de QuestLogTitleButton_OnClick
+function QuestLogTitleButton_OnClick(self, button)
+    Original_QuestLogTitleButton_OnClick(self, button)
+
+    if "LeftButton" and IsShiftKeyDown() then
+        local questIndex = this:GetID()
+        if questIndex then
+            local questLink = CreateQuestLink(questIndex)
+            if questLink then
+                editBox:SetText(questLink)
+                editBox:SetFocus()
+            end
+        end
+    end
+end
+
 
 ---------------------------------------------------------------------------------
 --                                 Slider                                      --
