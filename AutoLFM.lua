@@ -985,6 +985,9 @@ editBox:SetBackdrop({
 editBox:SetTextColor(1, 1, 1)  -- Couleur du texte blanc
 
 local function CreateQuestLink(questIndex)
+    if not AutoLFM or not AutoLFM:IsVisible() then
+        return -- autoLFM fermé, ne fait rien
+    end
     local title, level, _, _, _, _, _, questID = GetQuestLogTitle(questIndex)
     if not title or title == "" then return nil end
     if not questID then
@@ -1002,6 +1005,7 @@ local Original_QuestLogTitleButton_OnClick = QuestLogTitleButton_OnClick
 
 -- Surcharge de QuestLogTitleButton_OnClick
 function QuestLogTitleButton_OnClick(self, button)
+
     Original_QuestLogTitleButton_OnClick(self, button)
 
     if "LeftButton" and IsShiftKeyDown() then
@@ -1020,6 +1024,9 @@ end
 local Original_ContainerFrameItemButton_OnClick = ContainerFrameItemButton_OnClick
 
 function ContainerFrameItemButton_OnClick(self, button)
+    if not AutoLFM or not AutoLFM:IsVisible() then
+        return -- autoLFM fermé, ne fait rien
+    end
     -- Appeler la fonction originale (ouvrir tooltip, etc.)
     Original_ContainerFrameItemButton_OnClick(self, button)
 
@@ -1035,6 +1042,31 @@ function ContainerFrameItemButton_OnClick(self, button)
         end
     end
 end
+
+-- Sauvegarder la fonction d'origine
+local Original_SetItemRef = SetItemRef
+
+-- Nouvelle fonction pour intercepter les clics sur les liens
+function SetItemRef(link, text, button, chatFrame)
+    if not AutoLFM or not AutoLFM:IsVisible() then
+        return -- autoLFM fermé, ne fait rien
+    end
+
+    Original_SetItemRef(link, text, button, chatFrame)
+
+    -- Vérifier clic gauche + Shift + lien d'item
+    if "LeftButton" and IsShiftKeyDown() then
+        -- En 1.12, les liens d'item commencent souvent par "item:"
+        if link and string.find(link, "^item:") then
+            if editBox then
+                editBox:SetText(text)
+                editBox:SetFocus()
+            end
+        end
+    end
+end
+
+
 
 ---------------------------------------------------------------------------------
 --                                 Slider                                      --
