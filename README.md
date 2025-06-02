@@ -12,7 +12,7 @@ https://github.com/FSuhas/AutoLFM
 
 ![donjons scaling](donjons.PNG)
 
-![quest](quest.PNG)
+![quest](quesLink.PNG)
 
 ![raid selector](raid.PNG)
 
