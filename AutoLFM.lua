@@ -1016,6 +1016,25 @@ function QuestLogTitleButton_OnClick(self, button)
     end
 end
 
+-- On sauvegarde la fonction d'origine OnClick des boutons d'item du sac
+local Original_ContainerFrameItemButton_OnClick = ContainerFrameItemButton_OnClick
+
+function ContainerFrameItemButton_OnClick(self, button)
+    -- Appeler la fonction originale (ouvrir tooltip, etc.)
+    Original_ContainerFrameItemButton_OnClick(self, button)
+
+    if "LeftButton" and IsShiftKeyDown() then
+        local bag = this:GetParent():GetID()
+        local slot = this:GetID()
+        local itemLink = GetContainerItemLink(bag, slot)
+        if itemLink then
+            if editBox then
+                editBox:SetText(itemLink)
+                editBox:SetFocus()
+            end
+        end
+    end
+end
 
 ---------------------------------------------------------------------------------
 --                                 Slider                                      --

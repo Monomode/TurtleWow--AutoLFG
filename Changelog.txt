@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.5.4
+Add custom item button click behavior to copy item link to edit box
+
 Version: 1.5.3
 Add quest link creation and modify quest log button behavior
 
