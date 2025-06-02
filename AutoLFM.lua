@@ -1024,9 +1024,6 @@ end
 local Original_ContainerFrameItemButton_OnClick = ContainerFrameItemButton_OnClick
 
 function ContainerFrameItemButton_OnClick(self, button)
-    if not AutoLFM or not AutoLFM:IsVisible() then
-        return -- autoLFM fermé, ne fait rien
-    end
     -- Appeler la fonction originale (ouvrir tooltip, etc.)
     Original_ContainerFrameItemButton_OnClick(self, button)
 
@@ -1048,9 +1045,6 @@ local Original_SetItemRef = SetItemRef
 
 -- Nouvelle fonction pour intercepter les clics sur les liens
 function SetItemRef(link, text, button, chatFrame)
-    if not AutoLFM or not AutoLFM:IsVisible() then
-        return -- autoLFM fermé, ne fait rien
-    end
 
     Original_SetItemRef(link, text, button, chatFrame)
 
