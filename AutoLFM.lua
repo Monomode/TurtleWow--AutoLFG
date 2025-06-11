@@ -1243,7 +1243,6 @@ local function updateMsgFrameCombined()
         selectedCountRoles = selectedCountRoles + 1
     end
 
-    -- Construire la chaîne de rôles
     local rolesList = table.concat(selectedRoles, " & ")
     local finalRolesSegment = ""
     if selectedCountRoles == 3 then
@@ -1252,11 +1251,10 @@ local function updateMsgFrameCombined()
         finalRolesSegment = "Need " .. rolesList
     end
 
-    -- Gérer les raids sélectionnés
+    -- Gérer les raids
     local selectedRaids = GetSelectedRaids()
     local isRaidSelected = false
     local raidSize = 0
-    local raidCount = 0
 
     if table.getn(selectedRaids) > 0 then
         for _, raidAbrev in pairs(selectedRaids) do
@@ -1269,14 +1267,13 @@ local function updateMsgFrameCombined()
                     end
                     isRaidSelected = true
                     raidSize = sliderValue
-                    raidCount = raidCount + 1
                     break
                 end
             end
         end
     end
 
-    -- Gérer les donjons si aucun raid
+    -- Donjons si aucun raid sélectionné
     if not isRaidSelected then
         for _, donjonAbrev in pairs(selectedDungeons) do
             for _, donjon in pairs(donjons) do
@@ -1300,41 +1297,47 @@ local function updateMsgFrameCombined()
         end
     end
 
-    -- Aucun contenu, aucun rôle, aucun texte perso
-    if table.getn(selectedContent) == 0 and selectedCountRoles == 0 and userInputMessage == "" then
+    -- Aucun contenu, rôle, ou message
+    local contentCount = table.getn(selectedContent)
+    if contentCount == 0 and selectedCountRoles == 0 and userInputMessage == "" then
         combinedMessage = ""
         msgTextDj:SetText(combinedMessage)
         msgTextRaids:SetText(combinedMessage)
         return
     end
 
-    -- Calcul du "mate"
+    -- Calcul du manque (mate)
     local mate = 0
+    local raidPlayerCountText = ""
+    local currentCount = 0
+
     if isRaidSelected then
-        mate = raidSize - totalPlayersInRaid
-        if mate == -totalPlayersInGroup then mate = "" end
+        if totalPlayersInRaid > 0 then
+            currentCount = totalPlayersInRaid
+        else
+            currentCount = totalPlayersInGroup
+        end
+        mate = raidSize - currentCount
+        if mate < 0 then mate = 0 end
+        raidPlayerCountText = " " .. currentCount .. "/" .. raidSize
     else
         mate = totalGroupSize - totalPlayersInGroup
-        if mate < 0 then mate = "" end
+        if mate < 0 then mate = 0 end
     end
 
     -- Construction du message
     local contentMessage = table.concat(selectedContent, " & ")
-    local raidPlayerCountText = ""
-    if isRaidSelected then
-        raidPlayerCountText = " " .. totalPlayersInRaid .. "/" .. raidSize
-    end
 
-    if table.getn(selectedContent) == 0 and selectedCountRoles == 0 then
+    if contentCount == 0 and selectedCountRoles == 0 then
         combinedMessage = userInputMessage
 
-    elseif table.getn(selectedContent) == 0 and selectedCountRoles > 0 then
+    elseif contentCount == 0 and selectedCountRoles > 0 then
         combinedMessage = finalRolesSegment
         if userInputMessage ~= "" then
             combinedMessage = combinedMessage .. " " .. userInputMessage
         end
 
-    elseif table.getn(selectedContent) > 0 and selectedCountRoles == 0 then
+    elseif contentCount > 0 and selectedCountRoles == 0 then
         if isRaidSelected then
             combinedMessage = contentMessage .. " LF" .. mate .. "M" .. raidPlayerCountText
         else
@@ -1344,7 +1347,7 @@ local function updateMsgFrameCombined()
             combinedMessage = combinedMessage .. " " .. userInputMessage
         end
 
-    elseif table.getn(selectedContent) > 0 and selectedCountRoles > 0 then
+    elseif contentCount > 0 and selectedCountRoles > 0 then
         if isRaidSelected then
             combinedMessage = contentMessage .. " LF" .. mate .. "M " .. finalRolesSegment .. raidPlayerCountText
         else
@@ -1358,6 +1361,7 @@ local function updateMsgFrameCombined()
     msgTextDj:SetText(combinedMessage)
     msgTextRaids:SetText(combinedMessage)
 end
+
 
 
 -- Fonction pour gérer le changement de texte
