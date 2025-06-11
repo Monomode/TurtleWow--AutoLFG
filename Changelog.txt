@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.5.6
+Update version to 1.5.6 and refactor message construction in updateMsgFrameCombined function
+
 Version: 1.5.5
 Add visibility checks for AutoLFM in quest and item link functions
 

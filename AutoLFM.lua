@@ -1233,94 +1233,74 @@ end
 local function updateMsgFrameCombined()
     local totalPlayersInGroup = countGroupMembers()
     local totalPlayersInRaid = countRaidMembers()
-
     local totalGroupSize = 0
-    local textWidth = msgTextDj:GetStringWidth()  -- Largeur du texte
 
-    -- Segment des donjons ou raids sélectionnés
-    local contentMessage = ""
     local selectedContent = {}
-
-    -- Segment des rôles sélectionnés
     local selectedCountRoles = 0
 
-    -- Comptage des rôles sélectionnés
+    -- Compter les rôles sélectionnés
     for _, role in pairs(selectedRoles) do
         selectedCountRoles = selectedCountRoles + 1
     end
 
-    -- Segment des rôles
-    local rolesSegmentFix = "Need "
-    local rolesSegment = ""
-
+    -- Construire la chaîne de rôles
+    local rolesList = table.concat(selectedRoles, " & ")
+    local finalRolesSegment = ""
     if selectedCountRoles == 3 then
-        rolesSegment = "Need All"
+        finalRolesSegment = "Need All"
     elseif selectedCountRoles > 0 then
-        rolesSegment = rolesSegmentFix .. table.concat(selectedRoles, " & ")
+        finalRolesSegment = "Need " .. rolesList
     end
 
-    -- Si un raid est sélectionné, utiliser les raids
+    -- Gérer les raids sélectionnés
     local selectedRaids = GetSelectedRaids()
-
-    -- Flag pour déterminer si un raid est sélectionné
     local isRaidSelected = false
+    local raidSize = 0
+    local raidCount = 0
 
     if table.getn(selectedRaids) > 0 then
         for _, raidAbrev in pairs(selectedRaids) do
-            -- Rechercher le raid correspondant dans la table 'raids'
             for _, raid in pairs(raids) do
                 if raid.abrev == raidAbrev then
-                    local raidMessage = ""
-                    raidMessage = raid.abrev
-                    table.insert(selectedContent, raidMessage)
-                    -- Afficher le slider pour ce raid
+                    table.insert(selectedContent, raid.abrev)
                     ShowSliderForRaid(raid)
                     if raid.size_min == raid.size_max then
-                        sliderSizeFrame:Hide()  -- Masquer le slider si la taille est fixe
+                        sliderSizeFrame:Hide()
                     end
-                    isRaidSelected = true  -- Marquer que c'est un raid
+                    isRaidSelected = true
+                    raidSize = sliderValue
+                    raidCount = raidCount + 1
                     break
                 end
             end
         end
     end
 
-    -- Sinon, utiliser les donjons
+    -- Gérer les donjons si aucun raid
     if not isRaidSelected then
         for _, donjonAbrev in pairs(selectedDungeons) do
-            -- Rechercher le donjon correspondant dans la table 'donjons'
             for _, donjon in pairs(donjons) do
                 if donjon.abrev == donjonAbrev then
-                    -- Vérifier que 'donjon.size' n'est pas nil avant de l'utiliser
                     if donjon.size and totalPlayersInGroup then
                         totalGroupSize = donjon.size
-
-                        -- Calcul du nombre de joueurs manquants pour chaque donjon
                         local missingPlayers = totalGroupSize - totalPlayersInGroup
                         if missingPlayers < 0 then
                             missingPlayers = 0
                             stopMessageBroadcast()
                         end
-
-                        -- Générer le message pour ce donjon sous le format "LF M for Donjonselect"
-                        local donjonMessage = ""
                         if missingPlayers > 0 then
-                            donjonMessage = donjon.abrev
+                            table.insert(selectedContent, donjon.abrev)
                         end
-
-                        -- Ajouter le message pour ce donjon à la liste des contenus sélectionnés
-                        table.insert(selectedContent, donjonMessage)
                     else
-                        -- Si 'donjon.size' est nil ou 'totalPlayersInGroup' est nil, afficher un message d'erreur
-                        DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid dungeon size or number of players for " .. donjon.abrev .. " " .. donjon.size)
+                        DEFAULT_CHAT_FRAME:AddMessage("Erreur : Invalid dungeon size or number of players for " .. donjon.abrev)
                     end
-                    break  -- Stopper la recherche dès qu'on a trouvé le bon donjon
+                    break
                 end
             end
         end
     end
 
-    -- Si aucun contenu n'est sélectionné, ne rien afficher
+    -- Aucun contenu, aucun rôle, aucun texte perso
     if table.getn(selectedContent) == 0 and selectedCountRoles == 0 and userInputMessage == "" then
         combinedMessage = ""
         msgTextDj:SetText(combinedMessage)
@@ -1328,37 +1308,55 @@ local function updateMsgFrameCombined()
         return
     end
 
-    -- Créer un message combiné pour chaque donjon
-    if table.getn(selectedContent) > 0 then
-        contentMessage = table.concat(selectedContent, ", ")
-    end
-
-    -- Vérifier si un raid a été sélectionné et utiliser la taille du raid ou du donjon
+    -- Calcul du "mate"
     local mate = 0
     if isRaidSelected then
-        value = sliderValue
-        -- Utiliser la valeur du slider pour ajuster la taille du groupe (en raid)
-        mate = value - totalPlayersInRaid
-        if mate == -totalPlayersInGroup then
-            mate = ""
-        end
+        mate = raidSize - totalPlayersInRaid
+        if mate == -totalPlayersInGroup then mate = "" end
     else
-        -- Utiliser la taille des donjons comme d'habitude
         mate = totalGroupSize - totalPlayersInGroup
-        if mate < 0 then
-            mate = ""
+        if mate < 0 then mate = "" end
+    end
+
+    -- Construction du message
+    local contentMessage = table.concat(selectedContent, " & ")
+    local raidPlayerCountText = ""
+    if isRaidSelected then
+        raidPlayerCountText = " " .. totalPlayersInRaid .. "/" .. raidSize
+    end
+
+    if table.getn(selectedContent) == 0 and selectedCountRoles == 0 then
+        combinedMessage = userInputMessage
+
+    elseif table.getn(selectedContent) == 0 and selectedCountRoles > 0 then
+        combinedMessage = finalRolesSegment
+        if userInputMessage ~= "" then
+            combinedMessage = combinedMessage .. " " .. userInputMessage
+        end
+
+    elseif table.getn(selectedContent) > 0 and selectedCountRoles == 0 then
+        if isRaidSelected then
+            combinedMessage = contentMessage .. " LF" .. mate .. "M" .. raidPlayerCountText
+        else
+            combinedMessage = "LF" .. mate .. "M for " .. contentMessage
+        end
+        if userInputMessage ~= "" then
+            combinedMessage = combinedMessage .. " " .. userInputMessage
+        end
+
+    elseif table.getn(selectedContent) > 0 and selectedCountRoles > 0 then
+        if isRaidSelected then
+            combinedMessage = contentMessage .. " LF" .. mate .. "M " .. finalRolesSegment .. raidPlayerCountText
+        else
+            combinedMessage = "LF" .. mate .. "M for " .. contentMessage .. " " .. finalRolesSegment
+        end
+        if userInputMessage ~= "" then
+            combinedMessage = combinedMessage .. " " .. userInputMessage
         end
     end
 
-    -- Générer le message pour les donjons ou raids
-    if userInputMessage ~= "" then
-        msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-        msgTextRaids:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-    else
-        msgTextDj:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-        msgTextRaids:SetText("LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " ")
-    end
-    combinedMessage = "LF" .. mate .. "M " .. contentMessage .. " " .. rolesSegment .. " " .. userInputMessage .. " "
+    msgTextDj:SetText(combinedMessage)
+    msgTextRaids:SetText(combinedMessage)
 end
 
 
