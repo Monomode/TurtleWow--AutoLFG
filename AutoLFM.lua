@@ -273,6 +273,7 @@ local function OnPlayerEnteringWorld(self, event)
   findChannels()
   LoadSelectedChannels()
   msglog:UnregisterEvent("PLAYER_ENTERING_WORLD")
+--   AutoLFM:Show()  -- Afficher le cadre AutoLFM après le chargement
 end
 
 msglog:SetScript("OnEvent", OnPlayerEnteringWorld)
@@ -344,62 +345,176 @@ end)
 ---------------------------------------------------------------------------------
 
 
--- Création du cadre
 local AutoLFM = CreateFrame("Frame", "AutoLFM", UIParent)
-AutoLFM:SetWidth(600)
-AutoLFM:SetHeight(400)
-AutoLFM:SetPoint("CENTER", UIParent, "CENTER")
-AutoLFM:SetMovable(true)
+AutoLFM:SetWidth(384)
+AutoLFM:SetHeight(512)
+AutoLFM:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 AutoLFM:EnableMouse(true)
+AutoLFM:SetMovable(true)
 AutoLFM:RegisterForDrag("LeftButton")
+AutoLFM:SetScript("OnDragStart", function(self) this:StartMoving() end)
+AutoLFM:SetScript("OnDragStop", function(self) this:StopMovingOrSizing() end)
 
--- Ajouter le fond
-AutoLFM:SetBackdrop({
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-    tile = true, tileSize = 32, edgeSize = 32,
-    insets = { left = 10, right = 10, top = 10, bottom = 10 },
+-- Background Textures (gauche)
+local tl = AutoLFM:CreateTexture(nil, "ARTWORK")
+tl:SetTexture("Interface\\Spellbook\\UI-SpellbookPanel-TopLeft")
+tl:SetWidth(256)
+tl:SetHeight(256)
+tl:SetPoint("TOPLEFT", 0, 0)
+
+local tr = AutoLFM:CreateTexture(nil, "ARTWORK")
+tr:SetTexture("Interface\\Spellbook\\UI-SpellbookPanel-TopRight")
+tr:SetWidth(128)
+tr:SetHeight(256)
+tr:SetPoint("TOPRIGHT", 0, 0)
+
+local bl = AutoLFM:CreateTexture(nil, "ARTWORK")
+bl:SetTexture("Interface\\Spellbook\\UI-SpellbookPanel-BotLeft")
+bl:SetWidth(256)
+bl:SetHeight(256)
+bl:SetPoint("BOTTOMLEFT", 0, 0)
+
+local br = AutoLFM:CreateTexture(nil, "ARTWORK")
+br:SetTexture("Interface\\Spellbook\\UI-SpellbookPanel-BotRight")
+br:SetWidth(128)
+br:SetHeight(256)
+br:SetPoint("BOTTOMRIGHT", 0, 0)
+
+-- Icon (Overlay)
+local ring = AutoLFM:CreateTexture("AutoLFMSpellbookRing", "OVERLAY")
+ring:SetTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png")
+ring:SetWidth(52)
+ring:SetHeight(52)
+ring:SetPoint("TOPLEFT", 13, -11)
+ring:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+
+-- Right Panel
+local rightPanel = CreateFrame("Frame", "AutoLFM_RightPanel", AutoLFM)
+rightPanel:SetWidth(384)
+rightPanel:SetHeight(512)
+rightPanel:SetPoint("TOPLEFT", AutoLFM, "TOPRIGHT", -46, 0)
+rightPanel:Hide() -- Hide the right panel by default
+
+local rt_tl = rightPanel:CreateTexture(nil, "ARTWORK")
+rt_tl:SetTexture("Interface\\Spellbook\\UI-SpellbookPanel-BotLeft")
+rt_tl:SetWidth(256)
+rt_tl:SetHeight(256)
+rt_tl:SetPoint("TOPLEFT", rightPanel, "TOPLEFT")
+rt_tl:SetTexCoord(0, 1, 1, 0)
+
+local rt_tr = rightPanel:CreateTexture(nil, "ARTWORK")
+rt_tr:SetTexture("Interface\\Spellbook\\UI-SpellbookPanel-BotRight")
+rt_tr:SetWidth(128)
+rt_tr:SetHeight(256)
+rt_tr:SetPoint("TOPRIGHT", rightPanel, "TOPRIGHT")
+rt_tr:SetTexCoord(0, 1, 1, 0)
+
+local rt_bl = rightPanel:CreateTexture(nil, "ARTWORK")
+rt_bl:SetTexture("Interface\\Spellbook\\UI-SpellbookPanel-BotLeft")
+rt_bl:SetWidth(256)
+rt_bl:SetHeight(256)
+rt_bl:SetPoint("BOTTOMLEFT", rightPanel, "BOTTOMLEFT")
+
+local rt_br = rightPanel:CreateTexture(nil, "ARTWORK")
+rt_br:SetTexture("Interface\\Spellbook\\UI-SpellbookPanel-BotRight")
+rt_br:SetWidth(128)
+rt_br:SetHeight(256)
+rt_br:SetPoint("BOTTOMRIGHT", rightPanel, "BOTTOMRIGHT")
+
+
+local openTexture = "Interface\\AddOns\\AutoLFM\\icon\\ring.png"
+local closedTexture = "Interface\\AddOns\\AutoLFM\\icon\\fermer.png"
+
+local eyeOpen = true
+local eye = AutoLFM:CreateTexture(nil, "OVERLAY")
+eye:SetWidth(52)
+eye:SetHeight(52)
+eye:SetPoint("TOPLEFT", 13, -11)
+eye:SetTexture(openTexture)
+
+local nextChange = 0
+
+local function OnUpdateHandler(self, elapsed)
+    local now = GetTime()
+    if now >= nextChange then
+        eyeOpen = not eyeOpen
+        eye:SetTexture(eyeOpen and openTexture or closedTexture)
+        if eyeOpen then
+            nextChange = now + math.random(1, 3)
+        else
+            nextChange = now + 0.15
+        end
+    end
+end
+
+AutoLFM:SetScript("OnShow", function(self)
+    nextChange = GetTime() + math.random(1, 3) -- init timer
+    this:SetScript("OnUpdate", OnUpdateHandler)
+end)
+
+AutoLFM:SetScript("OnHide", function(self)
+    this:SetScript("OnUpdate", nil) -- stop OnUpdate quand caché
+end)
+
+-- Close Button
+local closeBtn = CreateFrame("Button", "AutoLFMCloseButton", AutoLFM, "UIPanelCloseButton")
+closeBtn:SetWidth(32)
+closeBtn:SetHeight(32)
+closeBtn:SetPoint("TOPRIGHT", -28, -9)
+
+local showArrowBtn  -- déclaration en haut pour pouvoir l'utiliser dans le closure
+local closeArrowTex
+
+-- Bouton flèche pour fermer rightPanel (flèche vers la gauche)
+local closeBtn = CreateFrame("Button", "AutoLFMCloseButton", rightPanel)
+closeBtn:SetWidth(24)
+closeBtn:SetHeight(64)
+closeBtn:SetPoint("TOPRIGHT", rightPanel, "TOPRIGHT", 0, -220)
+
+local closeArrowTex = closeBtn:CreateTexture(nil, "OVERLAY")
+closeArrowTex:SetAllPoints()
+closeArrowTex:SetTexture("Interface\\Buttons\\UI-SpellbookIcon-PrevPage-Up") -- flèche vers la gauche
+-- Maintenant création du bouton flèche
+showArrowBtn = CreateFrame("Button", nil, AutoLFM)
+showArrowBtn:SetWidth(24)
+showArrowBtn:SetHeight(64)
+showArrowBtn:SetPoint("RIGHT", AutoLFM, "RIGHT", -1, 0)
+showArrowBtn:Show()
+
+-- Créer cadre roleframe dans la frame de droite
+local roleframe = CreateFrame("Frame", nil, AutoLFM_RightPanel)
+roleframe:SetBackdrop({
+    bgFile = nil,
+    -- edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  -- Bordure visible (optionnelle)
+    edgeSize = 16,
+    insets = { left = 4, right = 2, top = 4, bottom = 4 },
 })
+roleframe:SetBackdropColor(1, 1, 1, 0.3)
+roleframe:SetBackdropBorderColor(1, 1, 1, 1)
 
--- Créer un titre du cadre
-local title = CreateFrame("Frame", nil, AutoLFM)
-title:SetPoint("BOTTOM", AutoLFM, "TOP", 0, -8)
-title:SetWidth(200)
-title:SetHeight(50)
-title:SetMovable(true)
-title:EnableMouse(true)
-title:RegisterForDrag("LeftButton")
+-- Positionner le roleframe
+roleframe:SetWidth(AutoLFM_RightPanel:GetWidth()- 60)
+roleframe:SetHeight(AutoLFM_RightPanel:GetHeight() / 6)
+roleframe:SetPoint("TOPLEFT", AutoLFM_RightPanel, "TOPLEFT", 20, -100)
 
-title:SetBackdrop({
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-    tile = true, tileSize = 32, edgeSize = 32,
-    insets = { left = 10, right = 10, top = 10, bottom = 10 },
-})
+local msgFrame = CreateFrame("Frame", nil, AutoLFM)
 
----------------------------------------------------------------------------------
---                        Icone en haut à gauche                              --
----------------------------------------------------------------------------------
+-- Positionner le cadre msgFrame juste en dessous de roleframe
+msgFrame:SetWidth(roleframe:GetWidth())
+msgFrame:SetHeight(roleframe:GetHeight() + 20)
+msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -5)
 
--- Frame pour l'icône en haut à gauche
-local iconFrame = CreateFrame("Frame", nil, AutoLFM)
-iconFrame:SetHeight(50)
-iconFrame:SetWidth(50)
-iconFrame:SetPoint("TOPLEFT", AutoLFM, "TOPLEFT", -15, 15) 
+-- Créer un bouton Toggle en dessous de msgFrame, centré par rapport à AutoLFM
+local toggleButton = CreateFrame("Button", "ToggleButton", msgFrame, "UIPanelButtonTemplate")
+toggleButton:SetWidth(120)
+toggleButton:SetHeight(30)
 
--- Texture ronde (cercle)
-local border = iconFrame:CreateTexture(nil, "BORDER")
-border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-border:SetHeight(100)
-border:SetWidth(100)
-border:SetPoint("TOPLEFT", -5, 4)
+-- Positionner le bouton en bas centré, sous roleframe et msgFrame par rapport à AutoLFM
+toggleButton:SetPoint("CENTER", msgFrame, "CENTER", 0, -10)  -- Placer 10 pixels sous msgFrame
+toggleButton:SetPoint("BOTTOM", AutoLFM, 0, 40)
 
--- Icône centrale
-local iconTexture = iconFrame:CreateTexture(nil, "ARTWORK")
-iconTexture:SetTexture("Interface\\AddOns\\AutoLFM\\icon\\ring.png") 
-iconTexture:SetHeight(50)
-iconTexture:SetWidth(50)
-iconTexture:SetPoint("CENTER", iconFrame, "CENTER", 0, 0)
+toggleButton:SetText("Start")
+
 
 ---------------------------------------------------------------------------------
 --                           Select Channel                                    --
@@ -410,15 +525,15 @@ iconTexture:SetPoint("CENTER", iconFrame, "CENTER", 0, 0)
 local channelsFrame = CreateFrame("Frame", nil, AutoLFM)
 channelsFrame:SetWidth(180)
 channelsFrame:SetHeight(150)
-channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 180, 0)
-
+channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 160, 70)
 -- Ajouter un fond pour le cadre des canaux
-channelsFrame:SetBackdrop({
+channelsFrame:SetBackdrop{
     bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
     edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-    tile = true, tileSize = 32, edgeSize = 32,
-    insets = { left = 10, right = 10, top = 10, bottom = 10 },
-})
+    edgeSize = 12,
+    insets = { left = 5, right = 5, top = 5, bottom = 5 },
+}
+
 
 channelsFrame:Hide()  -- Masquer le cadre par défaut
 
@@ -428,8 +543,6 @@ titleText:SetPoint("TOP", channelsFrame, "TOP", 0, -10)
 titleText:SetText("Select Channel Broadcast")
 titleText:SetTextColor(1, 1, 0)  -- Couleur dorée pour le titre
 titleText:SetJustifyH("CENTER")
-
-
 
 
 -- Créer un cadre interne pour contenir les boutons et les organiser
@@ -477,7 +590,15 @@ buttonFrame:SetHeight(channelsFrame:GetHeight() - 50)  -- Réduit la hauteur pou
 ---------------------------------------------------------------------------------
 
 
+-- Titre : Conteneur invisible pour positionner les segments
+local title = CreateFrame("Frame", nil, AutoLFM)
+title:SetWidth(384)
+title:SetHeight(40)
+title:SetPoint("TOP", AutoLFM, "TOP", 0, 20)  -- Décale légèrement au-dessus du cadre principal
+
+-- Segments de texte
 local titleSegments = {}
+
 local part1 = title:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 part1:SetText("|cff0070DDL|r")
 part1:SetFont("Fonts\\SKURRI.TTF", 24, "OUTLINE")
@@ -487,73 +608,26 @@ local part2 = title:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 part2:SetText("F")
 part2:SetFont("Fonts\\SKURRI.TTF", 24, "OUTLINE")
 part2:SetTextColor(1, 1, 1)
-part2:SetPoint("LEFT", part1, "RIGHT", 5, 0)
 table.insert(titleSegments, part2)
 
 local part3 = title:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 part3:SetText("|cffff0000M|r")
 part3:SetFont("Fonts\\SKURRI.TTF", 24, "OUTLINE")
-part3:SetPoint("LEFT", part2, "RIGHT", 5, 0)
 table.insert(titleSegments, part3)
 
--- Calculer la largeur totale du texte
+-- Positionnement centré horizontal
 local totalWidth = 0
 for _, segment in ipairs(titleSegments) do
-    totalWidth = totalWidth + segment:GetStringWidth()
+    segment:Show()
+    totalWidth = totalWidth + segment:GetStringWidth() + 5
 end
 
 local currentX = -totalWidth / 2
 for _, segment in ipairs(titleSegments) do
+    segment:ClearAllPoints()
     segment:SetPoint("CENTER", title, "CENTER", currentX, 0)
-    currentX = currentX + segment:GetStringWidth()
+    currentX = currentX + segment:GetStringWidth() + 5
 end
-
-
----------------------------------------------------------------------------------
---                                 Bouton X                                    --
----------------------------------------------------------------------------------
-
-
--- --- Création du bouton rond "X" en haut à droite de la frame principale ---
-local closeButton = CreateFrame("Button", nil, AutoLFM)
-closeButton:SetWidth(30)
-closeButton:SetHeight(30)
-closeButton:SetPoint("TOPRIGHT", AutoLFM, "TOPRIGHT", 8, 8)
-
--- Appliquer une forme ronde au bouton avec une bordure
-closeButton:SetBackdrop({
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-    edgeSize = 16,
-    insets = { left = 4, right = 4, top = 4, bottom = 4 }
-})
-
--- Ajouter un texte (un "X") à l'intérieur du bouton
-local closeIcon = closeButton:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-closeIcon:SetText("X")
-closeIcon:SetPoint("CENTER", closeButton, "CENTER", 0, 0)
-closeIcon:SetTextColor(1, 1, 1)
-
--- Ajouter un script pour masquer la frame quand le bouton est cliqué
-closeButton:SetScript("OnClick", function()
-    AutoLFM:Hide()
-end)
-
--- Option pour ajouter un effet de survol :
-closeButton:SetScript("OnEnter", function(self)
-    this:SetBackdropBorderColor(1, 0, 0, 1)
-    closeIcon:SetTextColor(1, 0, 0)
-end)
-
-closeButton:SetScript("OnLeave", function(self)
-  this:SetBackdrop({
-    bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-    edgeSize = 16,
-    insets = { left = 4, right = 4, top = 4, bottom = 4 }
-  })
-  closeIcon:SetTextColor(1, 1, 1)
-end)
 
 
 ---------------------------------------------------------------------------------
@@ -698,43 +772,6 @@ AutoLFMMinimapBtn:SetScript("OnClick", function()
 end)
 
 
----------------------------------------------------------------------------------
---                             Drag and Drop                                   --
----------------------------------------------------------------------------------
-
-
--- Fonction pour démarrer le mouvement de la frame et du titre
-local function StartMovingFrame(self)
-  if AutoLFM:IsShown() then
-      AutoLFM:StartMoving()
-      title:StartMoving()
-  end
-end
-
--- Fonction pour arrêter le mouvement de la frame et du titre
-local function StopMovingFrame(self)
-  if AutoLFM:IsShown() then
-      AutoLFM:StopMovingOrSizing()
-      title:StopMovingOrSizing()
-  end
-end
-
--- Fonction pour arrêter le mouvement de la frame et du titre quand ils sont cachés
-local function StopMovingOnHide(self)
-  AutoLFM:StopMovingOrSizing()
-  title:StopMovingOrSizing()
-end
-
--- Détecter les événements de déplacement sur la frame principale
-AutoLFM:SetScript("OnMouseDown", StartMovingFrame)
-AutoLFM:SetScript("OnMouseUp", StopMovingFrame)
-AutoLFM:SetScript("OnHide", StopMovingOnHide)
-
--- Détecter les événements de déplacement sur le titre
-title:SetScript("OnMouseDown", StartMovingFrame)
-title:SetScript("OnMouseUp", StopMovingFrame)
-title:SetScript("OnHide", StopMovingOnHide)
-
 -- Rendre le bouton déplacable avec Ctrl + Clic gauche
 AutoLFMMinimapBtn:SetMovable(true)
 AutoLFMMinimapBtn:EnableMouse(true)
@@ -784,8 +821,8 @@ djframe:SetBackdrop({
 })
 
 local djScrollFrame = CreateFrame("ScrollFrame", "AutoLFM_ScrollFrame_Dungeons", djframe, "UIPanelScrollFrameTemplate")
-djScrollFrame:SetPoint("TOPLEFT", djframe, "TOPLEFT", 10, -40)
-djScrollFrame:SetWidth(265)
+djScrollFrame:SetPoint("TOPLEFT", djframe, "TOPLEFT", 20, -80)
+djScrollFrame:SetWidth(280)
 djScrollFrame:SetHeight(330)
 
 -- Créer le contenu du ScrollFrame pour les donjons
@@ -802,7 +839,7 @@ djScrollFrame:SetScrollChild(contentFrame)
 
 -- Créer cadre raidFrame
 local raidFrame = CreateFrame("Frame", nil, AutoLFM)
-raidFrame:SetWidth(240)
+raidFrame:SetWidth(265)
 raidFrame:SetHeight(380)
 raidFrame:SetPoint("TOPLEFT", AutoLFM, "TOPLEFT", 10, -10)
 raidFrame:SetBackdrop({
@@ -811,8 +848,8 @@ raidFrame:SetBackdrop({
 })
 
 local raidScrollFrame = CreateFrame("ScrollFrame", "AutoLFM_ScrollFrame_Raids", raidFrame, "UIPanelScrollFrameTemplate")
-raidScrollFrame:SetPoint("TOPLEFT", raidFrame, "TOPLEFT", 10, -40)
-raidScrollFrame:SetWidth(240)
+raidScrollFrame:SetPoint("TOPLEFT", raidFrame, "TOPLEFT", 20, -80)
+raidScrollFrame:SetWidth(280)
 raidScrollFrame:SetHeight(330)
 
 
@@ -835,35 +872,21 @@ AutoLFMMinimapBtn:Show()
 ---------------------------------------------------------------------------------
 
 
--- Créer cadre roleframe
-local roleframe = CreateFrame("Frame", nil, AutoLFM)
-roleframe:SetBackdrop({
-    bgFile = nil,
-    -- edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",  -- Bordure blanche dev position
-    edgeSize = 16,
-    insets = { left = 4, right = 2, top = 4, bottom = 4 }, -- Marge de 4 pixels
-})
-roleframe:SetBackdropColor(1, 1, 1, 0.3)
-roleframe:SetBackdropBorderColor(1, 1, 1, 1)
-
--- Positionner le roleframe
-roleframe:SetWidth(AutoLFM:GetWidth() * 0.4)
-roleframe:SetHeight(AutoLFM:GetHeight() * 0.2) --
-roleframe:SetPoint("TOPRIGHT", AutoLFM, "TOPRIGHT", -30, -40)
 
 -- Réduction de la taille des icônes de 20 % au total
 local iconWidth = roleframe:GetWidth() / 3 * 0.7
 local iconHeight = roleframe:GetHeight() * 0.7
 
--- Espacement entre les icônes (en pixels) : augmenter l'espacement à 20 pixels
+-- Espacement entre les icônes
 local iconSpacing = 20
 
 -- Ajouter un texte au-dessus des icônes
 local selectRoleText = roleframe:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-selectRoleText:SetText("Choose the role(s) you need ")
+selectRoleText:SetText("Choose the role(s) you need")
 selectRoleText:SetPoint("BOTTOM", roleframe, "TOP", 0, 5)
 selectRoleText:SetJustifyH("CENTER")
 selectRoleText:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
+
 
 
 ---------------------------------------------------------------------------------
@@ -871,12 +894,6 @@ selectRoleText:SetFont("Fonts\\FRIZQT__.TTF", 14, "OUTLINE")
 ---------------------------------------------------------------------------------
 
 
-local msgFrame = CreateFrame("Frame", nil, AutoLFM)
-
--- Positionner le cadre msgFrame juste en dessous de roleframe
-msgFrame:SetWidth(roleframe:GetWidth())
-msgFrame:SetHeight(roleframe:GetHeight() + 20)
-msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -5)
 
 
 ---------------------------------------------------------------------------------
@@ -885,12 +902,6 @@ msgFrame:SetPoint("TOPRIGHT", roleframe, "BOTTOMRIGHT", 0, -5)
 
 
 local msgFrameDj = CreateFrame("Frame", nil, AutoLFM)
-msgFrameDj:SetBackdrop({
-  bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-  edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-  edgeSize = 16,
-  insets = { left = 5, right = 5, top = 5, bottom = 5 },
-})
 
 -- Positionner le cadre msgFrameDj juste en dessous de roleframe
 msgFrameDj:SetWidth(roleframe:GetWidth())
@@ -913,12 +924,6 @@ msgTextDj:SetWidth(msgFrameDj:GetWidth())
 
 
 local msgFrameRaids = CreateFrame("Frame", nil, AutoLFM)
-msgFrameRaids:SetBackdrop({
-  bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-  edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-  edgeSize = 16,
-  insets = { left = 5, right = 5, top = 5, bottom = 5 },
-})
 
 -- Positionner le cadre msgFrameRaids juste en dessous de roleframe
 msgFrameRaids:SetWidth(roleframe:GetWidth())
@@ -1103,7 +1108,7 @@ sliderSizeFrame:SetBackdropColor(1, 1, 1, 0.3)
 sliderSizeFrame:SetBackdropBorderColor(1, 1, 1, 1)
 sliderSizeFrame:SetWidth(220)  -- Largeur du slider
 sliderSizeFrame:SetHeight(100)  -- Hauteur du cadre (augmentée pour laisser de la place au texte supplémentaire)
-sliderSizeFrame:SetPoint("CENTER", msgFrame, "CENTER", 260, 5)  -- Positionner le cadre en bas au centre du panneau principal
+sliderSizeFrame:SetPoint("CENTER", msgFrame, "CENTER", 290, 120)  -- Positionner le cadre en bas au centre du panneau principal
 
 sliderSizeFrame:SetBackdrop{
     bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -1196,10 +1201,6 @@ sliderSize:SetScript("OnValueChanged", function(value)
     UpdateSliderText(value)  -- Mettre à jour le texte avec la valeur actuelle
 end)
 
-
-
-
-
 -- Fonction pour cacher le slider lorsqu'un raid est décoché
 local function HideSliderForRaid()
     if currentSliderFrame then
@@ -1207,8 +1208,6 @@ local function HideSliderForRaid()
         currentSliderFrame = nil   -- Réinitialiser la référence
     end
 end
-
-
 
 
 ---------------------------------------------------------------------------------
@@ -1794,138 +1793,166 @@ function calculer_priorite(niveau_joueur, donjon)
   return priority
 end
 
--- Fonction pour afficher les donjons par code couleur avec le niveau du donjon
 function DisplayDungeonsByColor()
-  -- Effacer les précédents donjons affichés
+  -- Cacher les anciens donjons affichés
   for _, child in ipairs({contentFrame:GetChildren()}) do
-      child:Hide()
+    child:Hide()
   end
 
-  local playerLevel = UnitLevel("player")  -- Récupère le niveau du joueur
-  local yOffset = 0  -- Position verticale pour les donjons
-  local donjonCount = 0  -- Initialiser le compteur de donjons
-
-  -- Créer une table de priorités pour organiser les donjons selon leur couleur
+  local playerLevel = UnitLevel("player")
+  local yOffset = 0
   local sortedDungeons = {}
 
-  -- Ajouter une priorité pour chaque donjon
+  -- Préparer la liste triée avec priorité et index original
   for _, donjon in pairs(donjons) do
-      if donjonCount >= maxDonjons then
-          break
-      end
-      donjonCount = donjonCount + 1
-
-      -- Utiliser la fonction calculer_priorite pour obtenir la priorité du donjon
-      local priority = calculer_priorite(playerLevel, donjon)
-
-      -- Ajouter le donjon à la table avec son index pour garder l'ordre d'origine
-      table.insert(sortedDungeons, {donjon = donjon, priority = priority, originalIndex = donjon.originalIndex})
+    if table.getn(sortedDungeons) >= maxDonjons then break end
+    local priority = calculer_priorite(playerLevel, donjon)
+    table.insert(sortedDungeons, {donjon = donjon, priority = priority, originalIndex = donjon.originalIndex})
   end
 
-  -- Tri par priorité (couleur)
   table.sort(sortedDungeons, function(a, b)
-      if a.priority == b.priority then
-          return a.originalIndex < b.originalIndex  -- Si la priorité est identique, trier par ordre d'apparition
-      else
-          return a.priority < b.priority  -- Sinon, trier par priorité de couleur (vert, rouge, gris)
-      end
+    if a.priority == b.priority then
+      return a.originalIndex < b.originalIndex
+    else
+      return a.priority < b.priority
+    end
   end)
 
-  -- Afficher les donjons dans l'ordre trié
+  -- Réinitialiser la table des frames pour pouvoir les gérer ailleurs
+  donjonClickableFrames = {}
+
+  -- Création des entrées UI pour chaque donjon trié
   for _, entry in ipairs(sortedDungeons) do
-      local donjon = entry.donjon
-      local priority = entry.priority
+    local donjon = entry.donjon
+    local priority = entry.priority
 
-      -- Créer une ligne cliquable qui englobe la case à cocher et les labels
-      local clickableFrame = CreateFrame("Button", "ClickableDonjonFrame" .. donjon.abrev, contentFrame)
-      clickableFrame:SetHeight(30)  -- Hauteur de la ligne
-      clickableFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)
-      clickableFrame:SetWidth(300)  -- Largeur de la ligne
-      clickableFrame:SetScript("OnClick", function()
-          -- Gestion de la sélection des donjons lorsqu'on clique sur la ligne
-          local checkbox = donjonCheckButtons[donjon.abrev]
-          checkbox:SetChecked(not checkbox:GetChecked())
-          checkbox:GetScript("OnClick")()  -- Appeler la fonction OnClick déjà définie
-      end)
+    local clickableFrame = CreateFrame("Button", "ClickableDonjonFrame" .. donjon.abrev, contentFrame)
+    clickableFrame:SetHeight(30)
+    clickableFrame:SetWidth(300)
+    clickableFrame:SetPoint("TOPLEFT", contentFrame, "TOPLEFT", 0, -yOffset)
 
-      -- Ajouter les événements de survol (hover)
-      clickableFrame:SetScript("OnEnter", function()
-          clickableFrame:SetBackdrop({
-              bgFile = "Interface\\Buttons\\WHITE8X8",  -- Changer la couleur de fond
-              insets = {left = 1, right = 1, top = 1, bottom = 1},
-          })
-          clickableFrame:SetBackdropColor(0.2, 0.2, 0.2, 0.8)  -- Fond gris foncé lors du survol
-      end)
+    -- Créer la checkbox
+    local checkbox = CreateFrame("CheckButton", "DonjonCheckbox" .. donjon.abrev, clickableFrame, "UICheckButtonTemplate")
+    checkbox:SetWidth(20)
+    checkbox:SetHeight(20)
+    checkbox:SetPoint("LEFT", clickableFrame, "LEFT", 0, 0)
+    donjonCheckButtons[donjon.abrev] = checkbox
 
-      clickableFrame:SetScript("OnLeave", function()
-          clickableFrame:SetBackdrop(nil)  -- Réinitialiser l'arrière-plan
-      end)
+    -- Labels : niveau et nom
+    local levelLabel = clickableFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    levelLabel:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
+    levelLabel:SetText(donjon.lvl_min .. "-" .. donjon.lvl_max)
 
-      -- Créer la case à cocher à gauche du label
-      local checkbox = CreateFrame("CheckButton", "DonjonCheckbox" .. donjon.abrev, clickableFrame, "UICheckButtonTemplate")
-      checkbox:SetWidth(20)
-      checkbox:SetHeight(20)
-      checkbox:SetPoint("LEFT", clickableFrame, "LEFT", 0, 0)  -- Positionner la case à cocher à gauche
+    local label = clickableFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    label:SetPoint("LEFT", levelLabel, "RIGHT", 10, 0)
+    label:SetText(donjon.nom)
 
-      local donjonAbrev = donjon.abrev
-      donjonCheckButtons[donjonAbrev] = checkbox
+    -- Couleur selon priorité
+    if priority == 4 then
+      label:SetTextColor(0.5, 0.5, 0.5)
+    elseif priority == 1 then
+      label:SetTextColor(0, 1, 0)
+    elseif priority == 2 then
+      label:SetTextColor(1, 0.5, 0)
+    else
+      label:SetTextColor(1, 0, 0)
+    end
 
-      -- Créer un label pour afficher le niveau du donjon à droite de la case à cocher
-      local levelLabel = clickableFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-      levelLabel:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
-      levelLabel:SetText(donjon.lvl_min .. "-" .. donjon.lvl_max)
-
-      -- Créer un label pour chaque donjon à droite du niveau du donjon
-      local label = clickableFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-      label:SetPoint("LEFT", levelLabel, "RIGHT", 10, 0)
-
-      -- Attribuer la couleur en fonction de la priorité calculée
-      if priority == 4 then
-          label:SetTextColor(0.5, 0.5, 0.5)  -- Gris (trop élevé)
-      elseif priority == 1 then
-          label:SetTextColor(0, 1, 0)  -- Vert (adapté ou légèrement en dessous)
-      elseif priority == 2 then
-          label:SetTextColor(1, 0.5, 0)  -- Orange (légèrement en dessous)
+    -- Mise à jour du fond selon état de la checkbox
+    local function UpdateBackdrop()
+      if checkbox:GetChecked() then
+        clickableFrame:SetBackdrop({
+          bgFile = "Interface\\Buttons\\WHITE8X8",
+          insets = {left = 1, right = 1, top = 1, bottom = 1},
+        })
+        clickableFrame:SetBackdropColor(0.2, 0.2, 0.2, 0.8)
       else
-          label:SetTextColor(1, 0, 0)  -- Rouge (trop faible)
+        clickableFrame:SetBackdrop(nil)
+      end
+    end
+
+    -- Click sur la ligne : toggle checkbox et update
+    clickableFrame:SetScript("OnClick", function()
+        checkbox:SetChecked(not checkbox:GetChecked())
+        checkbox:GetScript("OnClick")() -- appel du OnClick de la checkbox
+
+        UpdateBackdrop()
+    end)
+
+    -- Hover : affiche le fond
+    clickableFrame:SetScript("OnEnter", function()
+      clickableFrame:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8X8",
+        insets = {left = 1, right = 1, top = 1, bottom = 1},
+      })
+      clickableFrame:SetBackdropColor(0.2, 0.2, 0.2, 0.8)
+    end)
+
+    -- Quitte le hover : remet le fond selon checkbox
+    clickableFrame:SetScript("OnLeave", function()
+      if not checkbox:GetChecked() then
+        clickableFrame:SetBackdrop(nil)
+      else
+        UpdateBackdrop()
+      end
+    end)
+
+    -- Script checkbox : gérer sélection max 4 et mise à jour liste
+    checkbox:SetScript("OnClick", function()
+      local isChecked = checkbox:GetChecked()
+
+      if isChecked then
+        rightPanel:Show()
+        showArrowBtn:Hide()
+        editBox:Show()
+        sliderframe:Show()
+        dashText:Show()
+        toggleButton:Show()
+        msgFrameDj:Show()
+        -- Ne pas dupliquer dans la liste selectedDungeons
+        local alreadySelected = false
+        for _, val in ipairs(selectedDungeons) do
+          if val == donjon.abrev then
+            alreadySelected = true
+            break
+          end
+        end
+
+        if not alreadySelected then
+          -- Limite à 4 sélectionnés
+          if table.getn(selectedDungeons) >= 4 then
+            local first = selectedDungeons[1]
+            table.remove(selectedDungeons, 1)
+            if donjonCheckButtons[first] then
+              donjonCheckButtons[first]:SetChecked(false)
+              donjonCheckButtons[first]:GetParent():SetBackdrop(nil)
+            end
+          end
+          table.insert(selectedDungeons, donjon.abrev)
+        end
+
+      else
+        -- Retirer si décoché
+        for i, val in ipairs(selectedDungeons) do
+          if val == donjon.abrev then
+            table.remove(selectedDungeons, i)
+            break
+          end
+        end
       end
 
-      label:SetText(donjon.nom)
+      UpdateBackdrop()
+      updateMsgFrameCombined()
+    end)
 
-      -- Ajouter la gestion de la sélection des donjons
-      checkbox:SetScript("OnClick", function()
-          local isChecked = checkbox:GetChecked()
+    -- Stocker le frame pour gestion externe
+    table.insert(donjonClickableFrames, clickableFrame)
 
-          if isChecked then
-              -- Vérifier si déjà 2 donjons sont sélectionnés
-              if table.getn(selectedDungeons) >= 4 then
-                  -- Retirer le premier élément sélectionné et décocher la case correspondante
-                  local firstDonjonAbrev = selectedDungeons[1]  -- Récupérer l'abréviation du premier donjon
-                  table.remove(selectedDungeons, 1)  -- Retirer le premier donjon
-                  -- Décocher la case du premier donjon retiré
-                  if donjonCheckButtons[firstDonjonAbrev] then
-                      donjonCheckButtons[firstDonjonAbrev]:SetChecked(false)
-                  end
-              end
-              -- Ajouter le nouveau donjon sélectionné à la liste
-              table.insert(selectedDungeons, donjonAbrev)
-          else
-              -- Si la case est décochée, retirer l'abréviation du donjon de la liste
-              for i, value in pairs(selectedDungeons) do
-                  if value == donjonAbrev then
-                      table.remove(selectedDungeons, i)
-                      -- Après avoir retiré l'élément de la liste, décocher la case
-                      checkbox:SetChecked(false)
-                      break
-                  end
-              end
-          end
-          updateMsgFrameCombined()  -- Mettre à jour l'affichage
-      end)
-
-      yOffset = yOffset + 30
+    -- Décalage pour la prochaine ligne
+    yOffset = yOffset + 30
   end
 end
+
 
 -- Fonction pour effacer les donjons sélectionnés
 function clearSelectedDungeons()
@@ -1935,13 +1962,6 @@ function clearSelectedDungeons()
   end
   selectedDungeons = {}
 end
-
-
----------------------------------------------------------------------------------
---                             Raids Fonctions                                 --
----------------------------------------------------------------------------------
-
-
 
 ---------------------------------------------------------------------------------
 --                           VARIABLES ET INITIATION                           --
@@ -1954,8 +1974,8 @@ local maxRaids = 100
 
 -- Créer le contenu du ScrollFrame pour les raids
 local raidContentFrame = CreateFrame("Frame", nil, raidScrollFrame)
-raidContentFrame:SetWidth(raidFrame:GetWidth() - 20)
-raidContentFrame:SetHeight(raidFrame:GetHeight() - 60)
+raidContentFrame:SetWidth(raidFrame:GetWidth())
+raidContentFrame:SetHeight(raidFrame:GetHeight())
 raidScrollFrame:SetScrollChild(raidContentFrame)
 
 
@@ -1966,86 +1986,93 @@ raidCheckButtons = {}
 --                       CRÉATION DES CASES À COCHER                           --
 ---------------------------------------------------------------------------------
 
+raidClickableFrames = raidClickableFrames or {}  -- Assure que la table existe
 
--- Fonction pour créer et gérer les cases à cocher des raids
 for index, raid in pairs(raids) do
-  -- Incrémenter le nombre de raids
   raidCount = raidCount + 1
   if raidCount >= maxRaids then
       break
   end
 
-  -- Créer le cadre cliquable qui englobe la case à cocher et le label
   local clickableFrame = CreateFrame("Button", "ClickableRaidFrame" .. index, raidContentFrame)
-  clickableFrame:SetHeight(30)  -- Hauteur de la ligne
+  clickableFrame:SetHeight(30)
+  clickableFrame:SetWidth(raidContentFrame:GetWidth() + 20)
   clickableFrame:SetPoint("TOPLEFT", raidContentFrame, "TOPLEFT", 0, -(30 * (index - 1)))
-  clickableFrame:SetWidth(raidContentFrame:GetWidth())  -- Largeur de la ligne
 
-  -- Capturer l'abréviation du raid localement
+  -- Ajouter le clickableFrame dans la table globale pour pouvoir le manipuler ensuite
+  table.insert(raidClickableFrames, clickableFrame)
+
   local raidAbrev = raid.abrev
   local raidName = raid.nom
-  -- local sizeMin = raid.size_min
-  -- local sizeMax = raid.size_max
 
-  -- Créer la case à cocher pour chaque raid
   local checkbox = CreateFrame("CheckButton", "RaidCheckbox" .. index, clickableFrame, "UICheckButtonTemplate")
   checkbox:SetWidth(20)
   checkbox:SetHeight(20)
-  checkbox:SetPoint("LEFT", clickableFrame, "LEFT", 0, 0)  -- Positionner la case à cocher à gauche
+  checkbox:SetPoint("LEFT", clickableFrame, "LEFT", 0, 0)
 
-  -- Créer le label pour chaque raid
   local label = clickableFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   label:SetPoint("LEFT", checkbox, "RIGHT", 5, 0)
   label:SetText(raidName)
 
-  -- Ajouter la case à cocher dans la table raidCheckButtons
   raidCheckButtons[raidAbrev] = checkbox
 
-  -- Ajouter la gestion de la sélection des raids
-  checkbox:SetScript("OnClick", function()
-      -- Si la case est cochée, désélectionner toutes les autres cases
-      if checkbox:GetChecked() then
-          -- Désélectionner toutes les autres cases à cocher de raid
-          for _, otherCheckbox in pairs(raidCheckButtons) do
-              if otherCheckbox ~= checkbox then
-                  otherCheckbox:SetChecked(false)
-              end
-          end
-          -- Ajouter le raid sélectionné à la liste
-          selectedRaids = {raidAbrev}
-            -- name = raidName
-            -- sizeMin = sizeMin
-            -- sizeMax = sizeMax
-            -- -- Mettre à jour le slider avec les nouvelles valeurs
-            -- raid = {name, sizeMin, sizeMax}
-            -- updateSliderForSelectedRaid(raid, sizeMin, sizeMax)
-      else
-          -- Si la case est décochée, retirer l'abréviation du raid de la liste
-          selectedRaids = {}
-          sliderSizeFrame:Hide()
-      end
-      -- Mettre à jour l'affichage après chaque changement
-      updateMsgFrameCombined()
-  end)
-
-  -- Ajouter la gestion du clic sur la ligne entière (le cadre cliquable)
-  clickableFrame:SetScript("OnClick", function()
-      -- Lorsque la ligne entière est cliquée, basculer la sélection de la case à cocher
-      checkbox:SetChecked(not checkbox:GetChecked())
-      checkbox:GetScript("OnClick")()  -- Appeler la fonction OnClick déjà définie
-  end)
-
-  -- Ajouter les événements de survol (hover)
-  clickableFrame:SetScript("OnEnter", function()
+  local function UpdateBackdrop()
+    if checkbox:GetChecked() then
       clickableFrame:SetBackdrop({
-          bgFile = "Interface\\Buttons\\WHITE8X8",  -- Changer la couleur de fond
+          bgFile = "Interface\\Buttons\\WHITE8X8",
           insets = {left = 1, right = 1, top = 1, bottom = 1},
       })
-      clickableFrame:SetBackdropColor(0.2, 0.2, 0.2, 0.8)  -- Fond gris foncé lors du survol
+      clickableFrame:SetBackdropColor(0.2, 0.2, 0.2, 0.8)
+    else
+      clickableFrame:SetBackdrop(nil)
+    end
+  end
+
+  checkbox:SetScript("OnClick", function()
+    if checkbox:GetChecked() then
+                rightPanel:Show()
+        showArrowBtn:Hide()
+        editBox:Show()
+        sliderframe:Show()
+        dashText:Show()
+        toggleButton:Show()
+        msgFrameDj:Show()
+      -- Décocher toutes les autres cases et enlever leur backdrop
+      for _, otherCheckbox in pairs(raidCheckButtons) do
+        if otherCheckbox ~= checkbox then
+          otherCheckbox:SetChecked(false)
+          otherCheckbox:GetParent():SetBackdrop(nil)
+        end
+      end
+      selectedRaids = {raidAbrev}
+    else
+      selectedRaids = {}
+      sliderSizeFrame:Hide()
+        
+    end
+    UpdateBackdrop()
+    updateMsgFrameCombined()
+  end)
+
+  clickableFrame:SetScript("OnClick", function()
+    checkbox:SetChecked(not checkbox:GetChecked())
+    checkbox:GetScript("OnClick")()
+  end)
+
+  clickableFrame:SetScript("OnEnter", function()
+    clickableFrame:SetBackdrop({
+      bgFile = "Interface\\Buttons\\WHITE8X8",
+      insets = {left = 1, right = 1, top = 1, bottom = 1},
+    })
+    clickableFrame:SetBackdropColor(0.2, 0.2, 0.2, 0.8)
   end)
 
   clickableFrame:SetScript("OnLeave", function()
-      clickableFrame:SetBackdrop(nil)  -- Réinitialiser l'arrière-plan
+    if not checkbox:GetChecked() then
+      clickableFrame:SetBackdrop(nil)
+    else
+      UpdateBackdrop()
+    end
   end)
 end
 
@@ -2065,54 +2092,55 @@ function clearSelectedRaids()
     -- sliderSizeFrame:Hide()  -- Masquer le slider
 end
 
+local function ClearAllBackdrops(framesTable)
+  for _, frame in pairs(framesTable) do
+    if frame.SetBackdrop then
+      frame:SetBackdrop(nil)
+    end
+  end
+end
 
 ---------------------------------------------------------------------------------
 --                               Swap Bouton                                   --
 ---------------------------------------------------------------------------------
 
+-- Swap View Button
+local swapBtn = CreateFrame("Button", "AutoLFMSwapButton", AutoLFM, "UIPanelButtonTemplate")
+swapBtn:SetWidth(120)
+swapBtn:SetHeight(30)
+swapBtn:SetPoint("BOTTOM", -10, 40)
+swapBtn:SetText("Raids List")
 
-local swapButton = CreateFrame("Button", nil, AutoLFM, "OptionsButtonTemplate")
-swapButton:SetText("Raids List")
-swapButton:SetWidth(200)
-swapButton:SetHeight(25)
-swapButton:SetPoint("BOTTOM", djScrollFrame, "TOP", 0, 10)
-swapButton:SetBackdrop({
-  bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-  insets = { left = 4, right = 4, top = 4, bottom = 4 }
-})
-
---- Action lorsque le bouton est cliqué ---
-swapButton:SetScript("OnClick", function()
-    -- Si les donjons et les raids sont vides, basculer entre les vues
+swapBtn:SetScript("OnClick", function()
     if djScrollFrame:IsShown() then
-        -- Cacher les donjons et afficher les raids
+        -- Basculer en mode raids
         djScrollFrame:Hide()
-        swapButton:SetText("Dungeons List")
+        swapBtn:SetText("Dungeons List")
         raidFrame:Show()
         raidContentFrame:Show()
         raidScrollFrame:Show()
-        raidFrame:Show()
         msgFrameDj:Hide()
         msgFrameRaids:Show()
         clearSelectedDungeons()
         clearSelectedRoles()
         resetUserInputMessage()
         updateMsgFrameCombined()
+        ClearAllBackdrops(donjonClickableFrames)
     else
-        -- Cacher les raids et afficher les donjons
-        swapButton:SetText("Raids List")
+        -- Basculer en mode donjons
+        swapBtn:SetText("Raids List")
         djScrollFrame:Show()
-        msgFrameRaids:Hide()
+        raidFrame:Hide()
         raidContentFrame:Hide()
         raidScrollFrame:Hide()
-        raidFrame:Hide()
         msgFrameDj:Show()
+        msgFrameRaids:Hide()
         clearSelectedRaids()
         clearSelectedRoles()
         resetUserInputMessage()
         updateMsgFrameCombined()
         HideSliderForRaid()
-        -- sliderSizeFrame:Hide()
+        ClearAllBackdrops(raidClickableFrames)
     end
 end)
 
@@ -2292,17 +2320,6 @@ end)
 ---------------------------------------------------------------------------------
 
 
--- Créer un bouton Toggle en dessous de msgFrame, centré par rapport à AutoLFM
-local toggleButton = CreateFrame("Button", "ToggleButton", msgFrame, "UIPanelButtonTemplate")
-toggleButton:SetWidth(120)
-toggleButton:SetHeight(30)
-
--- Positionner le bouton en bas centré, sous roleframe et msgFrame par rapport à AutoLFM
-toggleButton:SetPoint("CENTER", msgFrame, "CENTER", 0, -10)  -- Placer 10 pixels sous msgFrame
-toggleButton:SetPoint("BOTTOM", AutoLFM, 0, 20)
-
-toggleButton:SetText("Start")
-
 -- Fonction pour gérer le changement d'état du bouton et démarrer/arrêter la diffusion
 toggleButton:SetScript("OnClick", function()
     -- Vérifier si le message combiné est vide ou ne contient que des espaces
@@ -2392,6 +2409,53 @@ AutoLFM:SetScript("OnEvent", function(self, event, ...)
 end)
 
 
+closeBtn:SetScript("OnClick", function()
+    rightPanel:Hide()
+    showArrowBtn:Show()
+    editBox:Hide()
+    sliderframe:Hide()
+    toggleButton:Hide()
+    msgFrameDj:Hide()
+    msgFrameRaids:Hide()
+    dashText:Hide()
+    sliderSizeFrame:Hide()
+    if selectedRaids[1] then
+        -- Si un raid est sélectionné, masquer le sliderSizeFrame
+        sliderSizeFrame:Hide()
+    end
+    channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 160, 70)
+end)
+
+
+
+local arrowTex = showArrowBtn:CreateTexture(nil, "OVERLAY")
+arrowTex:SetAllPoints()
+arrowTex:SetTexture("Interface\\Buttons\\UI-SpellbookIcon-NextPage-Up")
+
+showArrowBtn:SetScript("OnClick", function()
+    rightPanel:Show()
+    showArrowBtn:Hide()
+    editBox:Show()
+    sliderframe:Show()
+    toggleButton:Show()
+    msgFrameDj:Show()
+    msgFrameRaids:Show()
+    dashText:Show()
+    if selectedRaids[1] then
+        -- Si un raid est sélectionné, afficher le sliderSizeFrame
+        sliderSizeFrame:Show()
+    else
+        sliderSizeFrame:Hide()  -- Sinon, le cacher
+    end
+    channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 495, 70)
+end)
+
+editBox:Hide()
+sliderframe:Hide()
+toggleButton:Hide()
+msgFrameDj:Hide()
+msgFrameRaids:Hide()
+dashText:Hide()
 ---------------------------------------------------------------------------------
 --                       Commandes Slash pour l'addon                          --
 ---------------------------------------------------------------------------------
@@ -2479,3 +2543,62 @@ AutoLFM:Hide()
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
 ---------------------------------------------------------------------------------
+
+
+local mgMessage = nil
+local mgInterval = 60 -- secondes
+local mgElapsed = 0
+local mgRunning = false
+
+-- Frame pour OnUpdate
+local mgFrame = CreateFrame("Frame", "MGSpamFrame")
+
+-- Slash command
+SLASH_MG1 = "/mg"
+SlashCmdList["MG"] = function(msg)
+    if msg == "stop" then
+        mgRunning = false
+        mgFrame:SetScript("OnUpdate", nil)
+        DEFAULT_CHAT_FRAME:AddMessage("|cffff5555[MG]|r Spam arrêté.")
+        return
+    end
+
+    if msg == "" then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffff5555[MG]|r Usage : /mg <message> ou /mg stop")
+        return
+    end
+
+    if not IsInGuild() then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffff5555[MG]|r Vous n'êtes pas dans une guilde.")
+        return
+    end
+
+    mgMessage = msg
+    mgElapsed = mgInterval
+    mgRunning = true
+
+    mgFrame:SetScript("OnUpdate", function()
+        local now = GetTime()
+        if not mgFrame.lastUpdate then
+            mgFrame.lastUpdate = now
+            return
+        end
+
+        local elapsed = now - mgFrame.lastUpdate
+        mgFrame.lastUpdate = now
+
+        if not mgRunning then
+            mgFrame:SetScript("OnUpdate", nil)
+            return
+        end
+
+        mgElapsed = mgElapsed + elapsed
+        if mgElapsed >= mgInterval then
+            mgElapsed = 0
+            SendChatMessage("|cff00ffff" .. mgMessage .. "|r", "GUILD")
+
+        end
+    end)
+
+    DEFAULT_CHAT_FRAME:AddMessage("|cff55ff55[MG]|r Spam lancé toutes les " .. mgInterval .. "s : " .. msg)
+end

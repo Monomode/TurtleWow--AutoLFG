@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.5.7
+Bump version to 1.5.7 and update changelog with graphical improvements
+
 Version: 1.5.6
 Update version to 1.5.6 and refactor message construction in updateMsgFrameCombined function
 
