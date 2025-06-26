@@ -273,7 +273,7 @@ local function OnPlayerEnteringWorld(self, event)
   findChannels()
   LoadSelectedChannels()
   msglog:UnregisterEvent("PLAYER_ENTERING_WORLD")
-  AutoLFM:Show()  -- Afficher le cadre AutoLFM après le chargement
+--   AutoLFM:Show()  -- Afficher le cadre AutoLFM après le chargement
 end
 
 msglog:SetScript("OnEvent", OnPlayerEnteringWorld)
