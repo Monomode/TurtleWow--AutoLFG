@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.5.8
+Adjust AutoLFM frame display and button dimensions for improved layout
+
 Version: 1.5.7
 Bump version to 1.5.7 and update changelog with graphical improvements
 

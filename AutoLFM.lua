@@ -273,7 +273,7 @@ local function OnPlayerEnteringWorld(self, event)
   findChannels()
   LoadSelectedChannels()
   msglog:UnregisterEvent("PLAYER_ENTERING_WORLD")
---   AutoLFM:Show()  -- Afficher le cadre AutoLFM après le chargement
+  AutoLFM:Show()  -- Afficher le cadre AutoLFM après le chargement
 end
 
 msglog:SetScript("OnEvent", OnPlayerEnteringWorld)
@@ -467,18 +467,18 @@ local closeArrowTex
 
 -- Bouton flèche pour fermer rightPanel (flèche vers la gauche)
 local closeBtn = CreateFrame("Button", "AutoLFMCloseButton", rightPanel)
-closeBtn:SetWidth(24)
-closeBtn:SetHeight(64)
-closeBtn:SetPoint("TOPRIGHT", rightPanel, "TOPRIGHT", 0, -220)
+closeBtn:SetWidth(20)
+closeBtn:SetHeight(60)
+closeBtn:SetPoint("TOPRIGHT", rightPanel, "TOPRIGHT", -15, -225)
 
 local closeArrowTex = closeBtn:CreateTexture(nil, "OVERLAY")
 closeArrowTex:SetAllPoints()
 closeArrowTex:SetTexture("Interface\\Buttons\\UI-SpellbookIcon-PrevPage-Up") -- flèche vers la gauche
 -- Maintenant création du bouton flèche
 showArrowBtn = CreateFrame("Button", nil, AutoLFM)
-showArrowBtn:SetWidth(24)
-showArrowBtn:SetHeight(64)
-showArrowBtn:SetPoint("RIGHT", AutoLFM, "RIGHT", -1, 0)
+showArrowBtn:SetWidth(20)
+showArrowBtn:SetHeight(60)
+showArrowBtn:SetPoint("RIGHT", AutoLFM, "RIGHT", -15, 0)
 showArrowBtn:Show()
 
 -- Créer cadre roleframe dans la frame de droite
@@ -511,7 +511,7 @@ toggleButton:SetHeight(30)
 
 -- Positionner le bouton en bas centré, sous roleframe et msgFrame par rapport à AutoLFM
 toggleButton:SetPoint("CENTER", msgFrame, "CENTER", 0, -10)  -- Placer 10 pixels sous msgFrame
-toggleButton:SetPoint("BOTTOM", AutoLFM, 0, 40)
+toggleButton:SetPoint("BOTTOM", AutoLFM, -10, 40)
 
 toggleButton:SetText("Start")
 
