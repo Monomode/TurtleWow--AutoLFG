@@ -1189,7 +1189,9 @@ local function ShowSliderForRaid(raid)
     UpdateSliderText(sliderSize:GetValue())
 
     -- Afficher le cadre du slider
-    sliderSizeFrame:Show()
+    if AutoLFM and AutoLFM:IsShown() then
+        sliderSizeFrame:Show()
+    end
 
     -- Sauvegarder la référence du slider pour pouvoir le masquer plus tard
     currentSliderFrame = sliderSizeFrame
@@ -2367,7 +2369,6 @@ AutoLFM:RegisterEvent("RAID_ROSTER_UPDATE")
 
 AutoLFM:SetScript("OnEvent", function(self, event, ...)
   if "RAID_ROSTER_UPDATE" then
-    
     OnRaidRosterUpdate()
   end
 end)
