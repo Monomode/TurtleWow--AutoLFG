@@ -181,54 +181,42 @@ if not AutoLFM_SavedVariables then
     AutoLFM_SavedVariables = {}  -- Si les variables n'existent pas encore, on les initialise
 end
 
--- Initialisation de selectedChannels dans AutoLFM_SavedVariables si nécessaire
-if not AutoLFM_SavedVariables.selectedChannels then
-    AutoLFM_SavedVariables.selectedChannels = {}
+local charName = UnitName("player")  -- Nom du personnage
+local realmName = GetRealmName()    -- Nom du serveur (réalm)
+local uniqueIdentifier = charName .. "-" .. realmName
+ 
+-- Initialiser la sous-table pour ce personnage si nécessaire
+if not AutoLFM_SavedVariables[uniqueIdentifier] then
+    AutoLFM_SavedVariables[uniqueIdentifier] = {}
+end
+
+-- Initialiser selectedChannels si nécessaire
+if not AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels then
+    AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels = {}
 end
 
 -- Liste des canaux sélectionnés (chargée depuis les variables sauvegardées)
-local selectedChannels = AutoLFM_SavedVariables.selectedChannels or {}
+-- Référence pratique
+local selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
 
 -- Fonction pour sauvegarder les canaux sélectionnés
 local function SaveSelectedChannels()
-    -- Obtenir le nom du personnage et du serveur actuel
-    local charName = UnitName("player")  -- Nom du personnage
-    local realmName = GetRealmName()    -- Nom du serveur (réalm)
-
-    -- Créer un identifiant unique basé sur le nom du personnage et du serveur
-    local uniqueIdentifier = charName .. "-" .. realmName
-
-    -- Initialiser la table si elle n'existe pas encore
-    if not AutoLFM_SavedVariables then
-        AutoLFM_SavedVariables = {}
-    end
-
-    -- Sauvegarder les canaux sélectionnés pour ce personnage et serveur
-    AutoLFM_SavedVariables[uniqueIdentifier] = {
-        selectedChannels = selectedChannels
-    }
-
-    -- DEFAULT_CHAT_FRAME:AddMessage("Channels saved for " .. uniqueIdentifier .. ": " .. table.concat(selectedChannels, ", "))
+    AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels = selectedChannels
 end
 
 
 -- Fonction pour charger les canaux sélectionnés lors du démarrage
 local function LoadSelectedChannels()
-    -- Obtenir le nom du personnage et du serveur actuel
-    local charName = UnitName("player")  -- Nom du personnage
-    local realmName = GetRealmName()    -- Nom du serveur (réalm)
-
-    -- Créer un identifiant unique basé sur le nom du personnage et du serveur
-    local uniqueIdentifier = charName .. "-" .. realmName
-
-    -- Vérifier si les canaux sont déjà sauvegardés pour ce personnage et serveur
-    if AutoLFM_SavedVariables[uniqueIdentifier] then
-        selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
+    if AutoLFM_SavedVariables[uniqueIdentifier] and AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels then
+        -- Met à jour le contenu de selectedChannels sans redéfinir la variable
+        for k in pairs(selectedChannels) do selectedChannels[k] = nil end
+        for k,v in pairs(AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels) do
+            selectedChannels[k] = v
+        end
     else
-        selectedChannels = {}  -- Si aucune donnée sauvegardée, initialiser la table vide
+        for k in pairs(selectedChannels) do selectedChannels[k] = nil end
     end
 end
-
 
 -- Fonction pour mettre à jour le canal sélectionné dans la table
 local function ToggleChannelSelection(channelName, isSelected)
@@ -525,7 +513,16 @@ toggleButton:SetText("Start")
 local channelsFrame = CreateFrame("Frame", nil, AutoLFM)
 channelsFrame:SetWidth(180)
 channelsFrame:SetHeight(150)
-channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 160, 70)
+
+-- Fonction pour mettre à jour la position en fonction de l’état du panneau droit
+local function UpdateChannelsFramePosition()
+    if showArrowBtn and showArrowBtn:IsShown() then
+        channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 160, 70)
+    else
+        channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 495, 70)
+    end
+end
+
 -- Ajouter un fond pour le cadre des canaux
 channelsFrame:SetBackdrop{
     bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -534,8 +531,14 @@ channelsFrame:SetBackdrop{
     insets = { left = 5, right = 5, top = 5, bottom = 5 },
 }
 
-
-channelsFrame:Hide()  -- Masquer le cadre par défaut
+-- Vérifier si des canaux sont sélectionnés
+if next(selectedChannels) == nil then
+     DEFAULT_CHAT_FRAME:AddMessage("548")
+    channelsFrame:Show()  -- Afficher le cadre des canaux
+else
+    LoadSelectedChannels()
+    channelsFrame:Hide()  -- Masquer le cadre des canaux si aucun canal n'est sélectionné
+end
 
 -- Ajouter un titre en haut du cadre
 local titleText = channelsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -747,29 +750,40 @@ AutoLFMMinimapBtn:SetScript("OnLeave", function()
     GameTooltip:Hide()
 end)
 
+local function tableCount(t)
+    local count = 0
+    for _ in pairs(t) do
+        count = count + 1
+    end
+    return count
+end
+
 -- Clic gauche pour ouvrir/fermer l'interface
 AutoLFMMinimapBtn:SetScript("OnClick", function()
-    -- Vérifier si la touche Ctrl est enfoncée
     if IsControlKeyDown() then
         return
     end
 
-    -- Si Ctrl n'est pas enfoncé, gérer l'ouverture/fermeture de l'interface
     if AutoLFM:IsShown() then
         AutoLFM:Hide()
     else
         AutoLFM:Show()
-        findChannels()
-        CreateChannelButtons()
-        -- Vérifier si des canaux sont sélectionnés
+
+        LoadSelectedChannels()
+
+        if not channelsFrame.buttons or tableCount(channelsFrame.buttons) == 0 then
+            findChannels()
+            CreateChannelButtons()
+        end
+
         if next(selectedChannels) == nil then
-            channelsFrame:Show()  -- Afficher le cadre des canaux
+            UpdateChannelsFramePosition()
         else
-            LoadSelectedChannels()
-            channelsFrame:Hide()  -- Masquer le cadre des canaux si aucun canal n'est sélectionné
+            channelsFrame:Hide()
         end
     end
 end)
+
 
 
 -- Rendre le bouton déplacable avec Ctrl + Clic gauche
@@ -1877,7 +1891,7 @@ function DisplayDungeonsByColor()
     clickableFrame:SetScript("OnClick", function()
         checkbox:SetChecked(not checkbox:GetChecked())
         checkbox:GetScript("OnClick")() -- appel du OnClick de la checkbox
-
+        
         UpdateBackdrop()
     end)
 
@@ -1911,6 +1925,7 @@ function DisplayDungeonsByColor()
         dashText:Show()
         toggleButton:Show()
         msgFrameDj:Show()
+        UpdateChannelsFramePosition()
         -- Ne pas dupliquer dans la liste selectedDungeons
         local alreadySelected = false
         for _, val in ipairs(selectedDungeons) do
@@ -2032,13 +2047,14 @@ for index, raid in pairs(raids) do
 
   checkbox:SetScript("OnClick", function()
     if checkbox:GetChecked() then
-                rightPanel:Show()
+        rightPanel:Show()
         showArrowBtn:Hide()
         editBox:Show()
         sliderframe:Show()
         dashText:Show()
         toggleButton:Show()
         msgFrameDj:Show()
+        UpdateChannelsFramePosition()
       -- Décocher toutes les autres cases et enlever leur backdrop
       for _, otherCheckbox in pairs(raidCheckButtons) do
         if otherCheckbox ~= checkbox then
@@ -2424,7 +2440,7 @@ closeBtn:SetScript("OnClick", function()
         -- Si un raid est sélectionné, masquer le sliderSizeFrame
         sliderSizeFrame:Hide()
     end
-    channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 160, 70)
+    UpdateChannelsFramePosition()
 end)
 
 
@@ -2448,7 +2464,7 @@ showArrowBtn:SetScript("OnClick", function()
     else
         sliderSizeFrame:Hide()  -- Sinon, le cacher
     end
-    channelsFrame:SetPoint("BOTTOMRIGHT", AutoLFM, "BOTTOMRIGHT", 495, 70)
+    UpdateChannelsFramePosition()
 end)
 
 editBox:Hide()
