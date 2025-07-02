@@ -531,13 +531,15 @@ channelsFrame:SetBackdrop{
     insets = { left = 5, right = 5, top = 5, bottom = 5 },
 }
 
--- Vérifier si des canaux sont sélectionnés
-if next(selectedChannels) == nil then
-     DEFAULT_CHAT_FRAME:AddMessage("548")
-    channelsFrame:Show()  -- Afficher le cadre des canaux
-else
+local function ToggleChannelFrame()
     LoadSelectedChannels()
-    channelsFrame:Hide()  -- Masquer le cadre des canaux si aucun canal n'est sélectionné
+    -- Vérifier si des canaux sont sélectionnés
+    if next(selectedChannels) == nil then
+        channelsFrame:Show()  -- Afficher le cadre des canaux
+    else
+      
+        channelsFrame:Hide()  -- Masquer le cadre des canaux si aucun canal n'est sélectionné
+    end
 end
 
 -- Ajouter un titre en haut du cadre
@@ -776,11 +778,7 @@ AutoLFMMinimapBtn:SetScript("OnClick", function()
             CreateChannelButtons()
         end
 
-        if next(selectedChannels) == nil then
-            UpdateChannelsFramePosition()
-        else
-            channelsFrame:Hide()
-        end
+        ToggleChannelFrame()
     end
 end)
 
@@ -1926,6 +1924,7 @@ function DisplayDungeonsByColor()
         toggleButton:Show()
         msgFrameDj:Show()
         UpdateChannelsFramePosition()
+        ToggleChannelFrame()
         -- Ne pas dupliquer dans la liste selectedDungeons
         local alreadySelected = false
         for _, val in ipairs(selectedDungeons) do
@@ -2055,6 +2054,7 @@ for index, raid in pairs(raids) do
         toggleButton:Show()
         msgFrameDj:Show()
         UpdateChannelsFramePosition()
+        ToggleChannelFrame()
       -- Décocher toutes les autres cases et enlever leur backdrop
       for _, otherCheckbox in pairs(raidCheckButtons) do
         if otherCheckbox ~= checkbox then
@@ -2143,6 +2143,7 @@ swapBtn:SetScript("OnClick", function()
         clearSelectedRoles()
         resetUserInputMessage()
         updateMsgFrameCombined()
+        ToggleChannelFrame()
         ClearAllBackdrops(donjonClickableFrames)
     else
         -- Basculer en mode donjons
@@ -2158,6 +2159,7 @@ swapBtn:SetScript("OnClick", function()
         resetUserInputMessage()
         updateMsgFrameCombined()
         HideSliderForRaid()
+        ToggleChannelFrame()
         ClearAllBackdrops(raidClickableFrames)
     end
 end)
@@ -2441,6 +2443,7 @@ closeBtn:SetScript("OnClick", function()
         sliderSizeFrame:Hide()
     end
     UpdateChannelsFramePosition()
+    ToggleChannelFrame()
 end)
 
 
@@ -2465,6 +2468,7 @@ showArrowBtn:SetScript("OnClick", function()
         sliderSizeFrame:Hide()  -- Sinon, le cacher
     end
     UpdateChannelsFramePosition()
+    ToggleChannelFrame()
 end)
 
 editBox:Hide()
@@ -2473,6 +2477,7 @@ toggleButton:Hide()
 msgFrameDj:Hide()
 msgFrameRaids:Hide()
 dashText:Hide()
+
 ---------------------------------------------------------------------------------
 --                       Commandes Slash pour l'addon                          --
 ---------------------------------------------------------------------------------
