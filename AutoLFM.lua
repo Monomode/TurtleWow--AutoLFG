@@ -16,7 +16,6 @@ local selectedRoles = {} -- Table to store selected roles
 local userInputMessage = "" -- Variable to store user input message
 local combinedMessage = "" -- String to store the combined message
 
-
 ---------------------------------------------------------------------------------
 --                            Variables Donjons                                --
 ---------------------------------------------------------------------------------
@@ -176,39 +175,35 @@ end
 
   -- Appel initial pour rechercher les canaux à l'ouverture de l'addon
 
-  -- Initialisation des variables sauvegardées
-if not AutoLFM_SavedVariables then
-    AutoLFM_SavedVariables = {}  -- Si les variables n'existent pas encore, on les initialise
-end
+-- Initialise les variables sauvegardées si besoin
+if not AutoLFM_SavedVariables then AutoLFM_SavedVariables = {} end
 
-local charName = UnitName("player")  -- Nom du personnage
-local realmName = GetRealmName()    -- Nom du serveur (réalm)
+local charName = UnitName("player")
+local realmName = GetRealmName()
 local uniqueIdentifier = charName .. "-" .. realmName
+
+AutoLFM_SavedVariables[uniqueIdentifier] = AutoLFM_SavedVariables[uniqueIdentifier] or {}
+local savedData = AutoLFM_SavedVariables[uniqueIdentifier]
+
+savedData.selectedChannels = savedData.selectedChannels or {}
+savedData.hasUserSelectedChannels = savedData.hasUserSelectedChannels or false
+
+-- La table partagée des canaux sélectionnés
+local selectedChannels = savedData.selectedChannels
+local hasUserSelectedChannels = savedData.hasUserSelectedChannels
+
  
--- Initialiser la sous-table pour ce personnage si nécessaire
-if not AutoLFM_SavedVariables[uniqueIdentifier] then
-    AutoLFM_SavedVariables[uniqueIdentifier] = {}
-end
-
--- Initialiser selectedChannels si nécessaire
-if not AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels then
-    AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels = {}
-end
-
--- Liste des canaux sélectionnés (chargée depuis les variables sauvegardées)
--- Référence pratique
-local selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
-
 -- Fonction pour sauvegarder les canaux sélectionnés
 local function SaveSelectedChannels()
+    -- La table est déjà référencée, mais on peut forcer la sauvegarde
     AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels = selectedChannels
+    savedData.selectedChannels = selectedChannels
+    savedData.hasUserSelectedChannels = hasUserSelectedChannels
 end
-
 
 -- Fonction pour charger les canaux sélectionnés lors du démarrage
 local function LoadSelectedChannels()
     if AutoLFM_SavedVariables[uniqueIdentifier] and AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels then
-        -- Met à jour le contenu de selectedChannels sans redéfinir la variable
         for k in pairs(selectedChannels) do selectedChannels[k] = nil end
         for k,v in pairs(AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels) do
             selectedChannels[k] = v
@@ -221,12 +216,15 @@ end
 -- Fonction pour mettre à jour le canal sélectionné dans la table
 local function ToggleChannelSelection(channelName, isSelected)
     if isSelected then
-        selectedChannels[channelName] = true  -- Ajouter le canal aux sélectionnés
+        selectedChannels[channelName] = true
     else
-        selectedChannels[channelName] = nil  -- Retirer le canal des sélectionnés
+        selectedChannels[channelName] = nil
     end
 
-    -- Sauvegarder après chaque modification
+    AutoLFM_SavedVariables[uniqueIdentifier].hasUserSelectedChannels = true
+    hasUserSelectedChannels = true
+    savedData.hasUserSelectedChannels = true
+
     SaveSelectedChannels()
 end
 
@@ -532,15 +530,24 @@ channelsFrame:SetBackdrop{
 }
 
 local function ToggleChannelFrame()
-    LoadSelectedChannels()
-    -- Vérifier si des canaux sont sélectionnés
-    if next(selectedChannels) == nil then
-        channelsFrame:Show()  -- Afficher le cadre des canaux
+    local saved = AutoLFM_SavedVariables[uniqueIdentifier]
+    if not saved then
+        AutoLFM_SavedVariables[uniqueIdentifier] = {}
+        saved = AutoLFM_SavedVariables[uniqueIdentifier]
+    end
+    saved.selectedChannels = saved.selectedChannels or {}
+    saved.hasUserSelectedChannels = saved.hasUserSelectedChannels or false
+
+    -- selectedChannels pointe directement sur la table sauvegardée, pas besoin de LoadSelectedChannels()
+    selectedChannels = saved.selectedChannels
+
+    if next(selectedChannels) == nil and not saved.hasUserSelectedChannels then
+        channelsFrame:Show()
     else
-      
-        channelsFrame:Hide()  -- Masquer le cadre des canaux si aucun canal n'est sélectionné
+        channelsFrame:Hide()
     end
 end
+
 
 -- Ajouter un titre en haut du cadre
 local titleText = channelsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -762,9 +769,7 @@ end
 
 -- Clic gauche pour ouvrir/fermer l'interface
 AutoLFMMinimapBtn:SetScript("OnClick", function()
-    if IsControlKeyDown() then
-        return
-    end
+    if IsControlKeyDown() then return end
 
     if AutoLFM:IsShown() then
         AutoLFM:Hide()
@@ -781,6 +786,7 @@ AutoLFMMinimapBtn:SetScript("OnClick", function()
         ToggleChannelFrame()
     end
 end)
+
 
 
 
@@ -2206,6 +2212,7 @@ end
 -- Fonction pour envoyer un message dans tous les canaux sélectionnés
 local function sendMessageToSelectedChannels(message)
     -- Vérifier si des canaux ont été sélectionnés
+    LoadSelectedChannels()
     if next(selectedChannels) then
         local allChannelsValid = true  -- Indicateur pour vérifier si tous les canaux sont valides
 

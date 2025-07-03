@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.6.1
+Refactor saved variables initialization
+
 Version: 1.6.0
 Refactor channel frame toggle logic and update version to 1.6.0 in toc
 
