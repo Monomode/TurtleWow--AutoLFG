@@ -2492,6 +2492,7 @@ SLASH_LFM3 = "/lfm help"
 SLASH_LFM2 = "/lfm broadcast"
 SLASH_LFM5 = "/lfm minimap show"
 SLASH_LFM6 = "/lfm minimap hide"
+SLASH_LFM7 = "/lfm petfoireux"
 
 
 -- Fonction principale des commandes Slash
