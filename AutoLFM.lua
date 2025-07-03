@@ -2488,84 +2488,94 @@ dashText:Hide()
 
 -- Définir les slash commandes
 SLASH_LFM1 = "/lfm"
-SLASH_LFM3 = "/lfm help"
 SLASH_LFM2 = "/lfm broadcast"
+SLASH_LFM3 = "/lfm help"
+SLASH_LFM4 = "/lfm open"
 SLASH_LFM5 = "/lfm minimap show"
 SLASH_LFM6 = "/lfm minimap hide"
 SLASH_LFM7 = "/lfm petfoireux"
 
-
 -- Fonction principale des commandes Slash
 SlashCmdList["LFM"] = function(msg)
-    -- Séparer le message en argument
-    local args = strsplit(" ", msg)
-
-    -- Afficher les commandes disponibles
-    if args[1] == "help" then
-        -- Afficher les commandes disponibles dans le chat avec des couleurs
-        DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Available commands :")
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm  |cffFFFFFFOpens AutoLFM window.")
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm help   |cffFFFFFFDisplays all available orders.")  -- Bleu clair pour la commande et blanc pour l'explication
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm broadcast   |cffFFFFFFOpen Broadcast settings.")  -- Bleu clair pour la commande et blanc pour l'explication
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm minimap show   |cffFFFFFFDisplays the minimap button.")
-        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm minimap hide   |cffFFFFFFHide minimap button.")
-        return
+    -- Récupérer tous les arguments dans un tableau
+    local args = {}
+    for word in msg:gmatch("%S+") do
+        table.insert(args, word)
     end
 
-    -- Commande pour ouvrir la fenêtre AutoLFM
-    if args[1] == "" or args[1] == "open" then
+    -- Si aucune commande ou /lfm open : afficher ou cacher la fenêtre principale
+    if not args[1] or args[1] == "open" then
         if AutoLFM then
             if AutoLFM:IsVisible() then
-                AutoLFM:Hide()  -- Si la fenêtre est visible, la cacher
+                AutoLFM:Hide()
             else
-                AutoLFM:Show()  -- Si la fenêtre est cachée, l'afficher
+                AutoLFM:Show()
             end
+        else
+            DEFAULT_CHAT_FRAME:AddMessage("|cffff0000[AutoLFM] Addon not loaded properly.")
         end
         return
     end
 
-    -- Commande pour afficher le bouton de la minimap
-    if args[1] == "minimap" and args[2] == "show" then
-      if AutoLFMMinimapBtn:IsVisible() then
-          DEFAULT_CHAT_FRAME:AddMessage("The minimap button is already visible.", 1.0, 0.0, 0.0)  -- Texte rouge
-      else
-          AutoLFMMinimapBtn:Show()
-          DEFAULT_CHAT_FRAME:AddMessage("The minimap button has been redisplayed.", 0.0, 1.0, 0.0)  -- Texte vert
-      end
-      return
+    -- Commande d'aide
+    if args[1] == "help" then
+        DEFAULT_CHAT_FRAME:AddMessage("|cffffff00Available commands:")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm |cffFFFFFFToggle AutoLFM window.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm help |cffFFFFFFDisplay this help message.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm broadcast |cffFFFFFFOpen or close broadcast channel settings.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm minimap show |cffFFFFFFShow the minimap button.")
+        DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm minimap hide |cffFFFFFFHide the minimap button.")
+        --DEFAULT_CHAT_FRAME:AddMessage("|cff00FFFF /lfm petfoireux |cffFFFFFFPlay funny sound.")
+        return
     end
 
-        -- Commande pour masquer le bouton de la minimap
-    if args[1] == "minimap" and args[2] == "hide" then
-      if AutoLFMMinimapBtn:IsVisible() then
-        AutoLFMMinimapBtn:Hide()  -- Masquer le bouton
-        DEFAULT_CHAT_FRAME:AddMessage("The minimap button has been hidden.", 0.0, 1.0, 0.0)  -- Texte vert
-      else
-        DEFAULT_CHAT_FRAME:AddMessage("The minimap button is already hidden.", 1.0, 0.0, 0.0)  -- Texte rouge
-      end
-      return
+    -- Commandes minimap
+    if args[1] == "minimap" then
+        if args[2] == "show" then
+            if AutoLFMMinimapBtn:IsVisible() then
+                DEFAULT_CHAT_FRAME:AddMessage("The minimap button is already visible.", 1, 0, 0)
+            else
+                AutoLFMMinimapBtn:Show()
+                DEFAULT_CHAT_FRAME:AddMessage("The minimap button has been redisplayed.", 0, 1, 0)
+            end
+            return
+        elseif args[2] == "hide" then
+            if AutoLFMMinimapBtn:IsVisible() then
+                AutoLFMMinimapBtn:Hide()
+                DEFAULT_CHAT_FRAME:AddMessage("The minimap button has been hidden.", 0, 1, 0)
+            else
+                DEFAULT_CHAT_FRAME:AddMessage("The minimap button is already hidden.", 1, 0, 0)
+            end
+            return
+        else
+            DEFAULT_CHAT_FRAME:AddMessage("|cffff0000Invalid minimap command. Use 'show' or 'hide'.")
+            return
+        end
     end
 
+    -- Commande broadcast : toggle la fenêtre des canaux
     if args[1] == "broadcast" then
         if channelsFrame:IsVisible() then
-            channelsFrame:Hide()  -- Cacher le cadre des canaux
-            DEFAULT_CHAT_FRAME:AddMessage("Channels frame hidden.")  -- Message de confirmation
+            channelsFrame:Hide()
+            DEFAULT_CHAT_FRAME:AddMessage("Channels frame hidden.")
         else
             CreateChannelButtons()
             LoadSelectedChannels()
-            channelsFrame:Show()  -- Afficher le cadre des canaux
-            DEFAULT_CHAT_FRAME:AddMessage("Channels frame displayed.")  -- Message de confirmation
+            channelsFrame:Show()
+            DEFAULT_CHAT_FRAME:AddMessage("Channels frame displayed.")
         end
         return
     end
 
+    -- Commande rigolote
     if args[1] == "petfoireux" then
-        DEFAULT_CHAT_FRAME:AddMessage("Fuuumiiieeeerrrr !!!!!!.")
+        DEFAULT_CHAT_FRAME:AddMessage("Fuuumiiieeeerrrr !!!!!!")
         PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\fumier.ogg")
+        return
     end
 
-    -- Si la commande est incorrecte
-    DEFAULT_CHAT_FRAME:AddMessage("|cffff0000 ! Usage !   |cff00FFFF/lfm help |cffFFFFFFto list all commands.")  -- Rouge
+    -- Commande non reconnue
+    DEFAULT_CHAT_FRAME:AddMessage("|cffff0000! Usage ! |cff00FFFF/lfm help |cffFFFFFFto list all commands.")
 end
 
 AutoLFM:Hide()
