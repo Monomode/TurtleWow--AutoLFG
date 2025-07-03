@@ -2447,6 +2447,7 @@ closeBtn:SetScript("OnClick", function()
         sliderSizeFrame:Hide()
     end
     UpdateChannelsFramePosition()
+    swapChannelFrame()
 end)
 
 
@@ -2471,6 +2472,7 @@ showArrowBtn:SetScript("OnClick", function()
         sliderSizeFrame:Hide()  -- Sinon, le cacher
     end
     UpdateChannelsFramePosition()
+    swapChannelFrame()
 end)
 
 editBox:Hide()
