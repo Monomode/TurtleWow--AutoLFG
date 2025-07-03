@@ -2558,6 +2558,11 @@ SlashCmdList["LFM"] = function(msg)
         return
     end
 
+    if args[1] == "petfoireux" then
+        DEFAULT_CHAT_FRAME:AddMessage("Fuuumiiieeeerrrr !!!!!!.")
+        PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\fumier.ogg")
+    end
+
     -- Si la commande est incorrecte
     DEFAULT_CHAT_FRAME:AddMessage("|cffff0000 ! Usage !   |cff00FFFF/lfm help |cffFFFFFFto list all commands.")  -- Rouge
 end
