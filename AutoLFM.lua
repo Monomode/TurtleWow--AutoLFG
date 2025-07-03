@@ -16,6 +16,7 @@ local selectedRoles = {} -- Table to store selected roles
 local userInputMessage = "" -- Variable to store user input message
 local combinedMessage = "" -- String to store the combined message
 
+
 ---------------------------------------------------------------------------------
 --                            Variables Donjons                                --
 ---------------------------------------------------------------------------------
@@ -175,56 +176,54 @@ end
 
   -- Appel initial pour rechercher les canaux à l'ouverture de l'addon
 
--- Initialise les variables sauvegardées si besoin
-if not AutoLFM_SavedVariables then AutoLFM_SavedVariables = {} end
+  -- Initialisation des variables sauvegardées
+if not AutoLFM_SavedVariables then
+    AutoLFM_SavedVariables = {}  -- Si les variables n'existent pas encore, on les initialise
+end
 
-local charName = UnitName("player")
-local realmName = GetRealmName()
+local charName = UnitName("player")  -- Nom du personnage
+local realmName = GetRealmName()    -- Nom du serveur (réalm)
 local uniqueIdentifier = charName .. "-" .. realmName
-
-AutoLFM_SavedVariables[uniqueIdentifier] = AutoLFM_SavedVariables[uniqueIdentifier] or {}
-local savedData = AutoLFM_SavedVariables[uniqueIdentifier]
-
-savedData.selectedChannels = savedData.selectedChannels or {}
-savedData.hasUserSelectedChannels = savedData.hasUserSelectedChannels or false
-
--- La table partagée des canaux sélectionnés
-local selectedChannels = savedData.selectedChannels
-local hasUserSelectedChannels = savedData.hasUserSelectedChannels
-
  
+-- Initialiser la sous-table pour ce personnage si nécessaire
+if not AutoLFM_SavedVariables[uniqueIdentifier] then
+    AutoLFM_SavedVariables[uniqueIdentifier] = {}
+end
+
+-- Initialiser selectedChannels si nécessaire
+if not AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels then
+    AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels = {}
+end
+
+-- Liste des canaux sélectionnés (chargée depuis les variables sauvegardées)
+-- Référence pratique
+local selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
+
 -- Fonction pour sauvegarder les canaux sélectionnés
 local function SaveSelectedChannels()
-    -- La table est déjà référencée, mais on peut forcer la sauvegarde
     AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels = selectedChannels
-    savedData.selectedChannels = selectedChannels
-    savedData.hasUserSelectedChannels = hasUserSelectedChannels
 end
+
 
 -- Fonction pour charger les canaux sélectionnés lors du démarrage
 local function LoadSelectedChannels()
     if AutoLFM_SavedVariables[uniqueIdentifier] and AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels then
-        for k in pairs(selectedChannels) do selectedChannels[k] = nil end
-        for k,v in pairs(AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels) do
-            selectedChannels[k] = v
-        end
+        selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
     else
-        for k in pairs(selectedChannels) do selectedChannels[k] = nil end
+        selectedChannels = {}
+        AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels = selectedChannels
     end
 end
 
 -- Fonction pour mettre à jour le canal sélectionné dans la table
 local function ToggleChannelSelection(channelName, isSelected)
     if isSelected then
-        selectedChannels[channelName] = true
+        selectedChannels[channelName] = true  -- Ajouter le canal aux sélectionnés
     else
-        selectedChannels[channelName] = nil
+        selectedChannels[channelName] = nil  -- Retirer le canal des sélectionnés
     end
 
-    AutoLFM_SavedVariables[uniqueIdentifier].hasUserSelectedChannels = true
-    hasUserSelectedChannels = true
-    savedData.hasUserSelectedChannels = true
-
+    -- Sauvegarder après chaque modification
     SaveSelectedChannels()
 end
 
@@ -316,6 +315,14 @@ local function CheckRaidStatus()
     else
         return false
     end
+end
+
+local function tableCount(t)
+    local count = 0
+    for _ in pairs(t) do
+        count = count + 1
+    end
+    return count
 end
 
 -- Utilisation avec un frame événement
@@ -529,25 +536,14 @@ channelsFrame:SetBackdrop{
     insets = { left = 5, right = 5, top = 5, bottom = 5 },
 }
 
-local function ToggleChannelFrame()
-    local saved = AutoLFM_SavedVariables[uniqueIdentifier]
-    if not saved then
-        AutoLFM_SavedVariables[uniqueIdentifier] = {}
-        saved = AutoLFM_SavedVariables[uniqueIdentifier]
-    end
-    saved.selectedChannels = saved.selectedChannels or {}
-    saved.hasUserSelectedChannels = saved.hasUserSelectedChannels or false
-
-    -- selectedChannels pointe directement sur la table sauvegardée, pas besoin de LoadSelectedChannels()
-    selectedChannels = saved.selectedChannels
-
-    if next(selectedChannels) == nil and not saved.hasUserSelectedChannels then
-        channelsFrame:Show()
-    else
-        channelsFrame:Hide()
-    end
+-- Vérifier si des canaux sont sélectionnés
+if next(selectedChannels) == nil then
+     DEFAULT_CHAT_FRAME:AddMessage("548")
+    channelsFrame:Show()  -- Afficher le cadre des canaux
+else
+    LoadSelectedChannels()
+    channelsFrame:Hide()  -- Masquer le cadre des canaux si aucun canal n'est sélectionné
 end
-
 
 -- Ajouter un titre en haut du cadre
 local titleText = channelsFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -710,6 +706,21 @@ local function CreateChannelButtons()
     end
 end
 
+local function swapChannelFrame()
+    LoadSelectedChannels()
+
+    if not channelsFrame.buttons or tableCount(channelsFrame.buttons) == 0 then
+        findChannels()
+        CreateChannelButtons()
+    end
+
+    if next(selectedChannels) == nil then
+        UpdateChannelsFramePosition()
+    else
+        channelsFrame:Hide()
+    end
+end
+
 -- Création du bouton de la mini-carte
 local AutoLFMMinimapBtn = CreateFrame("Button", "AutoLFMMinimapBtn", Minimap)
 AutoLFMMinimapBtn:SetFrameStrata("LOW")  -- Ajuster la strate du cadre pour qu'il soit au-dessus de la mini-carte
@@ -759,34 +770,21 @@ AutoLFMMinimapBtn:SetScript("OnLeave", function()
     GameTooltip:Hide()
 end)
 
-local function tableCount(t)
-    local count = 0
-    for _ in pairs(t) do
-        count = count + 1
-    end
-    return count
-end
+
 
 -- Clic gauche pour ouvrir/fermer l'interface
 AutoLFMMinimapBtn:SetScript("OnClick", function()
-    if IsControlKeyDown() then return end
+    if IsControlKeyDown() then
+        return
+    end
 
     if AutoLFM:IsShown() then
         AutoLFM:Hide()
     else
         AutoLFM:Show()
-
-        LoadSelectedChannels()
-
-        if not channelsFrame.buttons or tableCount(channelsFrame.buttons) == 0 then
-            findChannels()
-            CreateChannelButtons()
-        end
-
-        ToggleChannelFrame()
+        swapChannelFrame()
     end
 end)
-
 
 
 
@@ -1930,7 +1928,7 @@ function DisplayDungeonsByColor()
         toggleButton:Show()
         msgFrameDj:Show()
         UpdateChannelsFramePosition()
-        ToggleChannelFrame()
+        swapChannelFrame()
         -- Ne pas dupliquer dans la liste selectedDungeons
         local alreadySelected = false
         for _, val in ipairs(selectedDungeons) do
@@ -2060,7 +2058,7 @@ for index, raid in pairs(raids) do
         toggleButton:Show()
         msgFrameDj:Show()
         UpdateChannelsFramePosition()
-        ToggleChannelFrame()
+        swapChannelFrame()
       -- Décocher toutes les autres cases et enlever leur backdrop
       for _, otherCheckbox in pairs(raidCheckButtons) do
         if otherCheckbox ~= checkbox then
@@ -2149,7 +2147,7 @@ swapBtn:SetScript("OnClick", function()
         clearSelectedRoles()
         resetUserInputMessage()
         updateMsgFrameCombined()
-        ToggleChannelFrame()
+        swapChannelFrame()
         ClearAllBackdrops(donjonClickableFrames)
     else
         -- Basculer en mode donjons
@@ -2165,7 +2163,7 @@ swapBtn:SetScript("OnClick", function()
         resetUserInputMessage()
         updateMsgFrameCombined()
         HideSliderForRaid()
-        ToggleChannelFrame()
+        swapChannelFrame()
         ClearAllBackdrops(raidClickableFrames)
     end
 end)
@@ -2212,7 +2210,6 @@ end
 -- Fonction pour envoyer un message dans tous les canaux sélectionnés
 local function sendMessageToSelectedChannels(message)
     -- Vérifier si des canaux ont été sélectionnés
-    LoadSelectedChannels()
     if next(selectedChannels) then
         local allChannelsValid = true  -- Indicateur pour vérifier si tous les canaux sont valides
 
@@ -2450,7 +2447,6 @@ closeBtn:SetScript("OnClick", function()
         sliderSizeFrame:Hide()
     end
     UpdateChannelsFramePosition()
-    ToggleChannelFrame()
 end)
 
 
@@ -2475,7 +2471,6 @@ showArrowBtn:SetScript("OnClick", function()
         sliderSizeFrame:Hide()  -- Sinon, le cacher
     end
     UpdateChannelsFramePosition()
-    ToggleChannelFrame()
 end)
 
 editBox:Hide()
@@ -2484,7 +2479,6 @@ toggleButton:Hide()
 msgFrameDj:Hide()
 msgFrameRaids:Hide()
 dashText:Hide()
-
 ---------------------------------------------------------------------------------
 --                       Commandes Slash pour l'addon                          --
 ---------------------------------------------------------------------------------
