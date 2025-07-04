@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.6.3
+Refactor code structure for improved readability and maintainability
+
 Version: 1.6.2
 Refactor saved variables initialization and streamline channel selection logic
 

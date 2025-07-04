@@ -8,13 +8,13 @@ https://github.com/FSuhas/AutoLFM
 
 ## Image
 
-![channel select](channel.PNG)
+![channel select](Screen/channel.PNG)
 
-![donjons scaling](donjons.PNG)
+![donjons scaling](Screen/donjons.PNG)
 
-![quest](quest.PNG)
+![quest](Screen/quest.PNG)
 
-![raid selector](raid.PNG)
+![raid selector](Screen/raid.PNG)
 
 ## Fonctionnalités
 
@@ -39,6 +39,7 @@ Les commandes Slash permettent d'interagir facilement avec l'addon via la fenêt
 - `/lfm broadcast` : Ouvre la selection des channels.
 - `/lfm minimap show` : Affiche le bouton de la mini-carte pour un accès rapide à l'addon.
 - `/lfm minimap hide` : Masque le bouton de la mini-carte si vous ne souhaitez pas qu'il soit visible.
+- `/lfm minimap reset` : Position du bouton de la minimap réinitialisée par défaut.
 
 
 - **Message de recherche de groupe automatique** : Lorsque l'addon est activé, il envoie automatiquement un message dans le chat pour signaler que vous cherchez des joueurs pour rejoindre  votre groupe pour un donjon ou autre activité.
