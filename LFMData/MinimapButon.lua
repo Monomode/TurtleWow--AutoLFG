@@ -83,7 +83,7 @@ function InitMinimapButton()
     AutoLFMMinimapBtn:Show()
 end
 
--- Frame pour gérer l'événement de chargement de l'addon
+-- -- Frame pour gérer l'événement de chargement de l'addon
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(self, event, arg1)

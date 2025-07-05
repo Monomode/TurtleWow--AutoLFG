@@ -757,6 +757,7 @@ toggleButton:SetScript("OnClick", function()
             toggleButton:SetText("Start")  -- Réinitialiser le texte à "Start" si on arrête
             PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_Denied.ogg")
         else
+            swapChannelFrame()
             startMessageBroadcast()
             toggleButton:SetText("Stop")  -- Changer le texte à "Stop" lorsqu'on commence
             PlaySoundFile("Interface\\AddOns\\AutoLFM\\sound\\LFG_RoleCheck.ogg")
