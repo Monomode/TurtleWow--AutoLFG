@@ -8,6 +8,10 @@ function InitMinimapButton()
         return
     end
 
+    if not AutoLFM_SavedVariables[uniqueIdentifier] then
+        AutoLFM_SavedVariables[uniqueIdentifier] = {}
+    end
+
     AutoLFMMinimapBtn = CreateFrame("Button", "AutoLFMMinimapBtn", Minimap)
     AutoLFMMinimapBtn:SetFrameStrata("LOW")
     AutoLFMMinimapBtn:SetHeight(24)
