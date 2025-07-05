@@ -6,9 +6,6 @@ local msglog = CreateFrame("Frame")
 msglog:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 function ShowDungeonUI()
-    contentFrame:Show()
-    djframe:Show()
-    djScrollFrame:Show()
     raidFrame:Hide()
     raidScrollFrame:Hide()
     editBox:Hide()
@@ -17,6 +14,7 @@ function ShowDungeonUI()
     msgFrameDj:Hide()
     msgFrameRaids:Hide()
     dashText:Hide()
+    AutoLFM:hide()
 end
 
 local function OnPlayerEnteringWorld(self, event)
@@ -46,7 +44,7 @@ end
 
 msglog:SetScript("OnEvent", OnPlayerEnteringWorld)
 
-AutoLFM:hide()
+
 ---------------------------------------------------------------------------------
 --                           Init Donjons & Raids                              --
 ---------------------------------------------------------------------------------
