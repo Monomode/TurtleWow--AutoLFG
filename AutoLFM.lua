@@ -40,7 +40,7 @@ local function OnPlayerEnteringWorld(self, event)
   
   InitMinimapButton()
   DisplayDungeonsByColor()
-  AutoLFM:Show()
+  AutoLFM:hide()
   ShowDungeonUI()
   msglog:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
