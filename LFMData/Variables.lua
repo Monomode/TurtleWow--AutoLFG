@@ -118,7 +118,6 @@ if not AutoLFM_SavedVariables then
     AutoLFM_SavedVariables = {}  -- Si les variables n'existent pas encore, on les initialise
 end
 
-
 charName = UnitName("player")  -- Nom du personnage
 realmName = GetRealmName()    -- Nom du serveur (réalm)
 uniqueIdentifier = charName .. "-" .. realmName
@@ -144,3 +143,5 @@ end
 -- Liste des canaux sélectionnés (chargée depuis les variables sauvegardées)
 -- Référence pratique
 selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
+posX = AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnX or -10  
+posY = AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnY or -10
