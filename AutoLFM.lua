@@ -17,6 +17,7 @@ function ShowDungeonUI()
     msgFrameDj:Hide()
     msgFrameRaids:Hide()
     dashText:Hide()
+    AutoLFM:hide()
 end
 
 local function OnPlayerEnteringWorld(self, event)
@@ -40,7 +41,6 @@ local function OnPlayerEnteringWorld(self, event)
   
   InitMinimapButton()
   DisplayDungeonsByColor()
-  AutoLFM:hide()
   ShowDungeonUI()
   msglog:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
