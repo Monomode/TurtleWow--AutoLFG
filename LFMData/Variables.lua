@@ -133,6 +133,14 @@ if not AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels then
     AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels = {}
 end
 
+if not AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnX then
+  AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnX = ""
+end
+
+if not AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnY then
+  AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnY = ""
+end
+
 -- Liste des canaux sélectionnés (chargée depuis les variables sauvegardées)
 -- Référence pratique
 selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
