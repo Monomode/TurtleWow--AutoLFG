@@ -13,8 +13,8 @@ function InitMinimapButton()
     AutoLFMMinimapBtn:SetHeight(24)
     AutoLFMMinimapBtn:SetWidth(24)
 
-    local posX = AutoLFM_SavedVariables.minimapBtnX or -10
-    local posY = AutoLFM_SavedVariables.minimapBtnY or -10
+    local posX = AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnX or -10
+    local posY = AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnY or -10
     AutoLFMMinimapBtn:SetPoint("TOPRIGHT", Minimap, "TOPRIGHT", posX, posY)
 
     -- Bordure
@@ -72,8 +72,8 @@ function InitMinimapButton()
     AutoLFMMinimapBtn:SetScript("OnMouseUp", function(self, button)
         AutoLFMMinimapBtn:StopMovingOrSizing()
         local point, relativeTo, relativePoint, xOfs, yOfs = AutoLFMMinimapBtn:GetPoint()
-        AutoLFM_SavedVariables.minimapBtnX = xOfs
-        AutoLFM_SavedVariables.minimapBtnY = yOfs
+        AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnX = xOfs
+        AutoLFM_SavedVariables[uniqueIdentifier].minimapBtnY = yOfs
     end)
 
     AutoLFMMinimapBtn:Show()
