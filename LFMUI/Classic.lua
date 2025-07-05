@@ -813,3 +813,5 @@ AutoLFM:SetScript("OnEvent", function(self, event, ...)
         end
     end
 end)
+
+AutoLFM:hide()
