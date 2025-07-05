@@ -14,7 +14,9 @@ function ShowDungeonUI()
     msgFrameDj:Hide()
     msgFrameRaids:Hide()
     dashText:Hide()
-    AutoLFM:hide()
+    if AutoLFM:IsVisible() then
+        AutoLFM:Hide()
+    end
 end
 
 local function OnPlayerEnteringWorld(self, event)
