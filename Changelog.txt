@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.6.4
+Add edit box focus handling to improve quest and item link functionality
+
 Version: 1.6.3
 Refactor code structure for improved readability and maintainability
 

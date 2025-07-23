@@ -372,6 +372,17 @@ function CreateQuestLink(questIndex)
     return link
 end
 
+local editBoxHasFocus = false
+
+editBox:SetScript("OnEditFocusGained", function(self)
+    editBoxHasFocus = true
+end)
+
+editBox:SetScript("OnEditFocusLost", function(self)
+    editBoxHasFocus = false
+end)
+
+
 -- Sauvegarder la fonction d'origine
 Original_QuestLogTitleButton_OnClick = QuestLogTitleButton_OnClick
 
@@ -380,7 +391,7 @@ function QuestLogTitleButton_OnClick(self, button)
 
     Original_QuestLogTitleButton_OnClick(self, button)
 
-    if "LeftButton" and IsShiftKeyDown() then
+    if "LeftButton" and IsShiftKeyDown() and editBox and editBoxHasFocus then
         local questIndex = this:GetID()
         if questIndex then
             local questLink = CreateQuestLink(questIndex)
@@ -399,7 +410,7 @@ function ContainerFrameItemButton_OnClick(self, button)
     -- Appeler la fonction originale (ouvrir tooltip, etc.)
     Original_ContainerFrameItemButton_OnClick(self, button)
 
-    if "LeftButton" and IsShiftKeyDown() then
+    if "LeftButton" and IsShiftKeyDown() and editBox and editBoxHasFocus then
         local bag = this:GetParent():GetID()
         local slot = this:GetID()
         local itemLink = GetContainerItemLink(bag, slot)
@@ -421,7 +432,7 @@ function SetItemRef(link, text, button, chatFrame)
     Original_SetItemRef(link, text, button, chatFrame)
 
     -- Vérifier clic gauche + Shift + lien d'item
-    if "LeftButton" and IsShiftKeyDown() then
+    if "LeftButton" and IsShiftKeyDown() and editBox and editBoxHasFocus then
         -- En 1.12, les liens d'item commencent souvent par "item:"
         if link and string.find(link, "^item:") then
             if editBox then
