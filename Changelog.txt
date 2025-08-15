@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.6.5
+Update dungeon and raid variables for accuracy and completeness
+
 Version: 1.6.4
 Add edit box focus handling to improve quest and item link functionality
 
