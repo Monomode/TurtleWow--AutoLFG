@@ -1,4 +1,7 @@
 AddOn: AutoLFM
+Version: 1.6.7
+Add FPS/MS display frame with drag-and-drop functionality
+
 Version: 1.6.6
 Update dungeon level ranges for accuracy and consistency
 
