@@ -365,3 +365,4 @@ function ToggleFramerate()
 end
 
 
+MyFPSFrame:Hide()
