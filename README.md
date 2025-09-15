@@ -1,61 +1,89 @@
-# autoLFM - README
+# AutoLFG 🎯  
+*Automated LFG (Looking For Group) tool for World of Warcraft 1.12 / TurtleWoW*  
 
-https://github.com/FSuhas/AutoLFM
+[![WoW Version](https://img.shields.io/badge/WoW-1.12-blue)]()  
+[![License](https://img.shields.io/badge/license-MIT-green)]()  
+[![Status](https://img.shields.io/badge/status-active-success)]()  
 
-## Description
+---
 
-**autoLFM** est un addon pour **World of Warcraft 1.12** conçu pour automatiser le processus de recherche de groupe (LFM). Il permet aux joueurs de créer automatiquement un message de recherche de groupe, ce qui simplifie l'interaction avec le système de LFG (Looking for Group). Cet addon permet d'économiser du temps et en optimisant les chances de trouver rapidement un groupe pour des donjons ou d'autres activités multijoueurs.
+## 📖 Overview  
 
-## Image
+**AutoLFG** is a lightweight addon for **World of Warcraft 1.12** that automates the group-finding process.  
+Instead of manually typing “Looking for More” messages in chat, AutoLFG takes care of it for you — helping you save time and quickly find groups for **dungeons, raids, and other multiplayer activities**.  
 
-![channel select](Screen/channel.PNG)
+---
 
-![donjons scaling](Screen/donjons.PNG)
+## ✨ Features  
 
-![quest](Screen/quest.PNG)
+- 📢 **Automatic LFG messages** — Sends your group request directly into chat.  
+- 🏰 **Dungeon & raid compatibility** — Supports a wide range of group content.  
+- ⚡ **Lightweight & simple UI** — Easy to use, no unnecessary clutter.  
+- 🛠 **Customizable messages** — Personalize your LFG message text.  
+- 🗺 **Minimap integration** — Quick-access button with show/hide/reset options.  
 
-![raid selector](Screen/raid.PNG)
+---
 
-## Fonctionnalités
+## 🖼 Screenshots  
 
-- **Auto-message LFM** : Envoie automatiquement un message de recherche de groupe dans la fenêtre de discussion.
-- **Compatibilité avec les donjons et les raids** : S'intègre directement aux mécanismes de recherche de groupe pour des donjons, raids ou autres activités de groupe.
-- **Interface simple et légère** : Facilité d'utilisation sans ajout complexe à l'interface de jeu.
+| Channel Selection | Dungeon Scaling | Quest | Raid Selector |  
+|-------------------|-----------------|-------|---------------|  
+| ![channel select](Screen/channel.PNG) | ![dungeons](Screen/donjons.PNG) | ![quest](Screen/quest.PNG) | ![raid](Screen/raid.PNG) |  
 
-## Installation
+---
 
-1. Téléchargez le fichier de l'addon.
-2. Décompressez le fichier téléchargé.
-3. Déplacez le dossier `autoLFM` dans le répertoire `Interface/AddOns` de votre installation World of Warcraft 1.12.
-4. Lancez World of Warcraft et connectez-vous à votre personnage.
-5. Dans le menu de l'écran d'accueil, cliquez sur le bouton "AddOns" pour vérifier que **autoLFM** est activé.
+## ⚙️ Installation  
 
-## Slash Commandes
+1. [Download](https://github.com/FSuhas/AutoLFG/archive/refs/heads/master.zip) the addon.  
+2. Extract the archive.  
+3. Move the `AutoLFG` folder into: World of Warcraft/Interface/AddOns
+4. Launch WoW and log in.  
+5. On the character select screen, click **AddOns** and make sure **AutoLFG** is enabled.  
 
-Les commandes Slash permettent d'interagir facilement avec l'addon via la fenêtre de discussion. Voici les principales commandes disponibles :
+---
 
-- `/lfm` : Ouvre la fenêtre de l'addon **AutoLFM**.
-- `/lfm help` : Affiche la liste de toutes les commandes disponibles avec une brève description de chacune.
-- `/lfm broadcast` : Ouvre la selection des channels.
-- `/lfm minimap show` : Affiche le bouton de la mini-carte pour un accès rapide à l'addon.
-- `/lfm minimap hide` : Masque le bouton de la mini-carte si vous ne souhaitez pas qu'il soit visible.
-- `/lfm minimap reset` : Position du bouton de la minimap réinitialisée par défaut.
+## 💻 Usage  
 
+### Slash Commands  
+Interact with the addon directly from the chat window:  
 
-- **Message de recherche de groupe automatique** : Lorsque l'addon est activé, il envoie automatiquement un message dans le chat pour signaler que vous cherchez des joueurs pour rejoindre  votre groupe pour un donjon ou autre activité.
+| Command | Description |  
+|---------|-------------|  
+| `/lfg` | Open AutoLFG window |  
+| `/lfg help` | Show all available commands |  
+| `/lfg broadcast` | Open channel selection |  
+| `/lfg minimap show` | Show the minimap button |  
+| `/lfg minimap hide` | Hide the minimap button |  
+| `/lfg minimap reset` | Reset minimap button position |  
 
-- **Personnalisation** : Vous pouvez ajuster le texte de votre message de recherche de groupe en ajoutant du texte via le menu de l'addon dans le jeu.
+### Automatic Messaging  
+- When enabled, AutoLFG will automatically broadcast your group search message in chat.  
+- Messages are fully customizable through the in-game options menu.  
 
-## Configuration
+---
 
-1. Ouvrez le menu des options de l'addon avec `/lfm`.
-2. Vous pouvez personnaliser le message de recherche de groupe et définir des préférences spécifiques pour les types de groupes que vous souhaitez contruire.
+## 🔧 Configuration  
 
-## Dépannage
+1. Open the addon options with: /lfg
+2. Customize your LFG message text.  
+3. Define group preferences (dungeon, raid, questing, etc.).  
 
-- **Le message LFM ne s'affiche pas** : Assurez-vous que l'addon est bien activé dans le menu AddOns avant de vous connecter.
+---
 
+## 🐛 Troubleshooting  
 
-## Aide et Support
+- **No LFG message appears?**  
+→ Check that the addon is enabled in the AddOns menu before logging in.  
 
-Pour toute question, suggestion ou rapport de bug, vous pouvez nous contacter via les forums de WoW ou sur la page GitHub de l'addon.
+---
+
+## 🤝 Support  
+
+- 💬 Ask questions or report bugs via the [GitHub Issues](https://github.com/FSuhas/AutoLFG/issues).  
+- 📢 Suggestions are welcome — feel free to contribute!  
+
+---
+
+## 📜 License  
+
+This project is licensed under the [MIT License](LICENSE).  
