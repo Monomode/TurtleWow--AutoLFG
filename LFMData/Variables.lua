@@ -31,22 +31,22 @@ closedTexture = "Interface\\AddOns\\AutoLFM\\icon\\fermer.png"
 donjons = {
   { nom = "Ragefire Chasm", abrev = "RFC", size = 5, lvl = "13-19", lvl_min = 13, lvl_max = 19 },
   { nom = "Wailing Caverns", abrev = "WC", size = 5, lvl = "16-25", lvl_min = 16, lvl_max = 25 },
-  { nom = "The Deadmines", abrev = "DM", size = 5, lvl = "16-24", lvl_min = 16, lvl_max = 24 },
+  { nom = "The Deadmines", abrev = "Deadmines", size = 5, lvl = "16-24", lvl_min = 16, lvl_max = 24 },
   { nom = "Shadowfang Keep", abrev = "SFK", size = 5, lvl = "20-28", lvl_min = 20, lvl_max = 28 },
   { nom = "Blackfathom Deeps", abrev = "BFD", size = 5, lvl = "22-31", lvl_min = 22, lvl_max = 31 },
   { nom = "The Stockade", abrev = "Stockade", size = 5, lvl = "23-32", lvl_min = 23, lvl_max = 32 },
   { nom = "Dragonnmaw Retreat", abrev = "DR", size = 5, lvl = "26-35", lvl_min = 26, lvl_max = 35 },
   { nom = "Gnomeregan", abrev = "Gnomeregan", size = 5, lvl = "28-37", lvl_min = 28, lvl_max = 37 },
   { nom = "Razorfen Kraul", abrev = "RFK", size = 5, lvl = "29-36", lvl_min = 29, lvl_max = 36 },
-  { nom = "Scarlet Monastery Graveyard", abrev = "SM Grav", size = 5, lvl = "30-37", lvl_min = 30, lvl_max = 37 },
+  { nom = "Scarlet Monastery Graveyard", abrev = "SM Grave", size = 5, lvl = "30-37", lvl_min = 30, lvl_max = 37 },
   { nom = "Scarlet Monastery Library", abrev = "SM Lib", size = 5, lvl = "32-40", lvl_min = 32, lvl_max = 40 },
   { nom = "Stormwrought Castle", abrev = "SC", size = 5, lvl = "32-40", lvl_min = 32, lvl_max = 40 },
-  { nom = "The Crescent Grove", abrev = "Crescent", size = 5, lvl = "33-39", lvl_min = 33, lvl_max = 39 },
-  { nom = "Scarlet Monastery Armory", abrev = "SM Armo", size = 5, lvl = "34-42", lvl_min = 34, lvl_max = 42 },
+  { nom = "The Crescent Grove", abrev = "CrescentG", size = 5, lvl = "33-39", lvl_min = 33, lvl_max = 39 },
+  { nom = "Scarlet Monastery Armory", abrev = "SM Armory", size = 5, lvl = "34-42", lvl_min = 34, lvl_max = 42 },
   { nom = "Razorfen Downs", abrev = "RFD", size = 5, lvl = "35-44", lvl_min = 35, lvl_max = 45 },
   { nom = "Stormwrought Descent", abrev = "SD", size = 5, lvl = "35-44", lvl_min = 35, lvl_max = 44 },
   { nom = "Scarlet Monastery Cathedral", abrev = "SM Cath", size = 5, lvl = "35-45", lvl_min = 35, lvl_max = 45 },
-  { nom = "Uldaman", abrev = "Ulda", size = 5, lvl = "41-50", lvl_min = 41, lvl_max = 50 },
+  { nom = "Uldaman", abrev = "Uldaman", size = 5, lvl = "41-50", lvl_min = 41, lvl_max = 50 },
   { nom = "Zul'Farrak", abrev = "ZF", size = 5, lvl = "42-51", lvl_min = 42, lvl_max = 51 },
   { nom = "Gilneas City", abrev = "Gilneas", size = 5, lvl = "43-52", lvl_min = 43, lvl_max = 52 },
   { nom = "Maraudon Orange", abrev = "Maraudon Orange", size = 5, lvl = "43-51", lvl_min = 43, lvl_max = 51 },
@@ -59,9 +59,9 @@ donjons = {
   { nom = "Blackrock Depths", abrev = "BRD", size = 5, lvl = "54-60", lvl_min = 54, lvl_max = 60 },
   { nom = "Lower Blackrock Spire", abrev = "LBRS", size = 5, lvl = "55-60", lvl_min = 55, lvl_max = 60 },
   { nom = "Dire Maul East", abrev = "DM East", size = 5, lvl = "55-60", lvl_min = 55, lvl_max = 60 },
-  { nom = "Dire Maul North", abrev = "DM N", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
+  { nom = "Dire Maul North", abrev = "DM North", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
   { nom = "Dire Maul Tribute", abrev = "DM Tribute", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
-  { nom = "Dire Maul West", abrev = "DM W", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
+  { nom = "Dire Maul West", abrev = "DM West", size = 5, lvl = "57-60", lvl_min = 57, lvl_max = 60 },
   { nom = "Stratholme Live 5", abrev = "Strat Live 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
   { nom = "Scholomance 5", abrev = "Scholo 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
   { nom = "Stratholme UD 5", abrev = "Strat UD 5", size = 5, lvl = "58-60", lvl_min = 58, lvl_max = 60 },
@@ -138,4 +138,5 @@ end
 
 -- Liste des canaux sélectionnés (chargée depuis les variables sauvegardées)
 -- Référence pratique
+
 selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
