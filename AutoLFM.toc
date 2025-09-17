@@ -1,5 +1,5 @@
 ## Interface: 11200
-## Title: |cff7fff7f TurtleWOW|r |cffffffffAuto|r|cff0070DDL|rF|cffff0000G|r
+## Title: |cff7fff7f TurtleWOW|r |cffffffffAuto|r|cffff0000L|rcff0070DDF|G|r 
 ## Notes: Automated LFM Message
 ## Version: 1.6.7
 ## Author: Monomoy
@@ -26,5 +26,6 @@ AutoLFM.lua
 LFMData\DisplayDonjon.lua
 LFMData\DisplayRaid.lua
 LFMData\Roles.lua
+
 
 
