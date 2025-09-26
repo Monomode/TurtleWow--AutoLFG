@@ -170,20 +170,22 @@ title:SetPoint("TOP", AutoLFM, "TOP", 0, 20)  -- Décale légèrement au-dessus 
 -- Segments de texte
 titleSegments = {}
 
+-- auto lfm / auto lfg title headline
+
 part1 = title:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-part1:SetText("|cff0070DDL|r")
-part1:SetFont("Fonts\\SKURRI.TTF", 24, "OUTLINE")
+part1:SetText("|cffff0000L|r") -- cffff0000
+part1:SetFont("Fonts\\FRIZQT__.TTF", 24, "OUTLINE")
 table.insert(titleSegments, part1)
 
 part2 = title:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-part2:SetText("F")
-part2:SetFont("Fonts\\SKURRI.TTF", 24, "OUTLINE")
+part2:SetText("F") -- 
+part2:SetFont("Fonts\\FRIZQT__.TTF", 24, "OUTLINE")
 part2:SetTextColor(1, 1, 1)
 table.insert(titleSegments, part2)
 
 part3 = title:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-part3:SetText("|cffff0000M|r")
-part3:SetFont("Fonts\\SKURRI.TTF", 24, "OUTLINE")
+part3:SetText("|cff0070DDG|r") -- cff0070DD
+part3:SetFont("Fonts\\FRIZQT__.TTF", 24, "OUTLINE")
 table.insert(titleSegments, part3)
 
 -- Positionnement centré horizontal
@@ -825,4 +827,5 @@ AutoLFM:SetScript("OnEvent", function(self, event, ...)
         end
     end
 end)
+
 
