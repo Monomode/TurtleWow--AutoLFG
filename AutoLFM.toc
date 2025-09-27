@@ -1,0 +1,34 @@
+## Interface: 11200
+## Title: |cff7fff7f TurtleWOW|r |cffffffffAuto|r|cffff0000L|r|cffffffffF|r|cff0070DDG|r 
+## Notes: Automated LFM Message
+## Version: 1.6.7
+## Author: Monomoy
+## DefaultState: Enabled
+## SavedVariables: AutoLFM_SavedVariables
+
+## GitHub: https://github.com/Monomode/TurtleWow--AutoLFG
+
+
+LFMData\Variables.lua
+
+LFMData\Function.lua
+LFMData\MinimapButon.lua
+LFMData\Channel.lua
+LFMData\MsgDynamique.lua
+LFMData\Broadcast.lua
+
+
+LFMUI\Classic.lua
+LFMUI\Modern.lua
+
+AutoLFM.lua
+
+LFMData\DisplayDonjon.lua
+LFMData\DisplayRaid.lua
+LFMData\Roles.lua
+
+
+
+
+
+
