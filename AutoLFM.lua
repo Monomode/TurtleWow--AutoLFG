@@ -22,14 +22,14 @@ end
 local function OnPlayerEnteringWorld(self, event)
 --   local seg1 = "|cffffffff ---- Refonte de l'addon ---- "
   local seg2 = "|cffffffff <"
-  local seg3 = "|cffffff00 Auto "
+  local seg3 = "|cffffffff Auto "
   local seg4 = "|cff0070DDL"
   local seg5 = "|cffffffffF"
   local seg6 = "|cffff0000M "
   local seg7 = "|cffffffff>"
   local seg8 = " "
-  local seg9 = "|cff00FF00 Loaded successfully !"
-  local seg10 = "|cffffff00   More information with  : "
+  local seg9 = "|cff00FF00 Loaded successfully!"
+  local seg10 = "|cffffff00   More information with: "
   local seg11 = "|cff00FFFF  /lfm help"
 
 
@@ -363,6 +363,7 @@ local originalToggleFramerate = ToggleFramerate
 function ToggleFramerate()
     ToggleMyFPSFrame()
 end
+
 
 
 MyFPSFrame:Hide()
