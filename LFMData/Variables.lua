@@ -30,12 +30,12 @@ closedTexture = "Interface\\AddOns\\AutoLFM\\icon\\fermer.png"
 
 donjons = {
   { nom = "Ragefire Chasm", abrev = "RFC", size = 5, lvl = "13-19", lvl_min = 13, lvl_max = 19 },
-  { nom = "Wailing Caverns", abrev = "WC", size = 5, lvl = "16-25", lvl_min = 16, lvl_max = 25 },
+  { nom = "Wailing Caverns", abrev = "Wailing Caverns", size = 5, lvl = "16-25", lvl_min = 16, lvl_max = 25 },
   { nom = "The Deadmines", abrev = "Deadmines", size = 5, lvl = "16-24", lvl_min = 16, lvl_max = 24 },
   { nom = "Shadowfang Keep", abrev = "SFK", size = 5, lvl = "20-28", lvl_min = 20, lvl_max = 28 },
   { nom = "Blackfathom Deeps", abrev = "BFD", size = 5, lvl = "22-31", lvl_min = 22, lvl_max = 31 },
   { nom = "The Stockade", abrev = "Stockade", size = 5, lvl = "23-32", lvl_min = 23, lvl_max = 32 },
-  { nom = "Dragonnmaw Retreat", abrev = "DR", size = 5, lvl = "26-35", lvl_min = 26, lvl_max = 35 },
+  { nom = "Dragonnmaw Retreat", abrev = "Dragonmaw R", size = 5, lvl = "26-35", lvl_min = 26, lvl_max = 35 },
   { nom = "Gnomeregan", abrev = "Gnomeregan", size = 5, lvl = "28-37", lvl_min = 28, lvl_max = 37 },
   { nom = "Razorfen Kraul", abrev = "RFK", size = 5, lvl = "29-36", lvl_min = 29, lvl_max = 36 },
   { nom = "Scarlet Monastery Graveyard", abrev = "SM Grave", size = 5, lvl = "30-37", lvl_min = 30, lvl_max = 37 },
@@ -140,3 +140,4 @@ end
 -- Référence pratique
 
 selectedChannels = AutoLFM_SavedVariables[uniqueIdentifier].selectedChannels
+
